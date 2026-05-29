@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>用户管理 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .user-disabled td { color: #BFBFBF !important; }
+    .user-disabled .admin-table-actions .admin-btn-link { color: #BFBFBF; }
+    .role-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .role-tag { padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .role-tag.admin { background: #E6F7FF; color: #1890FF; }
+    .role-tag.operator { background: #F6FFED; color: #52C41A; }
+    .role-tag.sales { background: #FFF7E6; color: #FAAD14; }
+    .role-tag.manager { background: #F9F0FF; color: #722ED1; }
+    .status-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .status-tag.normal { background: #F6FFED; color: #52C41A; }
+    .status-tag.disabled { background: #FFF1F0; color: #FF4D4F; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .status-dot.green { background: #52C41A; }
+    .status-dot.red { background: #FF4D4F; }
+    .admin-filter-select {
+      height: 36px;
+      padding: 0 32px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+      background: #FFF;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .admin-note {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: #FFF7E6;
+      border: 1px solid #FFE58F;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: #D48806;
+      margin-top: 16px;
+    }
+    .admin-note-icon { font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item active" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">系统管理 / <span>用户管理</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="admin-toolbar">
+              <div class="admin-toolbar-left">
+                <input type="text" class="admin-search-input" placeholder="搜索用户名/姓名">
+                <select class="admin-filter-select">
+                  <option value="">全部角色</option>
+                  <option>系统管理员</option>
+                  <option>运营专员</option>
+                  <option>店长</option>
+                  <option>销售员</option>
+                </select>
+                <select class="admin-filter-select">
+                  <option value="">全部状态</option>
+                  <option>正常</option>
+                  <option>禁用</option>
+                </select>
+              </div>
+              <div class="admin-toolbar-right">
+                <button class="admin-btn admin-btn-primary">＋ 新增用户</button>
+              </div>
+            </div>
+
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>用户ID</th>
+                  <th>用户名</th>
+                  <th>姓名</th>
+                  <th>角色</th>
+                  <th>所属门店</th>
+                  <th>状态</th>
+                  <th>最后登录</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>U10001</td>
+                  <td>admin</td>
+                  <td>王建国</td>
+                  <td>
+                    <div class="role-tags">
+                      <span class="role-tag admin">系统管理员</span>
+                    </div>
+                  </td>
+                  <td>总部</td>
+                  <td><span class="status-tag normal"><span class="status-dot green"></span>正常</span></td>
+                  <td>2026-05-29 09:15</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">编辑</button>
+                      <button class="admin-btn admin-btn-link">重置密码</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>U10002</td>
+                  <td>ops_liwei</td>
+                  <td>李伟</td>
+                  <td>
+                    <div class="role-tags">
+                      <span class="role-tag operator">运营专员</span>
+                    </div>
+                  </td>
+                  <td>总部</td>
+                  <td><span class="status-tag normal"><span class="status-dot green"></span>正常</span></td>
+                  <td>2026-05-29 08:42</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">编辑</button>
+                      <button class="admin-btn admin-btn-link">禁用</button>
+                      <button class="admin-btn admin-btn-link">重置密码</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>U10003</td>
+                  <td>store_chen</td>
+                  <td>陈志强</td>
+                  <td>
+                    <div class="role-tags">
+                      <span class="role-tag manager">店长</span>
+                    </div>
+                  </td>
+                  <td>福州万达广场店</td>
+                  <td><span class="status-tag normal"><span class="status-dot green"></span>正常</span></td>
+                  <td>2026-05-28 18:30</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">编辑</button>
+                      <button class="admin-btn admin-btn-link">禁用</button>
+                      <button class="admin-btn admin-btn-link">重置密码</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>U10004</td>
+                  <td>sale_zhang</td>
+                  <td>张丽华</td>
+                  <td>
+                    <div class="role-tags">
+                      <span class="role-tag sales">销售员</span>
+                    </div>
+                  </td>
+                  <td>福州万达广场店</td>
+                  <td><span class="status-tag normal"><span class="status-dot green"></span>正常</span></td>
+                  <td>2026-05-29 10:05</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">编辑</button>
+                      <button class="admin-btn admin-btn-link">禁用</button>
+                      <button class="admin-btn admin-btn-link">重置密码</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="user-disabled">
+                  <td>U10005</td>
+                  <td>sale_zhao</td>
+                  <td>赵明</td>
+                  <td>
+                    <div class="role-tags">
+                      <span class="role-tag sales">销售员</span>
+                    </div>
+                  </td>
+                  <td>福州宝龙城市广场店</td>
+                  <td><span class="status-tag disabled"><span class="status-dot red"></span>禁用</span></td>
+                  <td>2026-05-15 16:22</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">编辑</button>
+                      <button class="admin-btn admin-btn-link">启用</button>
+                      <button class="admin-btn admin-btn-link">重置密码</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>U10006</td>
+                  <td>store_lin</td>
+                  <td>林小芳</td>
+                  <td>
+                    <div class="role-tags">
+                      <span class="role-tag manager">店长</span>
+                    </div>
+                  </td>
+                  <td>福州宝龙城市广场店</td>
+                  <td><span class="status-tag normal"><span class="status-dot green"></span>正常</span></td>
+                  <td>2026-05-29 07:58</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">编辑</button>
+                      <button class="admin-btn admin-btn-link">禁用</button>
+                      <button class="admin-btn admin-btn-link">重置密码</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="admin-pagination">
+              <span style="font-size:13px;color:var(--admin-text-hint);margin-right:8px;">共 6 条</span>
+              <div class="admin-pagination-item">‹</div>
+              <div class="admin-pagination-item active">1</div>
+              <div class="admin-pagination-item">›</div>
+            </div>
+
+            <div class="admin-note">
+              <span class="admin-note-icon">⚠️</span>
+              禁用的账号无法登录系统
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

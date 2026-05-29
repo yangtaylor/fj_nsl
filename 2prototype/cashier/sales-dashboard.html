@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>销售看板 - 收银台终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .dashboard-date-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .dashboard-date-btn {
+      padding: 4px 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      color: var(--color-text-secondary);
+      background: #FFF;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .dashboard-date-btn.active {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      background: #FFF5F5;
+    }
+    .dashboard-stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .dashboard-stat-icon.red { background: #FFF1F0; }
+    .dashboard-stat-icon.blue { background: #E6F7FF; }
+    .dashboard-stat-icon.green { background: #F6FFED; }
+    .dashboard-stat-icon.gold { background: #FFF7E6; }
+    .dashboard-two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .dashboard-panel {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 20px;
+    }
+    .dashboard-panel-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+    }
+    .dashboard-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      height: 200px;
+      padding-bottom: 28px;
+      position: relative;
+    }
+    .dashboard-chart-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+    .dashboard-chart-bar {
+      width: 100%;
+      max-width: 40px;
+      background: linear-gradient(180deg, var(--color-primary), var(--color-primary-light));
+      border-radius: 4px 4px 0 0;
+      min-height: 8px;
+      position: relative;
+      transition: height 0.3s;
+    }
+    .dashboard-chart-bar.today {
+      background: linear-gradient(180deg, var(--color-secondary), #E6B800);
+    }
+    .dashboard-chart-value {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    .dashboard-chart-label {
+      margin-top: 8px;
+      font-size: 12px;
+      color: var(--color-text-hint);
+    }
+    .dashboard-rank-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .dashboard-rank-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .dashboard-rank-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .dashboard-rank-num.top1 { background: #FFF7E6; color: #D48806; }
+    .dashboard-rank-num.top2 { background: #F0F0F0; color: #666; }
+    .dashboard-rank-num.top3 { background: #FFF1F0; color: #C4161C; }
+    .dashboard-rank-num.normal { background: #F5F5F5; color: #999; }
+    .dashboard-rank-info {
+      flex: 1;
+    }
+    .dashboard-rank-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .dashboard-rank-bar-wrap {
+      height: 6px;
+      background: #F0F0F0;
+      border-radius: 3px;
+      margin-top: 4px;
+      overflow: hidden;
+    }
+    .dashboard-rank-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+    }
+    .dashboard-rank-count {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      min-width: 50px;
+      text-align: right;
+    }
+    .dashboard-rank-count span {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--color-text-hint);
+    }
+    .dashboard-pending-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 20px;
+    }
+    .dashboard-pending-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .dashboard-pending-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background: #FAFAFA;
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--color-primary);
+      transition: background 0.2s;
+    }
+    .dashboard-pending-item:hover {
+      background: #F5F5F5;
+    }
+    .dashboard-pending-item.urgent {
+      border-left-color: var(--color-error);
+      background: #FFF8F8;
+    }
+    .dashboard-pending-info {
+      flex: 1;
+    }
+    .dashboard-pending-id {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .dashboard-pending-detail {
+      font-size: 12px;
+      color: var(--color-text-hint);
+      margin-top: 2px;
+    }
+    .dashboard-pending-amount {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-primary);
+      min-width: 80px;
+      text-align: right;
+    }
+    .dashboard-pending-amount::before {
+      content: '¥';
+      font-size: 12px;
+    }
+    .dashboard-pending-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 12px;
+    }
+    .dashboard-pending-btn {
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .dashboard-pending-btn.primary {
+      background: var(--color-primary);
+      color: white;
+    }
+    .dashboard-pending-btn.primary:hover {
+      background: var(--color-primary-dark);
+    }
+    .dashboard-pending-btn.default {
+      background: #FFF;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-app">
+    <div class="cashier-sidebar">
+      <div class="cashier-sidebar-logo">
+        <span class="cashier-sidebar-logo-text">体彩<em>收银台</em></span>
+      </div>
+      <div class="cashier-sidebar-menu">
+        <a href="main-workspace.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="order-process.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📋</span>
+          <span>订单处理</span>
+        </a>
+        <a href="proxy-order.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">🛒</span>
+          <span>代客下单</span>
+        </a>
+        <a href="stock-in.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📦</span>
+          <span>库存管理</span>
+        </a>
+        <div class="cashier-sidebar-sub">
+          <a href="stock-in.html">入库签收</a>
+          <a href="inventory-check.html">库存盘点</a>
+          <a href="inventory-query.html">库存查询</a>
+          <a href="inventory-alert.html">库存预警</a>
+        </div>
+        <a href="sales-dashboard.html" class="cashier-sidebar-item active">
+          <span class="cashier-sidebar-item-icon">📈</span>
+          <span>销售看板</span>
+        </a>
+      </div>
+      <div class="cashier-sidebar-user">
+        <div class="cashier-sidebar-avatar">张</div>
+        <span>张销售</span>
+        <a href="login.html" class="cashier-sidebar-logout">退出登录</a>
+      </div>
+    </div>
+    <div class="cashier-main">
+      <div class="cashier-topbar">
+        <span class="cashier-topbar-title">销售看板</span>
+        <div class="cashier-topbar-actions">
+          <div class="dashboard-date-selector">
+            <button class="dashboard-date-btn">昨日</button>
+            <button class="dashboard-date-btn active">今日</button>
+            <button class="dashboard-date-btn">本周</button>
+            <button class="dashboard-date-btn">本月</button>
+          </div>
+        </div>
+      </div>
+      <div class="cashier-content">
+        <div class="cashier-stat-cards">
+          <div class="cashier-stat-card">
+            <div class="dashboard-stat-icon red">💰</div>
+            <div class="cashier-stat-card-label">今日销售额</div>
+            <div class="cashier-stat-card-value red">2,580</div>
+            <div class="cashier-stat-card-trend up">↑ 12.5% 较昨日</div>
+          </div>
+          <div class="cashier-stat-card">
+            <div class="dashboard-stat-icon blue">📋</div>
+            <div class="cashier-stat-card-label">今日订单</div>
+            <div class="cashier-stat-card-value">23<span style="font-size:14px;font-weight:400;color:var(--color-text-hint);"> 笔</span></div>
+            <div class="cashier-stat-card-trend up">↑ 8.3% 较昨日</div>
+          </div>
+          <div class="cashier-stat-card">
+            <div class="dashboard-stat-icon green">💵</div>
+            <div class="cashier-stat-card-label">平均客单价</div>
+            <div class="cashier-stat-card-value">112<span style="font-size:14px;font-weight:400;color:var(--color-text-hint);"> 元</span></div>
+            <div class="cashier-stat-card-trend down">↓ 2.1% 较昨日</div>
+          </div>
+          <div class="cashier-stat-card">
+            <div class="dashboard-stat-icon gold">🏆</div>
+            <div class="cashier-stat-card-label">热门票种</div>
+            <div class="cashier-stat-card-value" style="font-size:22px;">中国红</div>
+            <div class="cashier-stat-card-trend" style="color:var(--color-primary);">销量 12张</div>
+          </div>
+        </div>
+
+        <div class="dashboard-two-col">
+          <div class="dashboard-panel">
+            <div class="dashboard-panel-title">本周销售趋势</div>
+            <div class="dashboard-chart">
+              <div class="dashboard-chart-col">
+                <div class="dashboard-chart-bar" style="height:55%">
+                  <span class="dashboard-chart-value">¥1,860</span>
+                </div>
+                <span class="dashboard-chart-label">周一</span>
+              </div>
+              <div class="dashboard-chart-col">
+                <div class="dashboard-chart-bar" style="height:70%">
+                  <span class="dashboard-chart-value">¥2,340</span>
+                </div>
+                <span class="dashboard-chart-label">周二</span>
+              </div>
+              <div class="dashboard-chart-col">
+                <div class="dashboard-chart-bar" style="height:45%">
+                  <span class="dashboard-chart-value">¥1,520</span>
+                </div>
+                <span class="dashboard-chart-label">周三</span>
+              </div>
+              <div class="dashboard-chart-col">
+                <div class="dashboard-chart-bar" style="height:80%">
+                  <span class="dashboard-chart-value">¥2,680</span>
+                </div>
+                <span class="dashboard-chart-label">周四</span>
+              </div>
+              <div class="dashboard-chart-col">
+                <div class="dashboard-chart-bar" style="height:65%">
+                  <span class="dashboard-chart-value">¥2,180</span>
+                </div>
+                <span class="dashboard-chart-label">周五</span>
+              </div>
+              <div class="dashboard-chart-col">
+                <div class="dashboard-chart-bar" style="height:90%">
+                  <span class="dashboard-chart-value">¥3,020</span>
+                </div>
+                <span class="dashboard-chart-label">周六</span>
+              </div>
+              <div class="dashboard-chart-col">
+                <div class="dashboard-chart-bar today" style="height:78%">
+                  <span class="dashboard-chart-value">¥2,580</span>
+                </div>
+                <span class="dashboard-chart-label" style="color:var(--color-primary);font-weight:600;">今日</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-panel">
+            <div class="dashboard-panel-title">热销票种排行</div>
+            <div class="dashboard-rank-list">
+              <div class="dashboard-rank-item">
+                <div class="dashboard-rank-num top1">1</div>
+                <div class="dashboard-rank-info">
+                  <div class="dashboard-rank-name">中国红</div>
+                  <div class="dashboard-rank-bar-wrap"><div class="dashboard-rank-bar" style="width:100%"></div></div>
+                </div>
+                <div class="dashboard-rank-count">12<span>张</span></div>
+              </div>
+              <div class="dashboard-rank-item">
+                <div class="dashboard-rank-num top2">2</div>
+                <div class="dashboard-rank-info">
+                  <div class="dashboard-rank-name">好运十倍</div>
+                  <div class="dashboard-rank-bar-wrap"><div class="dashboard-rank-bar" style="width:75%"></div></div>
+                </div>
+                <div class="dashboard-rank-count">9<span>张</span></div>
+              </div>
+              <div class="dashboard-rank-item">
+                <div class="dashboard-rank-num top3">3</div>
+                <div class="dashboard-rank-info">
+                  <div class="dashboard-rank-name">顶呱刮</div>
+                  <div class="dashboard-rank-bar-wrap"><div class="dashboard-rank-bar" style="width:58%"></div></div>
+                </div>
+                <div class="dashboard-rank-count">7<span>张</span></div>
+              </div>
+              <div class="dashboard-rank-item">
+                <div class="dashboard-rank-num normal">4</div>
+                <div class="dashboard-rank-info">
+                  <div class="dashboard-rank-name">甜蜜蜜</div>
+                  <div class="dashboard-rank-bar-wrap"><div class="dashboard-rank-bar" style="width:42%"></div></div>
+                </div>
+                <div class="dashboard-rank-count">5<span>张</span></div>
+              </div>
+              <div class="dashboard-rank-item">
+                <div class="dashboard-rank-num normal">5</div>
+                <div class="dashboard-rank-info">
+                  <div class="dashboard-rank-name">绿茵传奇</div>
+                  <div class="dashboard-rank-bar-wrap"><div class="dashboard-rank-bar" style="width:25%"></div></div>
+                </div>
+                <div class="dashboard-rank-count">3<span>张</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-pending-section">
+          <div class="dashboard-panel-title">待处理订单队列</div>
+          <div class="dashboard-pending-list">
+            <div class="dashboard-pending-item urgent">
+              <div class="dashboard-pending-info">
+                <div class="dashboard-pending-id">ORD20260529143201</div>
+                <div class="dashboard-pending-detail">中国红×2, 顶呱刮×1 · 14:32下单 · 等待出票</div>
+              </div>
+              <div class="dashboard-pending-amount">30</div>
+              <div class="dashboard-pending-actions">
+                <button class="dashboard-pending-btn primary">出票</button>
+                <button class="dashboard-pending-btn default">详情</button>
+              </div>
+            </div>
+            <div class="dashboard-pending-item">
+              <div class="dashboard-pending-info">
+                <div class="dashboard-pending-id">ORD20260529142856</div>
+                <div class="dashboard-pending-detail">好运十倍×3, 甜蜜蜜×2 · 14:28下单 · 等待支付</div>
+              </div>
+              <div class="dashboard-pending-amount">80</div>
+              <div class="dashboard-pending-actions">
+                <button class="dashboard-pending-btn primary">处理</button>
+                <button class="dashboard-pending-btn default">详情</button>
+              </div>
+            </div>
+            <div class="dashboard-pending-item">
+              <div class="dashboard-pending-info">
+                <div class="dashboard-pending-id">ORD20260529141523</div>
+                <div class="dashboard-pending-detail">金光灿烂×1, 幸运星×2 · 14:15下单 · 等待出票</div>
+              </div>
+              <div class="dashboard-pending-amount">70</div>
+              <div class="dashboard-pending-actions">
+                <button class="dashboard-pending-btn primary">出票</button>
+                <button class="dashboard-pending-btn default">详情</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

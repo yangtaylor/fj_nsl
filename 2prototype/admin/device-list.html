@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>设备授权 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .admin-filter-select {
+      height: 36px;
+      padding: 0 32px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+      background: #FFF;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .device-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .device-stat-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .device-stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .device-stat-icon.online { background: #F6FFED; }
+    .device-stat-icon.offline { background: #F5F5F5; }
+    .device-stat-icon.expiring { background: #FFF7E6; }
+    .device-stat-label {
+      font-size: 14px;
+      color: var(--admin-text-hint);
+      margin-bottom: 4px;
+    }
+    .device-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+    .device-stat-value span {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--admin-text-hint);
+    }
+    .cert-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .cert-tag.valid { background: #F6FFED; color: #52C41A; }
+    .cert-tag.expiring { background: #FFF7E6; color: #FAAD14; }
+    .cert-tag.revoked { background: #FFF1F0; color: #FF4D4F; }
+    .online-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .online-dot.green { background: #52C41A; }
+    .online-dot.gray { background: #BFBFBF; }
+    .version-info {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item active" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">系统管理 / <span>设备授权</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="device-stats">
+          <div class="device-stat-card">
+            <div class="device-stat-icon online">🟢</div>
+            <div>
+              <div class="device-stat-label">在线设备</div>
+              <div class="device-stat-value">18 <span>台</span></div>
+            </div>
+          </div>
+          <div class="device-stat-card">
+            <div class="device-stat-icon offline">⚪</div>
+            <div>
+              <div class="device-stat-label">离线设备</div>
+              <div class="device-stat-value">2 <span>台</span></div>
+            </div>
+          </div>
+          <div class="device-stat-card">
+            <div class="device-stat-icon expiring">🟡</div>
+            <div>
+              <div class="device-stat-label">证书即将过期</div>
+              <div class="device-stat-value">1 <span>台</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="admin-toolbar">
+              <div class="admin-toolbar-left">
+                <input type="text" class="admin-search-input" placeholder="搜索设备名称/MAC地址">
+                <select class="admin-filter-select">
+                  <option value="">全部类型</option>
+                  <option>点单终端</option>
+                  <option>收银终端</option>
+                </select>
+                <select class="admin-filter-select">
+                  <option value="">全部状态</option>
+                  <option>在线</option>
+                  <option>离线</option>
+                </select>
+              </div>
+              <div class="admin-toolbar-right">
+                <button class="admin-btn admin-btn-primary">＋ 注册设备</button>
+              </div>
+            </div>
+
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>设备ID</th>
+                  <th>设备名称</th>
+                  <th>MAC地址</th>
+                  <th>序列号</th>
+                  <th>设备类型</th>
+                  <th>所属门店</th>
+                  <th>证书状态</th>
+                  <th>在线状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>DEV-2026-001</td>
+                  <td>点单终端A01</td>
+                  <td>00:1A:2B:3C:4D:01</td>
+                  <td>SN-PT-A001</td>
+                  <td>点单终端</td>
+                  <td>福州万达广场店</td>
+                  <td><span class="cert-tag valid">有效</span></td>
+                  <td><span class="online-status"><span class="online-dot green"></span>在线</span></td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">查看</button>
+                      <button class="admin-btn admin-btn-link">远程升级</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>DEV-2026-002</td>
+                  <td>收银终端B01</td>
+                  <td>00:1A:2B:3C:4D:02</td>
+                  <td>SN-CS-B001</td>
+                  <td>收银终端</td>
+                  <td>福州万达广场店</td>
+                  <td><span class="cert-tag valid">有效</span></td>
+                  <td><span class="online-status"><span class="online-dot green"></span>在线</span></td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">查看</button>
+                      <button class="admin-btn admin-btn-link">远程升级</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>DEV-2026-003</td>
+                  <td>点单终端A02</td>
+                  <td>00:1A:2B:3C:4D:03</td>
+                  <td>SN-PT-A002</td>
+                  <td>点单终端</td>
+                  <td>福州宝龙城市广场店</td>
+                  <td><span class="cert-tag valid">有效</span></td>
+                  <td><span class="online-status"><span class="online-dot green"></span>在线</span></td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">查看</button>
+                      <button class="admin-btn admin-btn-link">远程升级</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>DEV-2026-004</td>
+                  <td>收银终端B02</td>
+                  <td>00:1A:2B:3C:4D:04</td>
+                  <td>SN-CS-B002</td>
+                  <td>收银终端</td>
+                  <td>福州宝龙城市广场店</td>
+                  <td><span class="cert-tag valid">有效</span></td>
+                  <td><span class="online-status"><span class="online-dot green"></span>在线</span></td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">查看</button>
+                      <button class="admin-btn admin-btn-link">远程升级</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>DEV-2026-005</td>
+                  <td>点单终端A03</td>
+                  <td>00:1A:2B:3C:4D:05</td>
+                  <td>SN-PT-A003</td>
+                  <td>点单终端</td>
+                  <td>福州东百中心店</td>
+                  <td><span class="cert-tag valid">有效</span></td>
+                  <td><span class="online-status"><span class="online-dot gray"></span>离线</span></td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">查看</button>
+                      <button class="admin-btn admin-btn-link">吊销</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>DEV-2026-006</td>
+                  <td>收银终端B03</td>
+                  <td>00:1A:2B:3C:4D:06</td>
+                  <td>SN-CS-B003</td>
+                  <td>收银终端</td>
+                  <td>福州东百中心店</td>
+                  <td><span class="cert-tag expiring">即将过期</span></td>
+                  <td><span class="online-status"><span class="online-dot green"></span>在线</span></td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link">查看</button>
+                      <button class="admin-btn admin-btn-link">吊销</button>
+                      <button class="admin-btn admin-btn-link">远程升级</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="admin-pagination">
+              <span style="font-size:13px;color:var(--admin-text-hint);margin-right:8px;">共 6 条</span>
+              <div class="admin-pagination-item">‹</div>
+              <div class="admin-pagination-item active">1</div>
+              <div class="admin-pagination-item">›</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>票种管理 - 后台管理系统</title>
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #001529;
+            color: #fff;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #1890ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-header .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            padding: 10px 0;
+        }
+
+        .nav-group {
+            margin-bottom: 5px;
+        }
+
+        .nav-group-title {
+            padding: 10px 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-item.active {
+            color: #fff;
+            background: #1890ff;
+        }
+
+        .nav-item .icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-header {
+            background: #fff;
+            padding: 0 25px;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .breadcrumb .current {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            font-size: 18px;
+        }
+
+        .header-icon:hover {
+            background: #f3f4f6;
+        }
+
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 18px;
+            height: 18px;
+            background: #f5222d;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .user-dropdown:hover {
+            background: #f3f4f6;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1890ff;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .content-area {
+            padding: 24px;
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .page-header .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            background: #40a9ff;
+        }
+
+        .search-bar {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        .search-select {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            padding: 8px 16px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            padding: 8px 16px;
+            background: #fff;
+            color: #595959;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            font-size: 14px;
+            color: #595959;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tr:hover td {
+            background: #f5f5f5;
+        }
+
+        .status-tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-tag.active {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .status-tag.inactive {
+            background: #f5f5f5;
+            color: #8c8c8c;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .action-btn.danger:hover {
+            border-color: #f5222d;
+            color: #f5222d;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 8px;
+            width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-close {
+            font-size: 20px;
+            cursor: pointer;
+            color: #8c8c8c;
+            background: none;
+            border: none;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #1f2937;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-default {
+            padding: 8px 16px;
+            background: #fff;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            padding: 8px 16px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">🏪</div>
+                <div class="logo-text">体彩管理系统</div>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-group">
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="icon">📊</span>
+                        <span>数据仪表盘</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">商品管理</div>
+                    <a href="products.html" class="nav-item active">
+                        <span class="icon">🎫</span>
+                        <span>票种管理</span>
+                    </a>
+                    <a href="serial-numbers.html" class="nav-item">
+                        <span class="icon">🔢</span>
+                        <span>序列号管理</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">订单管理</div>
+                    <a href="orders.html" class="nav-item">
+                        <span class="icon">📋</span>
+                        <span>订单监控</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">门店管理</div>
+                    <a href="stores.html" class="nav-item">
+                        <span class="icon">🏪</span>
+                        <span>门店列表</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">系统管理</div>
+                    <a href="users.html" class="nav-item">
+                        <span class="icon">👥</span>
+                        <span>账号权限</span>
+                    </a>
+                    <a href="devices.html" class="nav-item">
+                        <span class="icon">💻</span>
+                        <span>设备授权</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">财务分析</div>
+                    <a href="finance.html" class="nav-item">
+                        <span class="icon">💰</span>
+                        <span>财务结算</span>
+                    </a>
+                    <a href="analytics.html" class="nav-item">
+                        <span class="icon">📈</span>
+                        <span>经营分析</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="breadcrumb">
+                    首页 / 商品管理 / <span class="current">票种管理</span>
+                </div>
+                <div class="header-actions">
+                    <div class="header-icon">
+                        🔔
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="header-icon">⚙️</div>
+                    <div class="user-dropdown">
+                        <div class="user-avatar">管</div>
+                        <span class="user-name">管理员</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="page-header">
+                    <div>
+                        <h1>票种管理</h1>
+                        <div class="subtitle">管理即开票、竞彩、大乐透等票种信息</div>
+                    </div>
+                    <button class="btn-primary" onclick="openModal()">+ 新增票种</button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="票种名称/编号">
+                    <select class="search-select">
+                        <option value="">全部类型</option>
+                        <option value="instant">即开票</option>
+                        <option value="competition">竞彩</option>
+                        <option value="lotto">大乐透</option>
+                        <option value="arrange">排列/七星彩</option>
+                    </select>
+                    <select class="search-select">
+                        <option value="">全部状态</option>
+                        <option value="active">上架</option>
+                        <option value="inactive">下架</option>
+                    </select>
+                    <button class="search-btn">查询</button>
+                    <button class="reset-btn">重置</button>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">票种列表</span>
+                        <span style="font-size: 13px; color: #8c8c8c;">共 12 条记录</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>票种编号</th>
+                                <th>票种名称</th>
+                                <th>类型</th>
+                                <th>面值</th>
+                                <th>状态</th>
+                                <th>库存</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>TK-2024-001</td>
+                                <td>中国红</td>
+                                <td>即开票</td>
+                                <td>¥10</td>
+                                <td><span class="status-tag active">上架</span></td>
+                                <td>1,250</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">下架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TK-2024-002</td>
+                                <td>好运十倍</td>
+                                <td>即开票</td>
+                                <td>¥10</td>
+                                <td><span class="status-tag active">上架</span></td>
+                                <td>890</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">下架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TK-2024-003</td>
+                                <td>竞彩足球</td>
+                                <td>竞彩</td>
+                                <td>¥2</td>
+                                <td><span class="status-tag active">上架</span></td>
+                                <td>不限</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">下架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TK-2024-004</td>
+                                <td>大乐透</td>
+                                <td>大乐透</td>
+                                <td>¥2</td>
+                                <td><span class="status-tag active">上架</span></td>
+                                <td>不限</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">下架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TK-2024-005</td>
+                                <td>排列三</td>
+                                <td>排列/七星彩</td>
+                                <td>¥2</td>
+                                <td><span class="status-tag active">上架</span></td>
+                                <td>不限</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">下架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TK-2024-006</td>
+                                <td>点石成金</td>
+                                <td>即开票</td>
+                                <td>¥20</td>
+                                <td><span class="status-tag inactive">下架</span></td>
+                                <td>0</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">上架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TK-2024-007</td>
+                                <td>七星彩</td>
+                                <td>排列/七星彩</td>
+                                <td>¥2</td>
+                                <td><span class="status-tag active">上架</span></td>
+                                <td>不限</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">下架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>TK-2024-008</td>
+                                <td>竞彩篮球</td>
+                                <td>竞彩</td>
+                                <td>¥2</td>
+                                <td><span class="status-tag active">上架</span></td>
+                                <td>不限</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">下架</button>
+                                        <button class="action-btn danger">删除</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span style="font-size: 13px; color: #8c8c8c;">每页 10 条</span>
+                        <button class="page-btn">上一页</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">新增票种</span>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">票种编号</label>
+                        <input type="text" class="form-input" placeholder="如：TK-2024-009">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">票种名称</label>
+                        <input type="text" class="form-input" placeholder="如：中国红">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">票种类型</label>
+                        <select class="form-select">
+                            <option>即开票</option>
+                            <option>竞彩</option>
+                            <option>大乐透</option>
+                            <option>排列/七星彩</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">面值</label>
+                        <input type="text" class="form-input" placeholder="如：10">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">初始库存</label>
+                        <input type="number" class="form-input" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">状态</label>
+                        <select class="form-select">
+                            <option>上架</option>
+                            <option>下架</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">票种描述</label>
+                    <textarea class="form-textarea" placeholder="请输入票种描述..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-default" onclick="closeModal()">取消</button>
+                <button class="btn-confirm">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

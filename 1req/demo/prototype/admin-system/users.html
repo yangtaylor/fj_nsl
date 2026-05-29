@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号权限 - 后台管理系统</title>
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #001529;
+            color: #fff;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #1890ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-header .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            padding: 10px 0;
+        }
+
+        .nav-group {
+            margin-bottom: 5px;
+        }
+
+        .nav-group-title {
+            padding: 10px 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-item.active {
+            color: #fff;
+            background: #1890ff;
+        }
+
+        .nav-item .icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-header {
+            background: #fff;
+            padding: 0 25px;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .breadcrumb .current {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            font-size: 18px;
+        }
+
+        .header-icon:hover {
+            background: #f3f4f6;
+        }
+
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 18px;
+            height: 18px;
+            background: #f5222d;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .user-dropdown:hover {
+            background: #f3f4f6;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1890ff;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .content-area {
+            padding: 24px;
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .page-header .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .btn-primary {
+            padding: 10px 20px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary:hover {
+            background: #40a9ff;
+        }
+
+        .search-bar {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            width: 200px;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        .search-select {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            background: #fff;
+            cursor: pointer;
+        }
+
+        .search-btn {
+            padding: 8px 16px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .reset-btn {
+            padding: 8px 16px;
+            background: #fff;
+            color: #595959;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            padding: 14px 20px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2937;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table td {
+            padding: 14px 20px;
+            font-size: 14px;
+            color: #595959;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .data-table tr:hover td {
+            background: #f5f5f5;
+        }
+
+        .status-tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-tag.active {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .status-tag.inactive {
+            background: #f5f5f5;
+            color: #8c8c8c;
+        }
+
+        .role-tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .role-tag.admin {
+            background: #fff1f0;
+            color: #cf1322;
+        }
+
+        .role-tag.manager {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .role-tag.staff {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .action-btns {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 4px 10px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .action-btn.danger:hover {
+            border-color: #f5222d;
+            color: #f5222d;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            padding: 20px;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .page-btn.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 8px;
+            width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .modal-close {
+            font-size: 20px;
+            cursor: pointer;
+            color: #8c8c8c;
+            background: none;
+            border: none;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: #1f2937;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-default {
+            padding: 8px 16px;
+            background: #fff;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .btn-confirm {
+            padding: 8px 16px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">🏪</div>
+                <div class="logo-text">体彩管理系统</div>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-group">
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="icon">📊</span>
+                        <span>数据仪表盘</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">商品管理</div>
+                    <a href="products.html" class="nav-item">
+                        <span class="icon">🎫</span>
+                        <span>票种管理</span>
+                    </a>
+                    <a href="serial-numbers.html" class="nav-item">
+                        <span class="icon">🔢</span>
+                        <span>序列号管理</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">订单管理</div>
+                    <a href="orders.html" class="nav-item">
+                        <span class="icon">📋</span>
+                        <span>订单监控</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">门店管理</div>
+                    <a href="stores.html" class="nav-item">
+                        <span class="icon">🏪</span>
+                        <span>门店列表</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">系统管理</div>
+                    <a href="users.html" class="nav-item active">
+                        <span class="icon">👥</span>
+                        <span>账号权限</span>
+                    </a>
+                    <a href="devices.html" class="nav-item">
+                        <span class="icon">💻</span>
+                        <span>设备授权</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">财务分析</div>
+                    <a href="finance.html" class="nav-item">
+                        <span class="icon">💰</span>
+                        <span>财务结算</span>
+                    </a>
+                    <a href="analytics.html" class="nav-item">
+                        <span class="icon">📈</span>
+                        <span>经营分析</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="breadcrumb">
+                    首页 / 系统管理 / <span class="current">账号权限</span>
+                </div>
+                <div class="header-actions">
+                    <div class="header-icon">
+                        🔔
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="header-icon">⚙️</div>
+                    <div class="user-dropdown">
+                        <div class="user-avatar">管</div>
+                        <span class="user-name">管理员</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="page-header">
+                    <div>
+                        <h1>账号权限</h1>
+                        <div class="subtitle">管理系统用户账号与角色权限</div>
+                    </div>
+                    <button class="btn-primary" onclick="openModal()">+ 新增用户</button>
+                </div>
+
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="用户账号/姓名">
+                    <select class="search-select">
+                        <option value="">全部角色</option>
+                        <option value="admin">系统管理员</option>
+                        <option value="manager">门店管理员</option>
+                        <option value="staff">销售员</option>
+                    </select>
+                    <select class="search-select">
+                        <option value="">全部状态</option>
+                        <option value="active">启用</option>
+                        <option value="inactive">禁用</option>
+                    </select>
+                    <button class="search-btn">查询</button>
+                    <button class="reset-btn">重置</button>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">用户列表</span>
+                        <span style="font-size: 13px; color: #8c8c8c;">共 48 条记录</span>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>用户账号</th>
+                                <th>姓名</th>
+                                <th>角色</th>
+                                <th>所属门店</th>
+                                <th>联系电话</th>
+                                <th>状态</th>
+                                <th>最后登录</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>admin</strong></td>
+                                <td>系统管理员</td>
+                                <td><span class="role-tag admin">系统管理员</span></td>
+                                <td>-</td>
+                                <td>138****0001</td>
+                                <td><span class="status-tag active">启用</span></td>
+                                <td>2024-05-28 14:30:22</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>zhangsan</strong></td>
+                                <td>张三</td>
+                                <td><span class="role-tag manager">门店管理员</span></td>
+                                <td>福州鼓楼旗舰店</td>
+                                <td>138****1234</td>
+                                <td><span class="status-tag active">启用</span></td>
+                                <td>2024-05-28 13:45:18</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>lisi</strong></td>
+                                <td>李四</td>
+                                <td><span class="role-tag manager">门店管理员</span></td>
+                                <td>厦门思明体验店</td>
+                                <td>139****5678</td>
+                                <td><span class="status-tag active">启用</span></td>
+                                <td>2024-05-28 12:20:35</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>wangwu</strong></td>
+                                <td>王五</td>
+                                <td><span class="role-tag staff">销售员</span></td>
+                                <td>福州鼓楼旗舰店</td>
+                                <td>137****9012</td>
+                                <td><span class="status-tag active">启用</span></td>
+                                <td>2024-05-28 10:15:42</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>zhaoliu</strong></td>
+                                <td>赵六</td>
+                                <td><span class="role-tag staff">销售员</span></td>
+                                <td>泉州丰泽店</td>
+                                <td>136****3456</td>
+                                <td><span class="status-tag active">启用</span></td>
+                                <td>2024-05-27 18:30:10</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>sunqi</strong></td>
+                                <td>孙七</td>
+                                <td><span class="role-tag staff">销售员</span></td>
+                                <td>莆田城厢店</td>
+                                <td>135****7890</td>
+                                <td><span class="status-tag inactive">禁用</span></td>
+                                <td>2024-05-20 09:22:15</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>zhouba</strong></td>
+                                <td>周八</td>
+                                <td><span class="role-tag manager">门店管理员</span></td>
+                                <td>漳州芗城店</td>
+                                <td>134****2345</td>
+                                <td><span class="status-tag active">启用</span></td>
+                                <td>2024-05-28 08:45:33</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>wujiu</strong></td>
+                                <td>吴九</td>
+                                <td><span class="role-tag staff">销售员</span></td>
+                                <td>厦门思明体验店</td>
+                                <td>133****6789</td>
+                                <td><span class="status-tag active">启用</span></td>
+                                <td>2024-05-28 11:10:28</td>
+                                <td>
+                                    <div class="action-btns">
+                                        <button class="action-btn">编辑</button>
+                                        <button class="action-btn">权限</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="pagination">
+                        <span style="font-size: 13px; color: #8c8c8c;">每页 10 条</span>
+                        <button class="page-btn">上一页</button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn">下一页</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="modal">
+        <div class="modal">
+            <div class="modal-header">
+                <span class="modal-title">新增用户</span>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">用户账号</label>
+                        <input type="text" class="form-input" placeholder="登录账号">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">姓名</label>
+                        <input type="text" class="form-input" placeholder="真实姓名">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">初始密码</label>
+                        <input type="password" class="form-input" placeholder="请输入密码">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">确认密码</label>
+                        <input type="password" class="form-input" placeholder="请再次输入密码">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">角色</label>
+                        <select class="form-select">
+                            <option>系统管理员</option>
+                            <option>门店管理员</option>
+                            <option>销售员</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">所属门店</label>
+                        <select class="form-select">
+                            <option>-</option>
+                            <option>福州鼓楼旗舰店</option>
+                            <option>厦门思明体验店</option>
+                            <option>泉州丰泽店</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">联系电话</label>
+                        <input type="text" class="form-input" placeholder="手机号码">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">状态</label>
+                        <select class="form-select">
+                            <option>启用</option>
+                            <option>禁用</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-default" onclick="closeModal()">取消</button>
+                <button class="btn-confirm">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modal').classList.add('active');
+        }
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>

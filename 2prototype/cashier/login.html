@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>登录 - 体彩收银台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .login-page {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #C4161C 0%, #8B0000 50%, #5C0011 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .login-page::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,215,0,0.1) 0%, transparent 70%);
+    }
+    .login-page::after {
+      content: '';
+      position: absolute;
+      bottom: -25%;
+      left: -5%;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+    }
+    .login-box {
+      width: 420px;
+      background: #FFF;
+      border-radius: var(--radius-xl);
+      padding: 48px 40px 36px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.5s ease;
+    }
+    .login-logo {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .login-logo-icon {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(196,22,28,0.3);
+    }
+    .login-logo-icon svg {
+      width: 32px;
+      height: 32px;
+      fill: white;
+    }
+    .login-logo h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--color-primary);
+      letter-spacing: 2px;
+    }
+    .login-logo h1 em {
+      color: var(--color-secondary);
+      font-style: normal;
+      text-shadow: 0 1px 4px rgba(255,215,0,0.3);
+    }
+    .login-logo p {
+      font-size: 13px;
+      color: var(--color-text-hint);
+      margin-top: 6px;
+    }
+    .login-form-group {
+      margin-bottom: 20px;
+    }
+    .login-form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .login-form-input-wrap {
+      position: relative;
+    }
+    .login-form-input {
+      width: 100%;
+      height: 46px;
+      padding: 0 44px 0 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      transition: border-color 0.2s;
+    }
+    .login-form-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(196,22,28,0.1);
+    }
+    .login-form-input::placeholder {
+      color: var(--color-text-hint);
+    }
+    .login-eye-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--color-text-hint);
+      background: none;
+      border: none;
+    }
+    .login-eye-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+    .login-submit {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(196,22,28,0.3);
+    }
+    .login-submit:hover {
+      box-shadow: 0 6px 20px rgba(196,22,28,0.4);
+      transform: translateY(-1px);
+    }
+    .login-submit:active {
+      transform: translateY(0);
+    }
+    .login-lockout {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #FFF1F0;
+      border: 1px solid #FFCCC7;
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+    .login-lockout-text {
+      font-size: 14px;
+      color: var(--color-error);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .login-lockout-countdown {
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .login-lockout-countdown strong {
+      color: var(--color-error);
+      font-size: 16px;
+    }
+    .login-store-info {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid var(--color-border-light);
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .login-store-info span {
+      color: var(--color-text-secondary);
+      font-weight: 500;
+    }
+    .login-watermark {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-box">
+      <div class="login-logo">
+        <div class="login-logo-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        </div>
+        <h1>体彩<em>收银台</em></h1>
+        <p>福建省新场景售彩系统</p>
+      </div>
+
+      <div class="login-form-group">
+        <label class="login-form-label">账号</label>
+        <input type="text" class="login-form-input" placeholder="请输入销售员账号" style="padding-right:16px;">
+      </div>
+      <div class="login-form-group">
+        <label class="login-form-label">密码</label>
+        <div class="login-form-input-wrap">
+          <input type="password" class="login-form-input" placeholder="请输入密码" value="••••••••">
+          <button class="login-eye-btn">
+            <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+          </button>
+        </div>
+      </div>
+      <a href="main-workspace.html" class="login-submit" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">登 录</a>
+
+      <div class="login-lockout">
+        <div class="login-lockout-text">账号已锁定，请15分钟后重试</div>
+        <div class="login-lockout-countdown">剩余等待时间：<strong>14:32</strong></div>
+      </div>
+
+      <div class="login-store-info">
+        当前门店：<span>3501001001 福州万达广场店</span>
+      </div>
+    </div>
+
+    <div class="login-watermark">福建省新场景售彩系统 v1.0</div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>福建省新场景售彩系统 - 页面原型导航</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    body {
+      background: #F0F2F5;
+      min-height: 100vh;
+    }
+    .nav-header {
+      background: linear-gradient(135deg, #C4161C 0%, #8B0000 100%);
+      padding: 40px 48px;
+      color: white;
+    }
+    .nav-header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .nav-header p {
+      font-size: 16px;
+      opacity: 0.85;
+    }
+    .nav-header-meta {
+      display: flex;
+      gap: 24px;
+      margin-top: 16px;
+    }
+    .nav-header-meta span {
+      font-size: 13px;
+      opacity: 0.7;
+    }
+    .nav-body {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px 48px;
+    }
+    .nav-section {
+      margin-bottom: 40px;
+    }
+    .nav-section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .nav-section-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+    }
+    .nav-section-icon.customer { background: #C4161C; }
+    .nav-section-icon.cashier { background: #FF8C00; }
+    .nav-section-icon.admin { background: #1890FF; }
+    .nav-section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1A1A1A;
+    }
+    .nav-section-subtitle {
+      font-size: 14px;
+      color: #999;
+    }
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .nav-card {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+      text-decoration: none;
+      display: block;
+    }
+    .nav-card:hover {
+      border-color: #C4161C;
+      box-shadow: 0 4px 12px rgba(196,22,28,0.12);
+      transform: translateY(-2px);
+    }
+    .nav-card-id {
+      font-size: 12px;
+      color: #999;
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+    .nav-card-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1A1A1A;
+      margin-bottom: 8px;
+    }
+    .nav-card-desc {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.5;
+    }
+    .nav-card-device {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 10px;
+      padding: 2px 8px;
+      background: #F5F5F5;
+      border-radius: 4px;
+      font-size: 11px;
+      color: #999;
+    }
+    .nav-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .nav-stat {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .nav-stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      color: #C4161C;
+    }
+    .nav-stat-label {
+      font-size: 14px;
+      color: #999;
+      margin-top: 4px;
+    }
+    .nav-legend {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+      padding: 16px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .nav-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #666;
+    }
+    .nav-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-header">
+    <h1>福建省新场景售彩系统 - 页面原型</h1>
+    <p>体彩专属即开票营销管理平台 · 顾客点单终端 + 收银台终端 + 后台管理系统</p>
+    <div class="nav-header-meta">
+      <span>版本: v1.0</span>
+      <span>日期: 2026-05-29</span>
+      <span>页面总数: 47</span>
+    </div>
+  </div>
+
+  <div class="nav-body">
+    <div class="nav-stats">
+      <div class="nav-stat">
+        <div class="nav-stat-value">10</div>
+        <div class="nav-stat-label">顾客点单终端页面</div>
+      </div>
+      <div class="nav-stat">
+        <div class="nav-stat-value">12</div>
+        <div class="nav-stat-label">收银台终端页面</div>
+      </div>
+      <div class="nav-stat">
+        <div class="nav-stat-value">22</div>
+        <div class="nav-stat-label">后台管理系统页面</div>
+      </div>
+      <div class="nav-stat">
+        <div class="nav-stat-value">3</div>
+        <div class="nav-stat-label">手机适配验证页</div>
+      </div>
+    </div>
+
+    <div class="nav-legend">
+      <div class="nav-legend-item">
+        <div class="nav-legend-dot" style="background:#C4161C"></div>
+        Pad模拟 (10寸平板 1280×800)
+      </div>
+      <div class="nav-legend-item">
+        <div class="nav-legend-dot" style="background:#FF8C00"></div>
+        Pad/Desktop模拟 (15寸 1366×1024 / 1920×1080)
+      </div>
+      <div class="nav-legend-item">
+        <div class="nav-legend-dot" style="background:#1890FF"></div>
+        Desktop模拟 (1920×1080)
+      </div>
+      <div class="nav-legend-item">
+        <div class="nav-legend-dot" style="background:#52C41A"></div>
+        Phone适配 (390×844)
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-header">
+        <div class="nav-section-icon customer">📱</div>
+        <div>
+          <div class="nav-section-title">顾客点单终端</div>
+          <div class="nav-section-subtitle">10寸Android平板 · Pad模拟 · 10个页面</div>
+        </div>
+      </div>
+      <div class="nav-grid">
+        <a class="nav-card" href="customer/ticket-browse.html">
+          <div class="nav-card-id">C01</div>
+          <div class="nav-card-name">票种浏览页</div>
+          <div class="nav-card-desc">大图卡片展示、分类筛选、直播推荐标识</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/ticket-detail.html">
+          <div class="nav-card-id">C02</div>
+          <div class="nav-card-name">票种详情页</div>
+          <div class="nav-card-desc">完整玩法说明、中奖规则、加入购物车</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/cart.html">
+          <div class="nav-card-id">C03</div>
+          <div class="nav-card-name">购物车页</div>
+          <div class="nav-card-desc">数量修改、删除商品、金额实时计算</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/order-confirm.html">
+          <div class="nav-card-id">C04</div>
+          <div class="nav-card-name">订单确认页</div>
+          <div class="nav-card-desc">订单摘要、确认生成订单</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/payment.html">
+          <div class="nav-card-id">C05</div>
+          <div class="nav-card-name">扫码支付页</div>
+          <div class="nav-card-desc">微信/支付宝二维码、5分钟倒计时</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/payment-result.html">
+          <div class="nav-card-id">C06</div>
+          <div class="nav-card-name">支付结果页</div>
+          <div class="nav-card-desc">成功(绿)/失败(红)/超时(黄)三态展示</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/ticket-notification.html">
+          <div class="nav-card-id">C07</div>
+          <div class="nav-card-name">出票通知页</div>
+          <div class="nav-card-desc">出票成功提示、领票指引</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/live-interaction.html">
+          <div class="nav-card-id">C08</div>
+          <div class="nav-card-name">直播互动页</div>
+          <div class="nav-card-desc">直播信息、推荐票种快捷加购、优惠活动</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/idle-carousel.html">
+          <div class="nav-card-id">C09</div>
+          <div class="nav-card-name">空闲轮播页</div>
+          <div class="nav-card-desc">热门票种轮播、中奖故事、触摸唤醒</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+        <a class="nav-card" href="customer/empty-states.html">
+          <div class="nav-card-id">C10</div>
+          <div class="nav-card-name">空状态合集页</div>
+          <div class="nav-card-desc">暂无可售、无匹配结果、购物车为空等</div>
+          <div class="nav-card-device">📱 Pad</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-header">
+        <div class="nav-section-icon cashier">💻</div>
+        <div>
+          <div class="nav-section-title">收银台终端</div>
+          <div class="nav-section-subtitle">15寸Android/Windows · Pad/Desktop模拟 · 12个页面</div>
+        </div>
+      </div>
+      <div class="nav-grid">
+        <a class="nav-card" href="cashier/device-bind.html">
+          <div class="nav-card-id">S01</div>
+          <div class="nav-card-name">设备绑定页</div>
+          <div class="nav-card-desc">设备指纹录入、证书获取流程</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/cert-verify.html">
+          <div class="nav-card-id">S02</div>
+          <div class="nav-card-name">证书校验页</div>
+          <div class="nav-card-desc">自动校验设备证书有效性</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/login.html">
+          <div class="nav-card-id">S03</div>
+          <div class="nav-card-name">登录页</div>
+          <div class="nav-card-desc">账号密码登录、锁定提示</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/main-workspace.html">
+          <div class="nav-card-id">S04</div>
+          <div class="nav-card-name">主工作台</div>
+          <div class="nav-card-desc">待处理订单、快捷操作入口</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/order-process.html">
+          <div class="nav-card-id">S05</div>
+          <div class="nav-card-name">订单处理页</div>
+          <div class="nav-card-desc">订单列表、声音弹窗提醒、出票确认</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/ticket-confirm.html">
+          <div class="nav-card-id">S06</div>
+          <div class="nav-card-name">出票确认页</div>
+          <div class="nav-card-desc">确认出票、打印小票</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/proxy-order.html">
+          <div class="nav-card-id">S07</div>
+          <div class="nav-card-name">代客下单页</div>
+          <div class="nav-card-desc">票种选择、现金/扫码支付</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/stock-in.html">
+          <div class="nav-card-id">S08</div>
+          <div class="nav-card-name">入库签收页</div>
+          <div class="nav-card-desc">扫描批次条码、入库确认</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/inventory-check.html">
+          <div class="nav-card-id">S09</div>
+          <div class="nav-card-name">库存盘点页</div>
+          <div class="nav-card-desc">实际数量录入、差异比对高亮</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/inventory-query.html">
+          <div class="nav-card-id">S10</div>
+          <div class="nav-card-name">库存查询页</div>
+          <div class="nav-card-desc">各票种剩余数量查询</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/inventory-alert.html">
+          <div class="nav-card-id">S11</div>
+          <div class="nav-card-name">库存预警页</div>
+          <div class="nav-card-desc">低于阈值预警通知</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+        <a class="nav-card" href="cashier/sales-dashboard.html">
+          <div class="nav-card-id">S12</div>
+          <div class="nav-card-name">销售看板页</div>
+          <div class="nav-card-desc">今日销售、趋势图、待处理队列</div>
+          <div class="nav-card-device">💻 Pad/Desktop</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-header">
+        <div class="nav-section-icon admin">🖥️</div>
+        <div>
+          <div class="nav-section-title">后台管理系统</div>
+          <div class="nav-section-subtitle">PC浏览器 · Desktop模拟 · 22个页面</div>
+        </div>
+      </div>
+      <div class="nav-grid">
+        <a class="nav-card" href="admin/login.html">
+          <div class="nav-card-id">B01</div>
+          <div class="nav-card-name">管理后台登录</div>
+          <div class="nav-card-desc">管理员账号密码登录</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/dashboard.html">
+          <div class="nav-card-id">B02</div>
+          <div class="nav-card-name">数据仪表盘</div>
+          <div class="nav-card-desc">全局概览、实时大屏、趋势图</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/product-list.html">
+          <div class="nav-card-id">B03</div>
+          <div class="nav-card-name">票种列表</div>
+          <div class="nav-card-desc">票种信息表格、搜索筛选</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/product-edit.html">
+          <div class="nav-card-id">B04</div>
+          <div class="nav-card-name">票种编辑</div>
+          <div class="nav-card-desc">票种新增/编辑表单</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/product-shelf.html">
+          <div class="nav-card-id">B05</div>
+          <div class="nav-card-name">上下架管理</div>
+          <div class="nav-card-desc">票种上下架状态切换</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/serial-number.html">
+          <div class="nav-card-id">B06</div>
+          <div class="nav-card-name">序列号管理</div>
+          <div class="nav-card-desc">批次号+序列号追溯体系</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/order-list.html">
+          <div class="nav-card-id">B07</div>
+          <div class="nav-card-name">订单列表</div>
+          <div class="nav-card-desc">实时订单动态、状态筛选</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/order-detail.html">
+          <div class="nav-card-id">B08</div>
+          <div class="nav-card-name">订单详情</div>
+          <div class="nav-card-desc">完整信息、状态流转记录</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/order-alert.html">
+          <div class="nav-card-id">B09</div>
+          <div class="nav-card-name">异常预警</div>
+          <div class="nav-card-desc">支付失败/出票超时预警</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/store-list.html">
+          <div class="nav-card-id">B10</div>
+          <div class="nav-card-name">门店列表</div>
+          <div class="nav-card-desc">门店信息表格</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/store-edit.html">
+          <div class="nav-card-id">B11</div>
+          <div class="nav-card-name">门店编辑</div>
+          <div class="nav-card-desc">门店新增/编辑表单</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/user-manage.html">
+          <div class="nav-card-id">B12</div>
+          <div class="nav-card-name">用户管理</div>
+          <div class="nav-card-desc">用户账号CRUD操作</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/role-assign.html">
+          <div class="nav-card-id">B13</div>
+          <div class="nav-card-name">角色分配</div>
+          <div class="nav-card-desc">RBAC角色权限配置</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/audit-log.html">
+          <div class="nav-card-id">B14</div>
+          <div class="nav-card-name">操作日志</div>
+          <div class="nav-card-desc">审计日志查询</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/device-list.html">
+          <div class="nav-card-id">B15</div>
+          <div class="nav-card-name">设备列表</div>
+          <div class="nav-card-desc">设备在线/离线状态监控</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/device-register.html">
+          <div class="nav-card-id">B16</div>
+          <div class="nav-card-name">设备注册</div>
+          <div class="nav-card-desc">设备注册/吊销操作</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/commission.html">
+          <div class="nav-card-id">B17</div>
+          <div class="nav-card-name">佣金计算</div>
+          <div class="nav-card-desc">佣金规则与计算结果</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/reconciliation.html">
+          <div class="nav-card-id">B18</div>
+          <div class="nav-card-name">对账管理</div>
+          <div class="nav-card-desc">T+1自动对账、差异标记</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/report-export.html">
+          <div class="nav-card-id">B19</div>
+          <div class="nav-card-name">报表导出</div>
+          <div class="nav-card-desc">结算对账报表导出</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/analysis-multi.html">
+          <div class="nav-card-id">B20</div>
+          <div class="nav-card-name">多维分析</div>
+          <div class="nav-card-desc">门店/票种/时段维度分析</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/analysis-compare.html">
+          <div class="nav-card-id">B21</div>
+          <div class="nav-card-name">门店对比</div>
+          <div class="nav-card-desc">多门店数据对比图表</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+        <a class="nav-card" href="admin/analysis-structure.html">
+          <div class="nav-card-id">B22</div>
+          <div class="nav-card-name">票种结构分析</div>
+          <div class="nav-card-desc">销量占比、库存周转分析</div>
+          <div class="nav-card-device">🖥️ Desktop</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-section-header">
+        <div class="nav-section-icon" style="background:#52C41A">📲</div>
+        <div>
+          <div class="nav-section-title">手机适配验证</div>
+          <div class="nav-section-subtitle">Phone模拟 390×844 · 3个适配验证页面</div>
+        </div>
+      </div>
+      <div class="nav-grid">
+        <a class="nav-card" href="customer/phone-adapt.html">
+          <div class="nav-card-id">P01</div>
+          <div class="nav-card-name">顾客终端手机适配</div>
+          <div class="nav-card-desc">票种浏览、购物车、扫码支付 Phone适配</div>
+          <div class="nav-card-device">📲 Phone</div>
+        </a>
+        <a class="nav-card" href="cashier/phone-adapt.html">
+          <div class="nav-card-id">P02</div>
+          <div class="nav-card-name">收银终端手机适配</div>
+          <div class="nav-card-desc">登录、订单处理、代客下单 Phone适配</div>
+          <div class="nav-card-device">📲 Phone</div>
+        </a>
+        <a class="nav-card" href="admin/phone-adapt.html">
+          <div class="nav-card-id">P03</div>
+          <div class="nav-card-name">管理后台手机适配</div>
+          <div class="nav-card-desc">数据仪表盘、订单列表 Phone适配</div>
+          <div class="nav-card-device">📲 Phone</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

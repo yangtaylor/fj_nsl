@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>出票通知 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .notify-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 48px 24px;
+    }
+    .notify-illustration {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #52C41A 0%, #73D13D 50%, #95DE64 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(82, 196, 26, 0.3);
+      position: relative;
+    }
+    .notify-illustration::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 2px dashed rgba(82, 196, 26, 0.3);
+      animation: spin 12s linear infinite;
+    }
+    .notify-illustration svg {
+      width: 64px;
+      height: 64px;
+      fill: none;
+      stroke: white;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .notify-big-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #389E0D;
+      margin-bottom: 8px;
+    }
+    .notify-instruction {
+      font-size: 16px;
+      color: var(--color-text-secondary);
+      margin-bottom: 32px;
+    }
+    .order-info-card {
+      width: 100%;
+      max-width: 560px;
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .order-info-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .order-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+    .order-info-label {
+      color: var(--color-text-hint);
+    }
+    .order-info-value {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .order-info-value.price {
+      color: var(--color-primary);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .serial-section {
+      width: 100%;
+      max-width: 560px;
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+    .serial-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 12px;
+    }
+    .serial-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .serial-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      background: #FAFAFA;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+    }
+    .serial-ticket-name {
+      color: var(--color-text-secondary);
+      min-width: 80px;
+    }
+    .serial-number {
+      font-family: 'Courier New', monospace;
+      color: var(--color-text-primary);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .serial-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--color-success);
+      flex-shrink: 0;
+    }
+    .notify-btn {
+      width: 100%;
+      max-width: 560px;
+      padding: 14px;
+      background: var(--color-primary);
+      color: white;
+      border-radius: var(--radius-lg);
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      transition: all var(--transition-fast);
+    }
+    .notify-btn:active {
+      background: var(--color-primary-dark);
+    }
+    .notify-countdown {
+      font-size: 14px;
+      color: var(--color-text-hint);
+    }
+    .notify-countdown strong {
+      color: var(--color-primary);
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>12:30</span>
+      <span>福建省体育彩票</span>
+      <span>WiFi</span>
+    </div>
+    <div class="customer-header">
+      <a href="payment-result.html" class="customer-header-back">‹</a>
+      <div class="customer-header-title">出票通知</div>
+    </div>
+    <div class="customer-body">
+      <div class="notify-body">
+        <div class="notify-illustration">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <div class="notify-big-title">出票成功！</div>
+        <div class="notify-instruction">请到收银台领取您的实体票</div>
+
+        <div class="order-info-card">
+          <div class="order-info-card-title">订单信息</div>
+          <div class="order-info-row">
+            <span class="order-info-label">订单号</span>
+            <span class="order-info-value">ORD20260529001</span>
+          </div>
+          <div class="order-info-row">
+            <span class="order-info-label">票种</span>
+            <span class="order-info-value">中国红×2, 好运十倍×1</span>
+          </div>
+          <div class="order-info-row">
+            <span class="order-info-label">金额</span>
+            <span class="order-info-value price">¥40</span>
+          </div>
+        </div>
+
+        <div class="serial-section">
+          <div class="serial-section-title">票券序列号</div>
+          <div class="serial-list">
+            <div class="serial-item">
+              <div class="serial-dot"></div>
+              <span class="serial-ticket-name">中国红</span>
+              <span class="serial-number">SN20260529001234</span>
+            </div>
+            <div class="serial-item">
+              <div class="serial-dot"></div>
+              <span class="serial-ticket-name">中国红</span>
+              <span class="serial-number">SN20260529001235</span>
+            </div>
+            <div class="serial-item">
+              <div class="serial-dot"></div>
+              <span class="serial-ticket-name">好运十倍</span>
+              <span class="serial-number">SN20260529001236</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="ticket-browse.html" class="notify-btn">我知道了</a>
+        <div class="notify-countdown">此页面 <strong>5</strong> 秒后自动返回首页</div>
+      </div>
+    </div>
+  </div>
+  <script>setTimeout(function(){window.location.href='ticket-browse.html';},5000);</script>
+</body>
+</html>

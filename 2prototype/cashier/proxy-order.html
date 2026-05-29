@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>代客下单 - 收银台终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .proxy-layout {
+      display: flex;
+      gap: 20px;
+      height: 100%;
+    }
+    .proxy-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .proxy-right {
+      width: 320px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .proxy-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .proxy-section-title::before {
+      content: '';
+      width: 3px;
+      height: 16px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+    .proxy-product-card {
+      background: #FFF;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      padding: 16px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .proxy-product-card:hover {
+      border-color: var(--color-primary-light);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(196, 22, 28, 0.1);
+    }
+    .proxy-product-card.selected {
+      border-color: var(--color-primary);
+      background: #FFF5F5;
+    }
+    .proxy-product-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 4px;
+      right: 6px;
+      width: 20px;
+      height: 20px;
+      background: var(--color-primary);
+      color: white;
+      border-radius: 50%;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .proxy-product-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      position: relative;
+      overflow: hidden;
+    }
+    .proxy-product-icon::before {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.15);
+      top: -10px;
+      right: -10px;
+    }
+    .proxy-product-icon.red { background: linear-gradient(135deg, #FF6B6B, #C4161C); }
+    .proxy-product-icon.blue { background: linear-gradient(135deg, #4FACFE, #1A5BC4); }
+    .proxy-product-icon.green { background: linear-gradient(135deg, #43E97B, #1B8A3E); }
+    .proxy-product-icon.purple { background: linear-gradient(135deg, #A18CD1, #6A1B9A); }
+    .proxy-product-icon.orange { background: linear-gradient(135deg, #FDCB6E, #E17055); }
+    .proxy-product-icon.gold { background: linear-gradient(135deg, #FFE44D, #D4A017); }
+    .proxy-product-icon.pink { background: linear-gradient(135deg, #FF9A9E, #C44569); }
+    .proxy-product-icon.teal { background: linear-gradient(135deg, #38F9D7, #0D7377); }
+    .proxy-product-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .proxy-product-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .proxy-product-price::before {
+      content: '¥';
+      font-size: 12px;
+    }
+    .proxy-summary-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 16px;
+    }
+    .proxy-summary-list {
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .proxy-summary-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .proxy-summary-item:last-child {
+      border-bottom: none;
+    }
+    .proxy-summary-item-info {
+      flex: 1;
+    }
+    .proxy-summary-item-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .proxy-summary-item-unit {
+      font-size: 12px;
+      color: var(--color-text-hint);
+    }
+    .proxy-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+    }
+    .proxy-stepper-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #FAFAFA;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--color-text-secondary);
+      transition: background 0.2s;
+    }
+    .proxy-stepper-btn:hover {
+      background: #F0F0F0;
+    }
+    .proxy-stepper-value {
+      width: 36px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 500;
+      border-left: 1px solid var(--color-border);
+      border-right: 1px solid var(--color-border);
+    }
+    .proxy-summary-item-total {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-primary);
+      min-width: 60px;
+      text-align: right;
+    }
+    .proxy-summary-subtotal {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0 0;
+      border-top: 2px solid var(--color-border);
+      margin-top: 8px;
+    }
+    .proxy-summary-subtotal-label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .proxy-summary-subtotal-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .proxy-summary-subtotal-value::before {
+      content: '¥';
+      font-size: 16px;
+    }
+    .proxy-payment-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 16px;
+    }
+    .proxy-payment-options {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .proxy-payment-option {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .proxy-payment-option:hover {
+      border-color: var(--color-primary-light);
+    }
+    .proxy-payment-option.active {
+      border-color: var(--color-primary);
+      background: #FFF5F5;
+    }
+    .proxy-payment-option-icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+    }
+    .proxy-payment-option-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .proxy-cash-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .proxy-cash-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .proxy-cash-label {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+      min-width: 70px;
+    }
+    .proxy-cash-input {
+      flex: 1;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .proxy-cash-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(196, 22, 28, 0.1);
+    }
+    .proxy-cash-change {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-success);
+    }
+    .proxy-qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+    }
+    .proxy-qr-placeholder {
+      width: 160px;
+      height: 160px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #FAFAFA;
+    }
+    .proxy-qr-placeholder svg {
+      width: 80px;
+      height: 80px;
+      color: var(--color-text-hint);
+    }
+    .proxy-qr-placeholder span {
+      font-size: 12px;
+      color: var(--color-text-hint);
+    }
+    .proxy-submit-btn {
+      width: 100%;
+      height: 48px;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    .proxy-submit-btn:hover {
+      background: var(--color-primary-dark);
+    }
+    .proxy-empty-hint {
+      text-align: center;
+      padding: 32px 0;
+      color: var(--color-text-hint);
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-app">
+    <div class="cashier-sidebar">
+      <div class="cashier-sidebar-logo">
+        <span class="cashier-sidebar-logo-text">体彩<em>收银台</em></span>
+      </div>
+      <div class="cashier-sidebar-menu">
+        <a href="main-workspace.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="order-process.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📋</span>
+          <span>订单处理</span>
+        </a>
+        <a href="proxy-order.html" class="cashier-sidebar-item active">
+          <span class="cashier-sidebar-item-icon">🛒</span>
+          <span>代客下单</span>
+        </a>
+        <a href="stock-in.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📦</span>
+          <span>库存管理</span>
+        </a>
+        <div class="cashier-sidebar-sub">
+          <a href="stock-in.html">入库签收</a>
+          <a href="inventory-check.html">库存盘点</a>
+          <a href="inventory-query.html">库存查询</a>
+          <a href="inventory-alert.html">库存预警</a>
+        </div>
+        <a href="sales-dashboard.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📈</span>
+          <span>销售看板</span>
+        </a>
+      </div>
+      <div class="cashier-sidebar-user">
+        <div class="cashier-sidebar-avatar">张</div>
+        <span>张销售</span>
+        <a href="login.html" class="cashier-sidebar-logout">退出登录</a>
+      </div>
+    </div>
+    <div class="cashier-main">
+      <div class="cashier-topbar">
+        <span class="cashier-topbar-title">代客下单</span>
+        <div class="cashier-topbar-actions">
+          <span style="font-size:13px;color:var(--color-text-hint);">2026-05-29 14:32</span>
+        </div>
+      </div>
+      <div class="cashier-content">
+        <div class="proxy-layout">
+          <div class="proxy-left">
+            <div>
+              <div class="proxy-section-title">选择票种</div>
+              <div class="cashier-proxy-product-grid">
+                <div class="proxy-product-card selected">
+                  <div class="proxy-product-icon red">红</div>
+                  <div class="proxy-product-name">中国红</div>
+                  <div class="proxy-product-price">10</div>
+                </div>
+                <div class="proxy-product-card">
+                  <div class="proxy-product-icon gold">运</div>
+                  <div class="proxy-product-name">好运十倍</div>
+                  <div class="proxy-product-price">20</div>
+                </div>
+                <div class="proxy-product-card selected">
+                  <div class="proxy-product-icon blue">刮</div>
+                  <div class="proxy-product-name">顶呱刮</div>
+                  <div class="proxy-product-price">10</div>
+                </div>
+                <div class="proxy-product-card">
+                  <div class="proxy-product-icon green">茵</div>
+                  <div class="proxy-product-name">绿茵传奇</div>
+                  <div class="proxy-product-price">30</div>
+                </div>
+                <div class="proxy-product-card selected">
+                  <div class="proxy-product-icon pink">蜜</div>
+                  <div class="proxy-product-name">甜蜜蜜</div>
+                  <div class="proxy-product-price">10</div>
+                </div>
+                <div class="proxy-product-card">
+                  <div class="proxy-product-icon gold">灿</div>
+                  <div class="proxy-product-name">金光灿烂</div>
+                  <div class="proxy-product-price">30</div>
+                </div>
+                <div class="proxy-product-card">
+                  <div class="proxy-product-icon purple">星</div>
+                  <div class="proxy-product-name">幸运星</div>
+                  <div class="proxy-product-price">20</div>
+                </div>
+                <div class="proxy-product-card">
+                  <div class="proxy-product-icon teal">贯</div>
+                  <div class="proxy-product-name">大满贯</div>
+                  <div class="proxy-product-price">50</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="proxy-right">
+            <div class="proxy-summary-card">
+              <div class="proxy-section-title">已选商品</div>
+              <div class="proxy-summary-list">
+                <div class="proxy-summary-item">
+                  <div class="proxy-summary-item-info">
+                    <div class="proxy-summary-item-name">中国红</div>
+                    <div class="proxy-summary-item-unit">¥10/张</div>
+                  </div>
+                  <div class="proxy-stepper">
+                    <button class="proxy-stepper-btn">−</button>
+                    <div class="proxy-stepper-value">2</div>
+                    <button class="proxy-stepper-btn">+</button>
+                  </div>
+                  <div class="proxy-summary-item-total">¥20</div>
+                </div>
+                <div class="proxy-summary-item">
+                  <div class="proxy-summary-item-info">
+                    <div class="proxy-summary-item-name">顶呱刮</div>
+                    <div class="proxy-summary-item-unit">¥10/张</div>
+                  </div>
+                  <div class="proxy-stepper">
+                    <button class="proxy-stepper-btn">−</button>
+                    <div class="proxy-stepper-value">1</div>
+                    <button class="proxy-stepper-btn">+</button>
+                  </div>
+                  <div class="proxy-summary-item-total">¥10</div>
+                </div>
+                <div class="proxy-summary-item">
+                  <div class="proxy-summary-item-info">
+                    <div class="proxy-summary-item-name">甜蜜蜜</div>
+                    <div class="proxy-summary-item-unit">¥10/张</div>
+                  </div>
+                  <div class="proxy-stepper">
+                    <button class="proxy-stepper-btn">−</button>
+                    <div class="proxy-stepper-value">3</div>
+                    <button class="proxy-stepper-btn">+</button>
+                  </div>
+                  <div class="proxy-summary-item-total">¥30</div>
+                </div>
+              </div>
+              <div class="proxy-summary-subtotal">
+                <span class="proxy-summary-subtotal-label">合计</span>
+                <span class="proxy-summary-subtotal-value">60</span>
+              </div>
+            </div>
+            <div class="proxy-payment-card">
+              <div class="proxy-section-title">支付方式</div>
+              <div class="proxy-payment-options">
+                <div class="proxy-payment-option active">
+                  <div class="proxy-payment-option-icon">💵</div>
+                  <div class="proxy-payment-option-text">现金</div>
+                </div>
+                <div class="proxy-payment-option">
+                  <div class="proxy-payment-option-icon">📱</div>
+                  <div class="proxy-payment-option-text">扫码支付</div>
+                </div>
+              </div>
+              <div class="proxy-cash-section">
+                <div class="proxy-cash-row">
+                  <span class="proxy-cash-label">收取金额</span>
+                  <input class="proxy-cash-input" type="number" value="100" placeholder="请输入收取金额">
+                  <span style="font-size:14px;color:var(--color-text-hint);">元</span>
+                </div>
+                <div class="proxy-cash-row">
+                  <span class="proxy-cash-label">找零</span>
+                  <span class="proxy-cash-change">¥40.00</span>
+                </div>
+              </div>
+            </div>
+            <a href="ticket-confirm.html" class="proxy-submit-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">确认下单</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

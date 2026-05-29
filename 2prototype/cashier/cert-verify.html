@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>证书校验 - 体彩收银台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .cert-page {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #C4161C 0%, #8B0000 50%, #5C0011 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .cert-page::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      left: -15%;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,215,0,0.06) 0%, transparent 70%);
+    }
+    .cert-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+      animation: fadeIn 0.5s ease;
+    }
+    .cert-card {
+      width: 500px;
+      background: #FFF;
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .cert-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .cert-title-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .cert-title-icon svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+    .cert-title h2 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .cert-status-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0;
+    }
+    .cert-status-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .cert-status-icon.loading {
+      border: 3px solid var(--color-border-light);
+      border-top-color: var(--color-primary);
+      animation: spin 1s linear infinite;
+    }
+    .cert-status-icon.success {
+      background: #F6FFED;
+      border: 2px solid var(--color-success);
+    }
+    .cert-status-icon.success svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--color-success);
+    }
+    .cert-status-icon.fail {
+      background: #FFF1F0;
+      border: 2px solid var(--color-error);
+    }
+    .cert-status-icon.fail svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--color-error);
+    }
+    .cert-status-text {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .cert-status-text.loading {
+      color: var(--color-primary);
+    }
+    .cert-status-text.success {
+      color: var(--color-success);
+    }
+    .cert-status-text.fail {
+      color: var(--color-error);
+    }
+    .cert-status-sub {
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .cert-loading-dots {
+      display: inline-flex;
+      gap: 4px;
+      margin-left: 2px;
+    }
+    .cert-loading-dots span {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--color-primary);
+      animation: dotBlink 1.4s infinite;
+    }
+    .cert-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .cert-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes dotBlink {
+      0%, 80%, 100% { opacity: 0.3; }
+      40% { opacity: 1; }
+    }
+    .cert-info {
+      background: #FAFAFA;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-top: 20px;
+    }
+    .cert-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+    .cert-info-row:not(:last-child) {
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .cert-info-label {
+      color: var(--color-text-hint);
+    }
+    .cert-info-value {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .cert-fail-msg {
+      text-align: center;
+      margin-top: 16px;
+      padding: 12px;
+      background: #FFF1F0;
+      border-radius: var(--radius-md);
+      color: var(--color-error);
+      font-size: 14px;
+    }
+    .cert-card-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+    .cert-card-label.checking {
+      background: #FFF7E6;
+      color: #D48806;
+    }
+    .cert-card-label.passed {
+      background: #F6FFED;
+      color: var(--color-success);
+    }
+    .cert-card-label.failed {
+      background: #FFF1F0;
+      color: var(--color-error);
+    }
+    .cert-watermark {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="cert-page">
+    <div class="cert-container">
+      <div class="cert-card">
+        <span class="cert-card-label checking">● 校验中</span>
+        <div class="cert-status-area">
+          <div class="cert-status-icon loading"></div>
+          <div class="cert-status-text loading">
+            正在校验设备证书<span class="cert-loading-dots"><span></span><span></span><span></span></span>
+          </div>
+          <div class="cert-status-sub">请稍候，正在与认证服务器通信...</div>
+        </div>
+        <div class="cert-info">
+          <div class="cert-info-row">
+            <span class="cert-info-label">证书序列号</span>
+            <span class="cert-info-value">CERT-20260529-00831</span>
+          </div>
+          <div class="cert-info-row">
+            <span class="cert-info-label">颁发时间</span>
+            <span class="cert-info-value">2026-05-29 10:00:00</span>
+          </div>
+          <div class="cert-info-row">
+            <span class="cert-info-label">到期时间</span>
+            <span class="cert-info-value">2027-05-29 10:00:00</span>
+          </div>
+          <div class="cert-info-row">
+            <span class="cert-info-label">设备MAC</span>
+            <span class="cert-info-value">A1:B2:C3:D4:E5:F6</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <span class="cert-card-label passed">● 校验通过</span>
+        <div class="cert-status-area">
+          <div class="cert-status-icon success">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+          </div>
+          <div class="cert-status-text success">设备证书校验通过</div>
+          <div class="cert-status-sub">设备已通过安全认证，可以正常使用</div>
+          <div style="margin-top:20px;text-align:center;">
+            <a href="login.html" style="display:inline-block;padding:10px 32px;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));color:white;border-radius:var(--radius-md);font-size:15px;font-weight:600;text-decoration:none;box-shadow:0 4px 12px rgba(196,22,28,0.3);">进入登录 →</a>
+          </div>
+        </div>
+        <div class="cert-info">
+          <div class="cert-info-row">
+            <span class="cert-info-label">证书序列号</span>
+            <span class="cert-info-value">CERT-20260529-00831</span>
+          </div>
+          <div class="cert-info-row">
+            <span class="cert-info-label">颁发时间</span>
+            <span class="cert-info-value">2026-05-29 10:00:00</span>
+          </div>
+          <div class="cert-info-row">
+            <span class="cert-info-label">到期时间</span>
+            <span class="cert-info-value">2027-05-29 10:00:00</span>
+          </div>
+          <div class="cert-info-row">
+            <span class="cert-info-label">设备MAC</span>
+            <span class="cert-info-value">A1:B2:C3:D4:E5:F6</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-card">
+        <span class="cert-card-label failed">● 校验失败</span>
+        <div class="cert-status-area">
+          <div class="cert-status-icon fail">
+            <svg viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+          </div>
+          <div class="cert-status-text fail">设备证书校验失败</div>
+          <div class="cert-status-sub">证书信息与设备不匹配</div>
+        </div>
+        <div class="cert-fail-msg">设备认证失败，请联系管理员</div>
+      </div>
+    </div>
+
+    <div class="cert-watermark">福建省新场景售彩系统 v1.0</div>
+  </div>
+</body>
+</html>

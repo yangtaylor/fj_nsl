@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>空闲轮播 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .idle-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+    }
+    .slide-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 48px;
+      position: relative;
+    }
+    .slide-section + .slide-section {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .slide-label {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      background: rgba(255, 255, 255, 0.15);
+      color: rgba(255, 255, 255, 0.7);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .slide-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .slide-title span {
+      color: var(--color-secondary);
+    }
+    .hot-tickets {
+      display: flex;
+      gap: 20px;
+    }
+    .hot-ticket-card {
+      width: 180px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .hot-ticket-image {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .hot-ticket-image.red {
+      background: linear-gradient(135deg, #FF4D4F, #C4161C);
+    }
+    .hot-ticket-image.gold {
+      background: linear-gradient(135deg, #FFD700, #FF8C00);
+    }
+    .hot-ticket-image.purple {
+      background: linear-gradient(135deg, #B37FEB, #722ED1);
+    }
+    .hot-ticket-info {
+      padding: 10px 14px;
+      text-align: center;
+    }
+    .hot-ticket-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+      margin-bottom: 4px;
+    }
+    .hot-ticket-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--color-secondary);
+    }
+    .hot-ticket-price::before {
+      content: '¥';
+      font-size: 11px;
+    }
+    .story-card {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      padding: 24px 32px;
+      max-width: 600px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .story-celebration {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFD700, #FF8C00);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(255, 215, 0, 0.4);
+    }
+    .story-text {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
+      line-height: 1.6;
+    }
+    .story-text strong {
+      color: var(--color-secondary);
+    }
+    .promo-banner {
+      background: linear-gradient(135deg, rgba(196, 22, 28, 0.8), rgba(255, 107, 107, 0.8));
+      border-radius: var(--radius-xl);
+      padding: 32px 48px;
+      max-width: 600px;
+      text-align: center;
+      border: 2px solid var(--color-secondary);
+      box-shadow: 0 0 32px rgba(255, 215, 0, 0.2);
+    }
+    .promo-banner-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-secondary);
+      margin-bottom: 8px;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+    .promo-banner-desc {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .carousel-bottom {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    .carousel-dots {
+      display: flex;
+      gap: 10px;
+    }
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transition: all 0.3s;
+    }
+    .carousel-dot.active {
+      background: var(--color-secondary);
+      width: 28px;
+      border-radius: 5px;
+    }
+    .wake-hint {
+      font-size: 18px;
+      color: rgba(255, 255, 255, 0.8);
+      animation: pulse 2s infinite;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .wake-hint-arrow {
+      display: inline-block;
+      animation: slideRight 1.5s infinite;
+    }
+    @keyframes slideRight {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(8px); }
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <a href="ticket-browse.html" class="idle-overlay">
+      <div class="slide-section">
+        <div class="slide-label">轮播画面 1/3</div>
+        <div class="slide-title">🔥 <span>热门票种</span></div>
+        <div class="hot-tickets">
+          <div class="hot-ticket-card">
+            <div class="hot-ticket-image red">中国红</div>
+            <div class="hot-ticket-info">
+              <div class="hot-ticket-name">中国红</div>
+              <div class="hot-ticket-price">10</div>
+            </div>
+          </div>
+          <div class="hot-ticket-card">
+            <div class="hot-ticket-image gold">好运十倍</div>
+            <div class="hot-ticket-info">
+              <div class="hot-ticket-name">好运十倍</div>
+              <div class="hot-ticket-price">20</div>
+            </div>
+          </div>
+          <div class="hot-ticket-card">
+            <div class="hot-ticket-image purple">金光灿烂</div>
+            <div class="hot-ticket-info">
+              <div class="hot-ticket-name">金光灿烂</div>
+              <div class="hot-ticket-price">30</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-section">
+        <div class="slide-label">轮播画面 2/3</div>
+        <div class="slide-title">🏆 <span>中奖故事</span></div>
+        <div class="story-card">
+          <div class="story-celebration">🎉</div>
+          <div class="story-text">
+            张先生在<strong>福州五四路门店</strong>购买中国红，喜中<strong>1000元</strong>大奖！
+          </div>
+        </div>
+      </div>
+
+      <div class="slide-section">
+        <div class="slide-label">轮播画面 3/3</div>
+        <div class="slide-title">⏰ <span>限时优惠</span></div>
+        <div class="promo-banner">
+          <div class="promo-banner-title">购满50元送刮刮乐1张</div>
+          <div class="promo-banner-desc">活动时间：即日起至2026年6月30日</div>
+        </div>
+      </div>
+
+      <div class="carousel-bottom">
+        <div class="carousel-dots">
+          <div class="carousel-dot active"></div>
+          <div class="carousel-dot"></div>
+          <div class="carousel-dot"></div>
+        </div>
+        <div class="wake-hint">
+          触摸屏幕开始选购 <span class="wake-hint-arrow">→</span>
+        </div>
+      </div>
+    </a>
+  </div>
+</body>
+</html>

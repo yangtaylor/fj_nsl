@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>登录 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .login-page {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #C4161C 0%, #E8383E 50%, #FF6B6B 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .login-page::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      top: -100px;
+      right: -80px;
+    }
+    .login-page::after {
+      content: '';
+      position: absolute;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      bottom: -60px;
+      left: -40px;
+    }
+    .login-card {
+      width: 480px;
+      background: #FFF;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+      padding: 48px 40px;
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.4s ease;
+    }
+    .login-logo {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+    .login-logo-icon {
+      width: 72px;
+      height: 72px;
+      background: linear-gradient(135deg, #C4161C, #FF6B6B);
+      border-radius: var(--radius-lg);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 16px rgba(196,22,28,0.3);
+    }
+    .login-logo-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .login-logo-subtitle {
+      font-size: 14px;
+      color: var(--color-text-hint);
+    }
+    .login-store-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 16px;
+      background: #FFF7E6;
+      border: 1px solid #FFE58F;
+      border-radius: 20px;
+      font-size: 13px;
+      color: #D48806;
+      margin: 0 auto 28px;
+    }
+    .login-store-tag-wrapper {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .login-tabs {
+      display: flex;
+      margin-bottom: 28px;
+      background: var(--color-bg-page);
+      border-radius: var(--radius-md);
+      padding: 4px;
+    }
+    .login-tab {
+      flex: 1;
+      text-align: center;
+      padding: 10px 0;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .login-tab.active {
+      background: #FFF;
+      color: var(--color-primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .login-input-group {
+      position: relative;
+    }
+    .login-input {
+      width: 100%;
+      height: 52px;
+      padding: 0 16px;
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      color: var(--color-text-primary);
+      background: #FFF;
+      transition: border-color 0.2s;
+    }
+    .login-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px rgba(196,22,28,0.08);
+    }
+    .login-input::placeholder {
+      color: var(--color-text-hint);
+    }
+    .login-input-row {
+      display: flex;
+      gap: 12px;
+    }
+    .login-input-row .login-input {
+      flex: 1;
+    }
+    .login-sms-btn {
+      flex-shrink: 0;
+      width: 120px;
+      height: 52px;
+      background: var(--color-primary);
+      color: #FFF;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .login-sms-btn:active {
+      background: var(--color-primary-dark);
+    }
+    .login-sms-btn.disabled {
+      background: var(--color-text-hint);
+      cursor: not-allowed;
+    }
+    .login-submit {
+      width: 100%;
+      height: 52px;
+      background: linear-gradient(135deg, #C4161C, #E8383E);
+      color: #FFF;
+      border-radius: var(--radius-md);
+      font-size: 17px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      margin-top: 8px;
+    }
+    .login-submit:active {
+      opacity: 0.9;
+    }
+    .login-qrcode-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 0;
+    }
+    .login-qrcode-box {
+      width: 200px;
+      height: 200px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      background: #FFF;
+    }
+    .login-qrcode-placeholder {
+      width: 160px;
+      height: 160px;
+      background: repeating-conic-gradient(#333 0% 25%, #fff 0% 50%) 50%/20px 20px;
+      border-radius: 4px;
+      opacity: 0.7;
+    }
+    .login-qrcode-hint {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+    .login-qrcode-icons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .login-qrcode-icon {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .login-qrcode-icon .icon-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .login-qrcode-icon .icon-dot.green { background: #07C160; }
+    .login-qrcode-icon .icon-dot.blue { background: #1677FF; }
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 24px 0 16px;
+    }
+    .login-divider::before,
+    .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--color-border-light);
+    }
+    .login-divider-text {
+      font-size: 13px;
+      color: var(--color-text-hint);
+      white-space: nowrap;
+    }
+    .login-skip {
+      text-align: center;
+    }
+    .login-skip-btn {
+      font-size: 14px;
+      color: var(--color-text-hint);
+      cursor: pointer;
+      background: none;
+      transition: color 0.2s;
+    }
+    .login-skip-btn:active {
+      color: var(--color-text-secondary);
+    }
+    .login-protocol {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 12px;
+      color: var(--color-text-hint);
+      line-height: 1.8;
+    }
+    .login-protocol a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    .login-panel {
+      display: none;
+    }
+    .login-panel.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>14:30</span>
+      <div class="statusbar-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4H11V9h2v5z"/></svg>
+      </div>
+    </div>
+
+    <div class="login-page">
+      <div class="login-card">
+        <div class="login-logo">
+          <div class="login-logo-icon">🎟️</div>
+          <div class="login-logo-title">体彩新场景</div>
+          <div class="login-logo-subtitle">顶呱刮 · 即开即兑</div>
+        </div>
+
+        <div class="login-store-tag-wrapper">
+          <span class="login-store-tag">📍 福州万达广场店</span>
+        </div>
+
+        <div class="login-tabs">
+          <div class="login-tab active" onclick="switchTab('phone')">手机号登录</div>
+          <div class="login-tab" onclick="switchTab('qrcode')">扫码登录</div>
+        </div>
+
+        <div class="login-panel active" id="panel-phone">
+          <div class="login-form">
+            <div class="login-input-row">
+              <input type="tel" class="login-input" placeholder="请输入手机号" maxlength="11">
+              <button class="login-sms-btn">获取验证码</button>
+            </div>
+            <input type="text" class="login-input" placeholder="请输入验证码" maxlength="6">
+            <button class="login-submit" onclick="location.href='ticket-browse.html'">登录</button>
+          </div>
+        </div>
+
+        <div class="login-panel" id="panel-qrcode">
+          <div class="login-qrcode-area">
+            <div class="login-qrcode-box">
+              <div class="login-qrcode-placeholder"></div>
+            </div>
+            <div class="login-qrcode-hint">请使用手机扫码登录</div>
+            <div class="login-qrcode-icons">
+              <span class="login-qrcode-icon"><span class="icon-dot green"></span>微信</span>
+              <span class="login-qrcode-icon"><span class="icon-dot blue"></span>支付宝</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="login-divider">
+          <span class="login-divider-text">其他方式</span>
+        </div>
+
+        <div class="login-skip">
+          <a href="ticket-browse.html" class="login-skip-btn">跳过登录，直接浏览 →</a>
+        </div>
+
+        <div class="login-protocol">
+          登录即表示同意 <a href="#">《用户服务协议》</a> 和 <a href="#">《隐私政策》</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(type) {
+      document.querySelectorAll('.login-tab').forEach(function(tab) {
+        tab.classList.remove('active');
+      });
+      document.querySelectorAll('.login-panel').forEach(function(panel) {
+        panel.classList.remove('active');
+      });
+      if (type === 'phone') {
+        document.querySelector('.login-tab:first-child').classList.add('active');
+        document.getElementById('panel-phone').classList.add('active');
+      } else {
+        document.querySelector('.login-tab:last-child').classList.add('active');
+        document.getElementById('panel-qrcode').classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>

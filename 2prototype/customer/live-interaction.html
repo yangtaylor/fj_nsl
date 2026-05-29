@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>直播互动 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .live-banner {
+      background: linear-gradient(135deg, #C4161C 0%, #FF6B6B 100%);
+      color: white;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .live-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      flex-shrink: 0;
+    }
+    .live-info {
+      flex: 1;
+    }
+    .live-info-name {
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .live-info-status {
+      font-size: 13px;
+      opacity: 0.9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #FF4D4F;
+      animation: pulse 1.5s infinite;
+    }
+    .live-viewers {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.2);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .live-viewers svg {
+      width: 16px;
+      height: 16px;
+      fill: white;
+    }
+    .section-block {
+      padding: 20px 24px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-title-icon {
+      width: 4px;
+      height: 20px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+    .recommend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .recommend-card {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      position: relative;
+    }
+    .recommend-card-image {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      font-weight: 700;
+      position: relative;
+    }
+    .recommend-card-image.red {
+      background: linear-gradient(135deg, #FF4D4F, #C4161C);
+    }
+    .recommend-card-image.gold {
+      background: linear-gradient(135deg, #FFD700, #FF8C00);
+    }
+    .recommend-card-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--color-secondary);
+      color: var(--color-text-primary);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .recommend-card-body {
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .recommend-card-info {
+      flex: 1;
+    }
+    .recommend-card-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .recommend-card-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .recommend-card-price::before {
+      content: '¥';
+      font-size: 13px;
+    }
+    .quick-add-btn {
+      padding: 8px 20px;
+      background: var(--color-secondary);
+      color: var(--color-text-primary);
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+    }
+    .quick-add-btn:active {
+      background: #FFC107;
+      transform: scale(0.95);
+    }
+    .promo-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .promo-card {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .promo-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .promo-icon.discount {
+      background: linear-gradient(135deg, #FFF1F0, #FFCCC7);
+    }
+    .promo-icon.gift {
+      background: linear-gradient(135deg, #FFF7E6, #FFE58F);
+    }
+    .promo-info {
+      flex: 1;
+    }
+    .promo-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .promo-desc {
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .promo-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .promo-badge.hot {
+      background: #FFF1F0;
+      color: var(--color-primary);
+    }
+    .promo-badge.new {
+      background: #FFF7E6;
+      color: #D48806;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>12:30</span>
+      <span>福建省体育彩票</span>
+      <span>WiFi</span>
+    </div>
+
+    <div class="live-banner">
+      <div class="live-avatar">👩</div>
+      <div class="live-info">
+        <div class="live-info-name">主播: 小李</div>
+        <div class="live-info-status">
+          <div class="live-dot"></div>
+          正在直播中
+        </div>
+      </div>
+      <div class="live-viewers">
+        <svg viewBox="0 0 24 24"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        128人观看
+      </div>
+    </div>
+
+    <div class="customer-body">
+      <div class="section-block">
+        <div class="section-title">
+          <div class="section-title-icon"></div>
+          直播推荐
+        </div>
+        <div class="recommend-grid">
+          <div class="recommend-card">
+            <div class="recommend-card-image red">中国红</div>
+            <div class="recommend-card-body">
+              <div class="recommend-card-info">
+                <div class="recommend-card-name">中国红</div>
+                <div class="recommend-card-price">10</div>
+              </div>
+              <a href="cart.html" class="quick-add-btn">快捷加购</a>
+            </div>
+          </div>
+          <div class="recommend-card">
+            <div class="recommend-card-image gold">
+              好运十倍
+              <div class="recommend-card-tag">直播特惠</div>
+            </div>
+            <div class="recommend-card-body">
+              <div class="recommend-card-info">
+                <div class="recommend-card-name">好运十倍</div>
+                <div class="recommend-card-price">20</div>
+              </div>
+              <a href="cart.html" class="quick-add-btn">快捷加购</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block" style="padding-top: 0;">
+        <div class="section-title">
+          <div class="section-title-icon"></div>
+          优惠活动
+        </div>
+        <div class="promo-list">
+          <div class="promo-card">
+            <div class="promo-icon discount">🏷️</div>
+            <div class="promo-info">
+              <div class="promo-title">购2张立减5元</div>
+              <div class="promo-desc">同一票种购买2张及以上即可享受</div>
+            </div>
+            <div class="promo-badge hot">热门</div>
+          </div>
+          <div class="promo-card">
+            <div class="promo-icon gift">🎁</div>
+            <div class="promo-info">
+              <div class="promo-title">满50元送刮刮乐1张</div>
+              <div class="promo-desc">单笔订单满50元自动赠送，数量有限</div>
+            </div>
+            <div class="promo-badge new">新活动</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="customer-tabbar">
+      <a href="ticket-browse.html" class="customer-tabbar-item">
+        <div class="customer-tabbar-icon">🎫</div>
+        <span>票种</span>
+      </a>
+      <a href="cart.html" class="customer-tabbar-item">
+        <div class="customer-tabbar-icon">🛒</div>
+        <span>购物车</span>
+      </a>
+      <a href="live-interaction.html" class="customer-tabbar-item active">
+        <div class="customer-tabbar-icon">📺</div>
+        <span>直播</span>
+      </a>
+      <div class="customer-tabbar-item">
+        <div class="customer-tabbar-icon">👤</div>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>福建省新场景售彩系统 - 页面原型导航</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            color: #1f2937;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3a5f 0%, #1890ff 100%);
+            color: #fff;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .header .version {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title .icon {
+            font-size: 24px;
+        }
+
+        .section-desc {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 20px;
+            margin-top: -10px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        .card-header {
+            padding: 20px 20px 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .card-icon.blue { background: #e6f7ff; }
+        .card-icon.green { background: #f6ffed; }
+        .card-icon.orange { background: #fff7e6; }
+        .card-icon.red { background: #fff1f0; }
+        .card-icon.purple { background: #f9f0ff; }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        .card-body {
+            padding: 0 20px 16px;
+            font-size: 14px;
+            color: #4b5563;
+            line-height: 1.6;
+        }
+
+        .card-footer {
+            padding: 12px 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-tag {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .card-tag.blue { background: #e6f7ff; color: #096dd9; }
+        .card-tag.green { background: #f6ffed; color: #389e0d; }
+        .card-tag.orange { background: #fff7e6; color: #d46b08; }
+        .card-tag.red { background: #fff1f0; color: #cf1322; }
+        .card-tag.purple { background: #f9f0ff; color: #531dab; }
+
+        .card-link {
+            font-size: 13px;
+            color: #1890ff;
+            font-weight: 500;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 24px;
+            background: #fff;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1890ff;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #9ca3af;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>福建省新场景售彩系统</h1>
+        <p>页面原型设计 - 完整交互演示</p>
+        <span class="version">v1.0.0 | 2026-05-29</span>
+    </div>
+
+    <div class="container">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">22</div>
+                <div class="stat-label">总页面数</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4</div>
+                <div class="stat-label">终端类型</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">6</div>
+                <div class="stat-label">顾客点单页</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">5</div>
+                <div class="stat-label">收银台页</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">9</div>
+                <div class="stat-label">后台管理页</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">2</div>
+                <div class="stat-label">移动端页</div>
+            </div>
+        </div>
+
+        <!-- 顾客点单终端 -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">📱</span>
+                顾客点单终端（Android平板 - 10寸）
+            </h2>
+            <p class="section-desc">面向顾客的自助点单界面，适配Pad横屏/竖屏，大图展示票种，触控友好</p>
+            <div class="card-grid">
+                <a href="customer-terminal/index.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">🎫</div>
+                        <div>
+                            <div class="card-title">票种浏览页</div>
+                            <div class="card-subtitle">首页 / 默认页</div>
+                        </div>
+                    </div>
+                    <div class="card-body">大图卡片展示票种、分类筛选、票种详情弹窗、加入购物车</div>
+                    <div class="card-footer">
+                        <span class="card-tag blue">C-01</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="customer-terminal/cart.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon green">🛒</div>
+                        <div>
+                            <div class="card-title">购物车页</div>
+                            <div class="card-subtitle">订单确认</div>
+                        </div>
+                    </div>
+                    <div class="card-body">购物车管理、数量调整、删除商品、确认订单</div>
+                    <div class="card-footer">
+                        <span class="card-tag green">C-02</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="customer-terminal/payment.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon orange">💳</div>
+                        <div>
+                            <div class="card-title">支付页</div>
+                            <div class="card-subtitle">扫码支付</div>
+                        </div>
+                    </div>
+                    <div class="card-body">支付二维码展示、支付倒计时、支付结果展示</div>
+                    <div class="card-footer">
+                        <span class="card-tag orange">C-03</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="customer-terminal/order-success.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">✅</div>
+                        <div>
+                            <div class="card-title">订单完成页</div>
+                            <div class="card-subtitle">出票成功</div>
+                        </div>
+                    </div>
+                    <div class="card-body">出票成功通知、订单信息、取单号、继续购买</div>
+                    <div class="card-footer">
+                        <span class="card-tag blue">C-04</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="customer-terminal/live.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon red">📺</div>
+                        <div>
+                            <div class="card-title">直播互动页</div>
+                            <div class="card-subtitle">直播场景</div>
+                        </div>
+                    </div>
+                    <div class="card-body">直播信息展示、快捷加购、优惠活动、弹幕互动</div>
+                    <div class="card-footer">
+                        <span class="card-tag red">C-05</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="customer-terminal/screensaver.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon purple">🖼️</div>
+                        <div>
+                            <div class="card-title">空闲轮播页</div>
+                            <div class="card-subtitle">屏保/广告</div>
+                        </div>
+                    </div>
+                    <div class="card-body">热门票种轮播、中奖故事、触摸唤醒、品牌宣传</div>
+                    <div class="card-footer">
+                        <span class="card-tag purple">C-06</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 收银台终端 -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">💻</span>
+                收银台终端（Android/Windows - 15寸）
+            </h2>
+            <p class="section-desc">面向销售员的收银操作界面，专业高效、信息密集、支持代客下单</p>
+            <div class="card-grid">
+                <a href="cashier-terminal/login.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">🔐</div>
+                        <div>
+                            <div class="card-title">登录页</div>
+                            <div class="card-subtitle">设备认证</div>
+                        </div>
+                    </div>
+                    <div class="card-body">设备认证状态、账号密码登录、记住密码、技术支持</div>
+                    <div class="card-footer">
+                        <span class="card-tag blue">S-01</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="cashier-terminal/orders.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon green">📋</div>
+                        <div>
+                            <div class="card-title">订单处理页</div>
+                            <div class="card-subtitle">核心功能</div>
+                        </div>
+                    </div>
+                    <div class="card-body">订单列表、状态管理、确认出票、打印小票、新订单通知</div>
+                    <div class="card-footer">
+                        <span class="card-tag green">S-02</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="cashier-terminal/quick-order.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon orange">🛒</div>
+                        <div>
+                            <div class="card-title">代客下单页</div>
+                            <div class="card-subtitle">快速下单</div>
+                        </div>
+                    </div>
+                    <div class="card-body">票种选择、数量调整、购物车、现金/扫码支付</div>
+                    <div class="card-footer">
+                        <span class="card-tag orange">S-03</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="cashier-terminal/inventory.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon purple">📦</div>
+                        <div>
+                            <div class="card-title">库存操作页</div>
+                            <div class="card-subtitle">库存管理</div>
+                        </div>
+                    </div>
+                    <div class="card-body">入库签收、库存盘点、库存查询、批次管理</div>
+                    <div class="card-footer">
+                        <span class="card-tag purple">S-04</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="cashier-terminal/dashboard.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon red">📊</div>
+                        <div>
+                            <div class="card-title">销售看板页</div>
+                            <div class="card-subtitle">数据可视化</div>
+                        </div>
+                    </div>
+                    <div class="card-body">今日销售、趋势图、热销排行、待处理队列</div>
+                    <div class="card-footer">
+                        <span class="card-tag red">S-05</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 后台管理系统 -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">🖥️</span>
+                后台管理系统（Web端）
+            </h2>
+            <p class="section-desc">面向管理员的后台管理界面，数据可视化、专业管理后台、响应式布局</p>
+            <div class="card-grid">
+                <a href="admin-system/dashboard.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">📊</div>
+                        <div>
+                            <div class="card-title">数据仪表盘</div>
+                            <div class="card-subtitle">全局概览</div>
+                        </div>
+                    </div>
+                    <div class="card-body">全局销售概览、实时数据大屏、异常预警、目标完成度</div>
+                    <div class="card-footer">
+                        <span class="card-tag blue">B-01</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/products.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon green">🎫</div>
+                        <div>
+                            <div class="card-title">商品管理</div>
+                            <div class="card-subtitle">票种维护</div>
+                        </div>
+                    </div>
+                    <div class="card-body">票种信息维护、上下架控制、图片管理、价格设置</div>
+                    <div class="card-footer">
+                        <span class="card-tag green">B-02</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/serial-numbers.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon orange">🔢</div>
+                        <div>
+                            <div class="card-title">序列号管理</div>
+                            <div class="card-subtitle">批次追溯</div>
+                        </div>
+                    </div>
+                    <div class="card-body">批次号管理、序列号追溯、入库记录、状态查询</div>
+                    <div class="card-footer">
+                        <span class="card-tag orange">B-03</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/orders.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon purple">📋</div>
+                        <div>
+                            <div class="card-title">订单监控</div>
+                            <div class="card-subtitle">实时订单</div>
+                        </div>
+                    </div>
+                    <div class="card-body">实时订单查看、异常订单预警、订单详情、退款处理</div>
+                    <div class="card-footer">
+                        <span class="card-tag purple">B-04</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/stores.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">🏪</div>
+                        <div>
+                            <div class="card-title">门店管理</div>
+                            <div class="card-subtitle">门店列表</div>
+                        </div>
+                    </div>
+                    <div class="card-body">门店基础信息、营业状态、区域划分、业绩统计</div>
+                    <div class="card-footer">
+                        <span class="card-tag blue">B-05</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/users.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon green">👥</div>
+                        <div>
+                            <div class="card-title">账号权限</div>
+                            <div class="card-subtitle">用户管理</div>
+                        </div>
+                    </div>
+                    <div class="card-body">用户管理、角色分配、权限设置、操作日志</div>
+                    <div class="card-footer">
+                        <span class="card-tag green">B-06</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/devices.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon orange">💻</div>
+                        <div>
+                            <div class="card-title">设备授权</div>
+                            <div class="card-subtitle">设备管理</div>
+                        </div>
+                    </div>
+                    <div class="card-body">设备注册、吊销、在线监控、远程升级、授权管理</div>
+                    <div class="card-footer">
+                        <span class="card-tag orange">B-07</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/finance.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon red">💰</div>
+                        <div>
+                            <div class="card-title">财务结算</div>
+                            <div class="card-subtitle">佣金对账</div>
+                        </div>
+                    </div>
+                    <div class="card-body">佣金计算、对账管理、报表导出、结算记录</div>
+                    <div class="card-footer">
+                        <span class="card-tag red">B-08</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="admin-system/analytics.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon purple">📈</div>
+                        <div>
+                            <div class="card-title">经营分析</div>
+                            <div class="card-subtitle">数据分析</div>
+                        </div>
+                    </div>
+                    <div class="card-body">多维度分析、门店对比、票种结构分析、趋势预测</div>
+                    <div class="card-footer">
+                        <span class="card-tag purple">B-09</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- 移动端手机界面 -->
+        <div class="section">
+            <h2 class="section-title">
+                <span class="icon">📲</span>
+                移动端手机界面（直播手机）
+            </h2>
+            <p class="section-desc">面向主播的直播手机界面，深色模式适配直播场景，简洁轻量</p>
+            <div class="card-grid">
+                <a href="mobile/live-control.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon red">📹</div>
+                        <div>
+                            <div class="card-title">直播控制台</div>
+                            <div class="card-subtitle">直播控制</div>
+                        </div>
+                    </div>
+                    <div class="card-body">直播开始/结束、推荐票种绑定、观众互动、快捷操作</div>
+                    <div class="card-footer">
+                        <span class="card-tag red">M-01</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+                <a href="mobile/live-stats.html" class="card">
+                    <div class="card-header">
+                        <div class="card-icon blue">📊</div>
+                        <div>
+                            <div class="card-title">直播数据页</div>
+                            <div class="card-subtitle">数据统计</div>
+                        </div>
+                    </div>
+                    <div class="card-body">直播时长、观看人数、关联订单、票种销售占比</div>
+                    <div class="card-footer">
+                        <span class="card-tag blue">M-02</span>
+                        <span class="card-link">查看原型 →</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>福建省新场景售彩系统 · 页面原型设计</p>
+        <p style="margin-top: 4px;">基于需求文档、PRD、用户故事和系统设计方案设计</p>
+    </div>
+</body>
+</html>

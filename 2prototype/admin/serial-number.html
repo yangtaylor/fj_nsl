@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>序列号管理 - 体彩管理后台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .admin-filter-select {
+      height: 36px;
+      padding: 0 28px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+      background: #FFF;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .admin-table-wrap {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-tag.in-stock { background: #F6FFED; color: #52C41A; }
+    .status-tag.sold { background: #E6F7FF; color: #1890FF; }
+    .status-tag.partial { background: #FFF7E6; color: #FA8C16; }
+    .admin-btn-link {
+      background: none;
+      border: none;
+      color: var(--admin-primary);
+      padding: 4px 8px;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .admin-btn-link:hover {
+      color: var(--admin-primary-light);
+    }
+    .detail-expand {
+      background: #FAFCFF;
+      border: 1px solid #E6F0FF;
+      border-radius: var(--radius-sm);
+      margin: 12px 16px 16px;
+      padding: 16px 20px;
+    }
+    .detail-expand-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 12px;
+    }
+    .serial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 8px;
+    }
+    .serial-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      background: #FFF;
+      border: 1px solid #F0F0F0;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--admin-text);
+    }
+    .serial-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .serial-dot.available { background: #52C41A; }
+    .serial-dot.sold { background: #D9D9D9; }
+    .serial-dot.reserved { background: #FAAD14; }
+    .admin-alert {
+      padding: 10px 16px;
+      background: #FFF7E6;
+      border: 1px solid #FFE58F;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: #D48806;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .admin-alert-icon {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item active" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">商品管理 / <span>序列号管理</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-toolbar">
+          <div class="admin-toolbar-left">
+            <input type="text" class="admin-search-input" placeholder="搜索批次号" style="width:200px">
+            <select class="admin-filter-select">
+              <option value="">全部票种</option>
+              <option value="zhongguohong">中国红</option>
+              <option value="haoyunshibei">好运十倍</option>
+              <option value="jinguangshanshan">金光闪闪</option>
+              <option value="xingyun5">幸运5</option>
+            </select>
+            <button class="admin-btn admin-btn-primary">查询</button>
+          </div>
+          <div class="admin-toolbar-right">
+            <button class="admin-btn admin-btn-primary">+ 导入批次</button>
+          </div>
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>批次号</th>
+                <th>票种</th>
+                <th>起始序列号</th>
+                <th>结束序列号</th>
+                <th>数量</th>
+                <th>入库时间</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>B20260501001</td>
+                <td>中国红</td>
+                <td>ZGH20260501001</td>
+                <td>ZGH20260501500</td>
+                <td>500</td>
+                <td>2026-05-01 09:00:00</td>
+                <td><span class="status-tag partial">部分售</span></td>
+                <td><button class="admin-btn-link">查看详情</button></td>
+              </tr>
+              <tr>
+                <td colspan="8" style="padding:0">
+                  <div class="detail-expand">
+                    <div class="detail-expand-title">批次 B20260501001 序列号明细</div>
+                    <div class="serial-grid">
+                      <div class="serial-item">
+                        <span class="serial-dot available"></span>
+                        ZGH20260501001
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot sold"></span>
+                        ZGH20260501002
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot sold"></span>
+                        ZGH20260501003
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot available"></span>
+                        ZGH20260501004
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot reserved"></span>
+                        ZGH20260501005
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot available"></span>
+                        ZGH20260501006
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot sold"></span>
+                        ZGH20260501007
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot available"></span>
+                        ZGH20260501008
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot available"></span>
+                        ZGH20260501009
+                      </div>
+                      <div class="serial-item">
+                        <span class="serial-dot sold"></span>
+                        ZGH20260501010
+                      </div>
+                    </div>
+                    <div style="margin-top:12px;font-size:13px;color:var(--admin-text-hint)">
+                      <span style="margin-right:16px"><span class="serial-dot available" style="display:inline-block;vertical-align:middle;margin-right:4px"></span>在库</span>
+                      <span style="margin-right:16px"><span class="serial-dot sold" style="display:inline-block;vertical-align:middle;margin-right:4px"></span>已售</span>
+                      <span><span class="serial-dot reserved" style="display:inline-block;vertical-align:middle;margin-right:4px"></span>预留</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td>B20260501002</td>
+                <td>好运十倍</td>
+                <td>HYSB20260501001</td>
+                <td>HYSB20260501300</td>
+                <td>300</td>
+                <td>2026-05-01 09:15:00</td>
+                <td><span class="status-tag in-stock">在库</span></td>
+                <td><button class="admin-btn-link">查看详情</button></td>
+              </tr>
+              <tr>
+                <td>B20260415003</td>
+                <td>金光闪闪</td>
+                <td>JGSS20260415001</td>
+                <td>JGSS20260415200</td>
+                <td>200</td>
+                <td>2026-04-15 14:30:00</td>
+                <td><span class="status-tag sold">已售</span></td>
+                <td><button class="admin-btn-link">查看详情</button></td>
+              </tr>
+              <tr>
+                <td>B20260420004</td>
+                <td>幸运5</td>
+                <td>XY5W20260420001</td>
+                <td>XY5W20260420600</td>
+                <td>600</td>
+                <td>2026-04-20 10:00:00</td>
+                <td><span class="status-tag partial">部分售</span></td>
+                <td><button class="admin-btn-link">查看详情</button></td>
+              </tr>
+              <tr>
+                <td>B20260525005</td>
+                <td>中国红</td>
+                <td>ZGH20260525001</td>
+                <td>ZGH20260525400</td>
+                <td>400</td>
+                <td>2026-05-25 08:45:00</td>
+                <td><span class="status-tag in-stock">在库</span></td>
+                <td><button class="admin-btn-link">查看详情</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="admin-alert">
+          <span class="admin-alert-icon">⚠️</span>
+          重复序列号录入时将提示「序列号已存在」
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

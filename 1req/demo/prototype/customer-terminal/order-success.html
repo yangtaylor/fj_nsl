@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>体彩服务角 - 订单完成</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .pad-container {
+      width: 1024px;
+      height: 768px;
+      background: #f5f5f5;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .header-title {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    /* Success Content */
+    .success-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 140px;
+      height: 140px;
+      background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 72px;
+      color: white;
+      margin-bottom: 32px;
+      animation: scaleIn 0.6s ease;
+      box-shadow: 0 8px 32px rgba(82, 196, 26, 0.3);
+    }
+
+    @keyframes scaleIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .success-title {
+      font-size: 32px;
+      font-weight: 700;
+      color: #52c41a;
+      margin-bottom: 12px;
+    }
+
+    .success-subtitle {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 40px;
+    }
+
+    /* Order Info Card */
+    .order-info-card {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 480px;
+      margin-bottom: 32px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 15px;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      color: #999;
+    }
+
+    .info-value {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .info-value.highlight {
+      color: #E60012;
+      font-weight: 700;
+    }
+
+    /* Status Steps */
+    .status-steps {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .step-icon.completed {
+      background: #52c41a;
+      color: white;
+    }
+
+    .step-icon.pending {
+      background: #f0f0f0;
+      color: #999;
+    }
+
+    .step-label {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .step-line {
+      width: 60px;
+      height: 2px;
+      background: #52c41a;
+    }
+
+    .step-line.pending {
+      background: #e8e8e8;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+    }
+
+    .btn-primary {
+      padding: 16px 40px;
+      background: linear-gradient(135deg, #E60012 0%, #ff4757 100%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(230, 0, 18, 0.3);
+    }
+
+    .btn-outline {
+      padding: 16px 40px;
+      background: white;
+      color: #666;
+      border: 2px solid #e8e8e8;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-outline:hover {
+      border-color: #E60012;
+      color: #E60012;
+    }
+
+    /* Waiting Notice */
+    .waiting-notice {
+      margin-top: 24px;
+      padding: 16px 24px;
+      background: rgba(230, 0, 18, 0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(230, 0, 18, 0.1);
+    }
+
+    .waiting-text {
+      font-size: 15px;
+      color: #E60012;
+      font-weight: 500;
+    }
+
+    .waiting-hint {
+      font-size: 13px;
+      color: #999;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="pad-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-title">✅ 支付成功</div>
+    </header>
+
+    <!-- Success Content -->
+    <div class="success-content">
+      <div class="success-icon">✓</div>
+      <div class="success-title">支付成功！</div>
+      <div class="success-subtitle">您的订单已支付成功，请等待出票</div>
+
+      <!-- Status Steps -->
+      <div class="status-steps">
+        <div class="step">
+          <div class="step-icon completed">✓</div>
+          <div class="step-label">下单</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-icon completed">✓</div>
+          <div class="step-label">支付</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step">
+          <div class="step-icon pending">📤</div>
+          <div class="step-label">出票</div>
+        </div>
+        <div class="step-line pending"></div>
+        <div class="step">
+          <div class="step-icon pending">🎉</div>
+          <div class="step-label">完成</div>
+        </div>
+      </div>
+
+      <!-- Order Info -->
+      <div class="order-info-card">
+        <div class="info-row">
+          <span class="info-label">订单编号</span>
+          <span class="info-value">ORD202605290001</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">支付金额</span>
+          <span class="info-value highlight">¥90.00</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">支付方式</span>
+          <span class="info-value">微信支付</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">支付时间</span>
+          <span class="info-value">2026-05-29 14:35:22</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">商品数量</span>
+          <span class="info-value">4 张</span>
+        </div>
+      </div>
+
+      <!-- Waiting Notice -->
+      <div class="waiting-notice">
+        <div class="waiting-text">⏳ 正在等待销售员出票...</div>
+        <div class="waiting-hint">出票完成后，请凭小票到收银台领取您的彩票</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-buttons">
+        <a href="order-success.html" class="btn-outline" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">查看订单详情</a>
+        <a href="index.html" class="btn-primary" style="text-decoration:none;display:inline-flex;align-items:center;justify-content:center;">继续购彩 →</a>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </a>
+      <a href="live.html" class="nav-item">
+        <span class="nav-icon">📺</span>
+        <span class="nav-label">直播</span>
+      </a>
+      <a href="cart.html" class="nav-item">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">购物车</span>
+      </a>
+      <a href="order-success.html" class="nav-item active">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">订单</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

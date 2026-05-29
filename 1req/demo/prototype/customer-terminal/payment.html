@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>体彩服务角 - 支付</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .pad-container {
+      width: 1024px;
+      height: 768px;
+      background: #f5f5f5;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #E60012 0%, #ff4757 100%);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #E60012;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .cancel-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* Payment Content */
+    .payment-content {
+      flex: 1;
+      display: flex;
+      padding: 24px;
+      gap: 24px;
+    }
+
+    /* Order Summary */
+    .order-summary {
+      width: 320px;
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+    }
+
+    .summary-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .order-items {
+      margin-bottom: 20px;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+
+    .order-item-name {
+      color: #666;
+    }
+
+    .order-item-price {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 2px solid #333;
+      margin-top: 16px;
+    }
+
+    .total-label {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .total-amount {
+      font-size: 28px;
+      font-weight: 700;
+      color: #E60012;
+    }
+
+    .order-id {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #666;
+      text-align: center;
+    }
+
+    /* Payment Methods */
+    .payment-methods {
+      flex: 1;
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .methods-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .method-options {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .method-option {
+      flex: 1;
+      padding: 24px;
+      border: 2px solid #e8e8e8;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .method-option:hover {
+      border-color: #E60012;
+    }
+
+    .method-option.active {
+      border-color: #E60012;
+      background: rgba(230, 0, 18, 0.05);
+    }
+
+    .method-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .method-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .method-desc {
+      font-size: 13px;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    /* QR Code Area */
+    .qr-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 32px;
+    }
+
+    .qr-code {
+      width: 200px;
+      height: 200px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 80px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .qr-text {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .qr-hint {
+      font-size: 14px;
+      color: #999;
+    }
+
+    /* Countdown */
+    .countdown {
+      margin-top: 24px;
+      text-align: center;
+    }
+
+    .countdown-text {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 8px;
+    }
+
+    .countdown-time {
+      font-size: 32px;
+      font-weight: 700;
+      color: #E60012;
+    }
+
+    /* Payment Success */
+    .payment-success {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 120px;
+      height: 120px;
+      background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: white;
+      margin-bottom: 24px;
+      animation: scaleIn 0.5s ease;
+    }
+
+    @keyframes scaleIn {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .success-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #52c41a;
+      margin-bottom: 12px;
+    }
+
+    .success-text {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 32px;
+    }
+
+    .success-info {
+      background: #f5f5f5;
+      padding: 20px 40px;
+      border-radius: 12px;
+      margin-bottom: 24px;
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .info-label {
+      color: #999;
+    }
+
+    .info-value {
+      color: #333;
+      font-weight: 500;
+    }
+
+    .waiting-text {
+      font-size: 16px;
+      color: #E60012;
+      font-weight: 600;
+    }
+
+    .done-btn {
+      margin-top: 24px;
+      padding: 16px 48px;
+      background: linear-gradient(135deg, #E60012 0%, #ff4757 100%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="pad-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">体彩</div>
+        <div class="logo-text">扫码支付</div>
+      </div>
+      <a href="cart.html" class="cancel-btn" style="text-decoration:none;display:inline-flex;align-items:center;">返回购物车</a>
+    </header>
+
+    <!-- Payment Content -->
+    <div class="payment-content">
+      <!-- Order Summary -->
+      <div class="order-summary">
+        <div class="summary-title">📋 订单信息</div>
+        <div class="order-items">
+          <div class="order-item">
+            <span class="order-item-name">好运十倍 x 2</span>
+            <span class="order-item-price">¥20.00</span>
+          </div>
+          <div class="order-item">
+            <span class="order-item-name">点石成金 x 1</span>
+            <span class="order-item-price">¥20.00</span>
+          </div>
+          <div class="order-item">
+            <span class="order-item-name">绿翡翠 x 1</span>
+            <span class="order-item-price">¥50.00</span>
+          </div>
+        </div>
+        <div class="order-total">
+          <span class="total-label">应付金额</span>
+          <span class="total-amount">¥90.00</span>
+        </div>
+        <div class="order-id">
+          订单号：ORD202605290001
+        </div>
+      </div>
+
+      <!-- Payment Methods -->
+      <div class="payment-methods">
+        <div class="methods-title">💳 选择支付方式</div>
+        <div class="method-options">
+          <div class="method-option active">
+            <div class="method-icon">💚</div>
+            <div class="method-name">微信支付</div>
+            <div class="method-desc">使用微信扫码</div>
+          </div>
+          <div class="method-option">
+            <div class="method-icon">💙</div>
+            <div class="method-name">支付宝</div>
+            <div class="method-desc">使用支付宝扫码</div>
+          </div>
+        </div>
+
+        <div class="qr-area">
+          <div class="qr-code">📱</div>
+          <div class="qr-text">请使用微信扫一扫</div>
+          <div class="qr-hint">扫描二维码完成支付</div>
+          
+          <div class="countdown">
+            <div class="countdown-text">支付剩余时间</div>
+            <div class="countdown-time">04:59</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </a>
+      <a href="live.html" class="nav-item">
+        <span class="nav-icon">📺</span>
+        <span class="nav-label">直播</span>
+      </a>
+      <a href="cart.html" class="nav-item">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">购物车</span>
+      </a>
+      <a href="order-success.html" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">订单</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

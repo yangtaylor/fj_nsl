@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>确认订单 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .order-section {
+      background: white;
+      padding: 20px 24px;
+      margin-bottom: 12px;
+    }
+    .order-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+    }
+    .order-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 10px 0;
+    }
+    .order-item + .order-item {
+      border-top: 1px solid var(--color-border-light);
+    }
+    .order-item-color {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .order-item-color.c-red { background: linear-gradient(135deg, #FF6B6B, #C4161C); }
+    .order-item-color.c-blue { background: linear-gradient(135deg, #4FACFE, #1A5BC4); }
+    .order-item-color.c-gold { background: linear-gradient(135deg, #FFE44D, #D4A017); color: #5C4300; }
+    .order-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .order-item-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .order-item-spec {
+      font-size: 13px;
+      color: var(--color-text-hint);
+      margin-top: 2px;
+    }
+    .order-item-right {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .order-item-price {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .order-item-qty {
+      font-size: 13px;
+      color: var(--color-text-hint);
+      margin-top: 2px;
+    }
+    .pay-methods {
+      display: flex;
+      gap: 16px;
+    }
+    .pay-method {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .pay-method.selected {
+      border-color: var(--color-primary);
+      background: #FFF8F8;
+    }
+    .pay-method-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .pay-method-icon.wechat { background: #E8F8E8; }
+    .pay-method-icon.alipay { background: #E6F4FF; }
+    .pay-method-name {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .pay-method-check {
+      margin-left: auto;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .pay-method.selected .pay-method-check {
+      border-color: var(--color-primary);
+      background: var(--color-primary);
+      color: white;
+      font-size: 13px;
+    }
+    .order-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+    .order-info-label {
+      color: var(--color-text-hint);
+    }
+    .order-info-value {
+      color: var(--color-text-secondary);
+    }
+    .order-amount-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      padding: 8px 0;
+    }
+    .order-amount-label {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+    }
+    .order-amount-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .order-amount-value::before {
+      content: '¥';
+      font-size: 14px;
+    }
+    .order-bottom-bar {
+      height: 72px;
+      background: white;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      border-top: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .order-bottom-total {
+      flex: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .order-bottom-label {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+    }
+    .order-bottom-amount {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .order-bottom-amount::before {
+      content: '¥';
+      font-size: 16px;
+    }
+    .order-bottom-bar .btn {
+      width: 180px;
+      height: 48px;
+      font-size: 17px;
+      border-radius: 24px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>14:30</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:white;"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:white;"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4H11V9h2v5z"/></svg>
+      </div>
+    </div>
+
+    <div class="customer-header">
+      <a href="cart.html" class="customer-header-back">‹</a>
+      <span class="customer-header-title">确认订单</span>
+    </div>
+
+    <div class="customer-body">
+      <div class="order-section">
+        <div class="order-section-title">订单商品</div>
+        <div class="order-item">
+          <div class="order-item-color c-red">中国红</div>
+          <div class="order-item-info">
+            <div class="order-item-name">中国红</div>
+            <div class="order-item-spec">即开型 · 面值10元</div>
+          </div>
+          <div class="order-item-right">
+            <div class="order-item-price">¥20.00</div>
+            <div class="order-item-qty">×2</div>
+          </div>
+        </div>
+        <div class="order-item">
+          <div class="order-item-color c-blue">好运</div>
+          <div class="order-item-info">
+            <div class="order-item-name">好运十倍</div>
+            <div class="order-item-spec">即开型 · 面值20元</div>
+          </div>
+          <div class="order-item-right">
+            <div class="order-item-price">¥20.00</div>
+            <div class="order-item-qty">×1</div>
+          </div>
+        </div>
+        <div class="order-item">
+          <div class="order-item-color c-gold">金光</div>
+          <div class="order-item-info">
+            <div class="order-item-name">金光灿烂</div>
+            <div class="order-item-spec">即开型 · 面值30元</div>
+          </div>
+          <div class="order-item-right">
+            <div class="order-item-price">¥30.00</div>
+            <div class="order-item-qty">×1</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section">
+        <div class="order-section-title">支付方式</div>
+        <div class="pay-methods">
+          <div class="pay-method selected">
+            <div class="pay-method-icon wechat">💬</div>
+            <span class="pay-method-name">微信支付</span>
+            <div class="pay-method-check">✓</div>
+          </div>
+          <div class="pay-method">
+            <div class="pay-method-icon alipay">🔷</div>
+            <span class="pay-method-name">支付宝</span>
+            <div class="pay-method-check"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-section">
+        <div class="order-section-title">订单信息</div>
+        <div class="order-info-row">
+          <span class="order-info-label">订单编号</span>
+          <span class="order-info-value">FJ2026052914300001</span>
+        </div>
+        <div class="order-info-row">
+          <span class="order-info-label">下单时间</span>
+          <span class="order-info-value">2026-05-29 14:30:25</span>
+        </div>
+      </div>
+
+      <div class="order-section">
+        <div class="order-amount-row">
+          <span class="order-amount-label">商品合计</span>
+          <span class="order-amount-value">70</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="order-bottom-bar">
+      <div class="order-bottom-total">
+        <span class="order-bottom-label">应付：</span>
+        <span class="order-bottom-amount">70</span>
+      </div>
+      <a href="payment.html" class="btn btn-primary">提交订单</a>
+    </div>
+  </div>
+</body>
+</html>

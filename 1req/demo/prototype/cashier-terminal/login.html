@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>收银台终端 - 登录</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .cashier-container {
+      width: 1280px;
+      height: 800px;
+      background: #f5f5f5;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0066CC 0%, #1890ff 100%);
+      color: white;
+      padding: 20px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 44px;
+      height: 44px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #0066CC;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-size: 22px;
+      font-weight: 600;
+    }
+
+    .device-info {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    /* Login Content */
+    .login-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+
+    .login-box {
+      background: white;
+      border-radius: 20px;
+      padding: 48px;
+      width: 100%;
+      max-width: 480px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .login-title {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .login-title h2 {
+      font-size: 28px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .login-title p {
+      font-size: 14px;
+      color: #999;
+    }
+
+    /* Device Status */
+    .device-status {
+      background: #f6ffed;
+      border: 1px solid #b7eb8f;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-icon {
+      width: 40px;
+      height: 40px;
+      background: #52c41a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+    }
+
+    .status-text {
+      flex: 1;
+    }
+
+    .status-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #52c41a;
+      margin-bottom: 2px;
+    }
+
+    .status-desc {
+      font-size: 13px;
+      color: #666;
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e8e8e8;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: #0066CC;
+    }
+
+    .login-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #0066CC 0%, #1890ff 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 8px;
+    }
+
+    .login-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 102, 204, 0.3);
+    }
+
+    /* Footer Info */
+    .login-footer {
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid #f0f0f0;
+      text-align: center;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 8px;
+    }
+
+    .footer-contact {
+      font-size: 14px;
+      color: #0066CC;
+      font-weight: 500;
+    }
+
+    /* Version Info */
+    .version-info {
+      position: absolute;
+      bottom: 24px;
+      right: 32px;
+      font-size: 12px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">收银</div>
+        <div class="logo-text">体彩收银台终端</div>
+      </div>
+      <div class="device-info">
+        设备编号：350403600101 | 门店：3504036001 - 福州鼓楼店
+      </div>
+    </header>
+
+    <!-- Login Content -->
+    <div class="login-content">
+      <div class="login-box">
+        <div class="login-title">
+          <h2>👋 欢迎登录</h2>
+          <p>请使用您的账号密码登录系统</p>
+        </div>
+
+        <!-- Device Status -->
+        <div class="device-status">
+          <div class="status-icon">✓</div>
+          <div class="status-text">
+            <div class="status-title">设备认证通过</div>
+            <div class="status-desc">设备证书有效，可以正常登录</div>
+          </div>
+        </div>
+
+        <!-- Login Form -->
+        <form>
+          <div class="form-group">
+            <label class="form-label">账号</label>
+            <input type="text" class="form-input" placeholder="请输入账号">
+          </div>
+          <div class="form-group">
+            <label class="form-label">密码</label>
+            <input type="password" class="form-input" placeholder="请输入密码">
+          </div>
+          <button type="button" class="login-btn" onclick="location.href='orders.html'">登 录</button>
+        </form>
+
+        <!-- Footer -->
+        <div class="login-footer">
+          <div class="footer-text">如遇登录问题，请联系技术支持</div>
+          <div class="footer-contact">📞 400-888-8888</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

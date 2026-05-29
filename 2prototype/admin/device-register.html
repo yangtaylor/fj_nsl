@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>注册设备 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .register-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .register-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .register-section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    .register-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .register-section-body {
+      padding: 24px 20px;
+    }
+    .cert-info-card {
+      margin-top: 24px;
+      padding: 16px;
+      background: #F0F5FF;
+      border: 1px solid #D6E4FF;
+      border-radius: var(--radius-sm);
+    }
+    .cert-info-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--admin-primary);
+      margin-bottom: 12px;
+    }
+    .cert-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+    .cert-info-label {
+      color: var(--admin-text-hint);
+    }
+    .cert-info-value {
+      color: var(--admin-text);
+      font-weight: 500;
+    }
+    .revoke-search {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .revoke-result {
+      padding: 16px;
+      background: #FAFAFA;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--admin-border);
+    }
+    .revoke-result-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 12px;
+    }
+    .revoke-result-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+    .revoke-result-label {
+      color: var(--admin-text-hint);
+    }
+    .revoke-result-value {
+      color: var(--admin-text);
+    }
+    .revoke-warning {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #FFF1F0;
+      border: 1px solid #FFCCC7;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: #CF1322;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+    .revoke-actions {
+      margin-top: 16px;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .admin-btn-danger-solid {
+      background: #FF4D4F;
+      color: white;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+    }
+    .admin-btn-danger-solid:hover {
+      background: #FF7875;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item active" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">系统管理 / 设备授权 / <span>注册设备</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="register-layout">
+          <div class="register-section">
+            <div class="register-section-header">
+              <div class="register-section-title">设备注册</div>
+            </div>
+            <div class="register-section-body">
+              <div class="admin-form">
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>MAC地址</label>
+                  <input type="text" class="admin-form-input" placeholder="例如: 00:1A:2B:3C:4D:07">
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>硬件序列号</label>
+                  <input type="text" class="admin-form-input" placeholder="例如: SN-PT-A007">
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>设备类型</label>
+                  <select class="admin-form-select">
+                    <option value="">请选择设备类型</option>
+                    <option>点单终端</option>
+                    <option>收银终端</option>
+                  </select>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>所属门店</label>
+                  <select class="admin-form-select">
+                    <option value="">请选择门店</option>
+                    <option>福州万达广场店</option>
+                    <option>福州宝龙城市广场店</option>
+                    <option>福州东百中心店</option>
+                    <option>厦门中山路店</option>
+                  </select>
+                </div>
+                <div class="admin-form-item">
+                  <button class="admin-btn admin-btn-primary" style="padding:10px 24px;">注册并颁发证书</button>
+                </div>
+              </div>
+
+              <div class="cert-info-card">
+                <div class="cert-info-title">📜 证书信息</div>
+                <div class="cert-info-row">
+                  <span class="cert-info-label">证书标准</span>
+                  <span class="cert-info-value">X.509 v3</span>
+                </div>
+                <div class="cert-info-row">
+                  <span class="cert-info-label">密钥算法</span>
+                  <span class="cert-info-value">RSA 2048</span>
+                </div>
+                <div class="cert-info-row">
+                  <span class="cert-info-label">有效期</span>
+                  <span class="cert-info-value">1年</span>
+                </div>
+                <div class="cert-info-row">
+                  <span class="cert-info-label">续期策略</span>
+                  <span class="cert-info-value">到期前30天自动续期</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="register-section">
+            <div class="register-section-header">
+              <div class="register-section-title">设备吊销</div>
+            </div>
+            <div class="register-section-body">
+              <div class="revoke-search">
+                <input type="text" class="admin-search-input" placeholder="输入设备ID或序列号" style="flex:1;">
+                <button class="admin-btn admin-btn-primary">查询</button>
+              </div>
+
+              <div class="revoke-result">
+                <div class="revoke-result-title">查询结果</div>
+                <div class="revoke-result-row">
+                  <span class="revoke-result-label">设备ID</span>
+                  <span class="revoke-result-value">DEV-2026-005</span>
+                </div>
+                <div class="revoke-result-row">
+                  <span class="revoke-result-label">设备名称</span>
+                  <span class="revoke-result-value">点单终端A03</span>
+                </div>
+                <div class="revoke-result-row">
+                  <span class="revoke-result-label">MAC地址</span>
+                  <span class="revoke-result-value">00:1A:2B:3C:4D:05</span>
+                </div>
+                <div class="revoke-result-row">
+                  <span class="revoke-result-label">所属门店</span>
+                  <span class="revoke-result-value">福州东百中心店</span>
+                </div>
+                <div class="revoke-result-row">
+                  <span class="revoke-result-label">证书状态</span>
+                  <span class="revoke-result-value" style="color:#52C41A;">有效</span>
+                </div>
+                <div class="revoke-result-row">
+                  <span class="revoke-result-label">证书到期</span>
+                  <span class="revoke-result-value">2027-03-15</span>
+                </div>
+              </div>
+
+              <div class="revoke-warning">
+                <span>⚠️</span>
+                <span>吊销后设备将无法接入系统，CRL将在1小时内更新</span>
+              </div>
+
+              <div class="revoke-actions">
+                <button class="admin-btn-danger-solid">吊销证书</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

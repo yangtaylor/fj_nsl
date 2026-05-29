@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>订单处理 - 体彩收银台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .order-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 16px;
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 4px;
+      box-shadow: var(--shadow-card);
+    }
+    .order-tab {
+      flex: 1;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s;
+      font-weight: 500;
+      gap: 6px;
+    }
+    .order-tab:hover {
+      color: var(--color-primary);
+    }
+    .order-tab.active {
+      background: var(--color-primary);
+      color: white;
+    }
+    .order-tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .order-tab.active .order-tab-count {
+      background: rgba(255,255,255,0.25);
+      color: white;
+    }
+    .order-tab:not(.active) .order-tab-count {
+      background: #FFF1F0;
+      color: var(--color-primary);
+    }
+    .order-list {
+      display: flex;
+      gap: 20px;
+    }
+    .order-list-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .order-list-detail {
+      width: 360px;
+      flex-shrink: 0;
+    }
+    .order-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: var(--shadow-card);
+      border-left: 4px solid var(--admin-primary);
+      transition: box-shadow 0.2s;
+    }
+    .order-card:hover {
+      box-shadow: var(--shadow-float);
+    }
+    .order-card.urgent {
+      border-left-color: var(--color-error);
+      animation: urgentPulse 2s infinite;
+    }
+    @keyframes urgentPulse {
+      0%, 100% { box-shadow: var(--shadow-card); }
+      50% { box-shadow: 0 0 0 3px rgba(255,77,79,0.15), var(--shadow-card); }
+    }
+    .order-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .order-card-id {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .order-card-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .order-card-time {
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .order-card-items {
+      margin-bottom: 12px;
+    }
+    .order-card-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      font-size: 14px;
+    }
+    .order-card-item-name {
+      color: var(--color-text-secondary);
+    }
+    .order-card-item-qty {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .order-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--color-border-light);
+    }
+    .order-card-amount {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .order-card-amount::before {
+      content: '¥';
+      font-size: 13px;
+    }
+    .order-card-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .order-detail-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+    .order-detail-header {
+      padding: 16px 20px;
+      background: #FAFAFA;
+      border-bottom: 1px solid var(--color-border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .order-detail-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .order-detail-body {
+      padding: 20px;
+    }
+    .order-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+    }
+    .order-detail-row:not(:last-child) {
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .order-detail-label {
+      color: var(--color-text-hint);
+    }
+    .order-detail-value {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .order-detail-serials {
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #F5F5F5;
+      border-radius: var(--radius-md);
+    }
+    .order-detail-serial-title {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .order-detail-serial-item {
+      font-size: 13px;
+      color: var(--color-text-primary);
+      padding: 4px 0;
+      font-family: 'Courier New', monospace;
+    }
+    .order-sound-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      background: #FFF7E6;
+      border-radius: 12px;
+      font-size: 13px;
+      color: #D48806;
+    }
+    .cashier-topbar-time {
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-app">
+    <div class="cashier-sidebar">
+      <div class="cashier-sidebar-logo">
+        <span class="cashier-sidebar-logo-text">体彩<em>收银台</em></span>
+      </div>
+      <div class="cashier-sidebar-menu">
+        <a href="main-workspace.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="order-process.html" class="cashier-sidebar-item active">
+          <span class="cashier-sidebar-item-icon">📋</span>
+          <span>订单处理</span>
+        </a>
+        <a href="proxy-order.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">🛒</span>
+          <span>代客下单</span>
+        </a>
+        <a href="stock-in.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📦</span>
+          <span>库存管理</span>
+        </a>
+        <div class="cashier-sidebar-sub">
+          <a href="stock-in.html">入库签收</a>
+          <a href="inventory-check.html">库存盘点</a>
+          <a href="inventory-query.html">库存查询</a>
+          <a href="inventory-alert.html">库存预警</a>
+        </div>
+        <a href="sales-dashboard.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📈</span>
+          <span>销售看板</span>
+        </a>
+      </div>
+      <div class="cashier-sidebar-user">
+        <div class="cashier-sidebar-avatar">张</div>
+        <span>张销售</span>
+        <a href="login.html" class="cashier-sidebar-logout">退出登录</a>
+      </div>
+    </div>
+
+    <div class="cashier-main">
+      <div class="cashier-topbar">
+        <span class="cashier-topbar-title">订单处理</span>
+        <div class="cashier-topbar-actions">
+          <span class="order-sound-indicator">🔊 新订单提醒</span>
+          <span class="cashier-topbar-time">2026-05-29 14:30</span>
+        </div>
+      </div>
+
+      <div class="cashier-content">
+        <div class="cashier-alert-bar">
+          🔔 您有5笔待处理订单，请及时处理
+        </div>
+
+        <div class="order-tabs">
+          <div class="order-tab">全部</div>
+          <div class="order-tab active">待出票<span class="order-tab-count">5</span></div>
+          <div class="order-tab">已出票</div>
+          <div class="order-tab">已完成</div>
+        </div>
+
+        <div class="order-list">
+          <div class="order-list-main">
+            <div class="order-card urgent">
+              <div class="order-card-header">
+                <span class="order-card-id">ORD20260529021</span>
+                <div class="order-card-right">
+                  <span class="order-card-time">14:28</span>
+                  <span class="tag tag-orange">待出票</span>
+                </div>
+              </div>
+              <div class="order-card-items">
+                <div class="order-card-item"><span class="order-card-item-name">中国红</span><span class="order-card-item-qty">×2</span></div>
+                <div class="order-card-item"><span class="order-card-item-name">好运十倍</span><span class="order-card-item-qty">×1</span></div>
+              </div>
+              <div class="order-card-footer">
+                <span class="order-card-amount">40</span>
+                <div class="order-card-actions">
+                  <a href="ticket-confirm.html" class="cashier-btn cashier-btn-success" style="text-decoration:none;">已出票</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card urgent">
+              <div class="order-card-header">
+                <span class="order-card-id">ORD20260529020</span>
+                <div class="order-card-right">
+                  <span class="order-card-time">14:22</span>
+                  <span class="tag tag-orange">待出票</span>
+                </div>
+              </div>
+              <div class="order-card-items">
+                <div class="order-card-item"><span class="order-card-item-name">金光灿烂</span><span class="order-card-item-qty">×3</span></div>
+              </div>
+              <div class="order-card-footer">
+                <span class="order-card-amount">90</span>
+                <div class="order-card-actions">
+                  <a href="ticket-confirm.html" class="cashier-btn cashier-btn-success" style="text-decoration:none;">已出票</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card">
+              <div class="order-card-header">
+                <span class="order-card-id">ORD20260529018</span>
+                <div class="order-card-right">
+                  <span class="order-card-time">14:05</span>
+                  <span class="tag tag-orange">待出票</span>
+                </div>
+              </div>
+              <div class="order-card-items">
+                <div class="order-card-item"><span class="order-card-item-name">好运十倍</span><span class="order-card-item-qty">×2</span></div>
+                <div class="order-card-item"><span class="order-card-item-name">中国红</span><span class="order-card-item-qty">×1</span></div>
+              </div>
+              <div class="order-card-footer">
+                <span class="order-card-amount">50</span>
+                <div class="order-card-actions">
+                  <a href="ticket-confirm.html" class="cashier-btn cashier-btn-success" style="text-decoration:none;">已出票</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card">
+              <div class="order-card-header">
+                <span class="order-card-id">ORD20260529015</span>
+                <div class="order-card-right">
+                  <span class="order-card-time">13:50</span>
+                  <span class="tag tag-orange">待出票</span>
+                </div>
+              </div>
+              <div class="order-card-items">
+                <div class="order-card-item"><span class="order-card-item-name">中国红</span><span class="order-card-item-qty">×5</span></div>
+              </div>
+              <div class="order-card-footer">
+                <span class="order-card-amount">50</span>
+                <div class="order-card-actions">
+                  <a href="ticket-confirm.html" class="cashier-btn cashier-btn-success" style="text-decoration:none;">已出票</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="order-card">
+              <div class="order-card-header">
+                <span class="order-card-id">ORD20260529012</span>
+                <div class="order-card-right">
+                  <span class="order-card-time">13:20</span>
+                  <span class="tag tag-orange">待出票</span>
+                </div>
+              </div>
+              <div class="order-card-items">
+                <div class="order-card-item"><span class="order-card-item-name">金光灿烂</span><span class="order-card-item-qty">×1</span></div>
+                <div class="order-card-item"><span class="order-card-item-name">好运十倍</span><span class="order-card-item-qty">×1</span></div>
+              </div>
+              <div class="order-card-footer">
+                <span class="order-card-amount">50</span>
+                <div class="order-card-actions">
+                  <a href="ticket-confirm.html" class="cashier-btn cashier-btn-success" style="text-decoration:none;">已出票</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="order-list-detail">
+            <div class="order-detail-card">
+              <div class="order-detail-header">
+                <span class="order-detail-title">订单详情</span>
+                <span class="tag tag-orange">待出票</span>
+              </div>
+              <div class="order-detail-body">
+                <div class="order-detail-row">
+                  <span class="order-detail-label">订单编号</span>
+                  <span class="order-detail-value">ORD20260529021</span>
+                </div>
+                <div class="order-detail-row">
+                  <span class="order-detail-label">下单时间</span>
+                  <span class="order-detail-value">14:28:35</span>
+                </div>
+                <div class="order-detail-row">
+                  <span class="order-detail-label">顾客来源</span>
+                  <span class="order-detail-value">顾客点单</span>
+                </div>
+                <div class="order-detail-row">
+                  <span class="order-detail-label">支付方式</span>
+                  <span class="order-detail-value">微信支付</span>
+                </div>
+                <div class="order-detail-row">
+                  <span class="order-detail-label">支付状态</span>
+                  <span class="order-detail-value" style="color:var(--color-success);">✓ 已支付</span>
+                </div>
+                <div class="order-detail-row">
+                  <span class="order-detail-label">订单金额</span>
+                  <span class="order-detail-value" style="color:var(--color-primary);font-size:18px;">¥40.00</span>
+                </div>
+
+                <div class="order-detail-serials">
+                  <div class="order-detail-serial-title">分配票号</div>
+                  <div class="order-detail-serial-item">中国红 — SN20260529001001</div>
+                  <div class="order-detail-serial-item">中国红 — SN20260529001002</div>
+                  <div class="order-detail-serial-item">好运十倍 — SN20260529002001</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

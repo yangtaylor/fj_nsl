@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>票种浏览 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .ticket-card-image.img-red { background: linear-gradient(135deg, #FF6B6B, #C4161C); }
+    .ticket-card-image.img-blue { background: linear-gradient(135deg, #4FACFE, #1A5BC4); }
+    .ticket-card-image.img-green { background: linear-gradient(135deg, #43E97B, #1B8A3E); }
+    .ticket-card-image.img-purple { background: linear-gradient(135deg, #A18CD1, #6A1B9A); }
+    .ticket-card-image.img-orange { background: linear-gradient(135deg, #FDCB6E, #E17055); }
+    .ticket-card-image.img-gold { background: linear-gradient(135deg, #FFE44D, #D4A017); }
+    .ticket-card-image .ticket-deco {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+    }
+    .ticket-card-image .ticket-deco::before {
+      content: '';
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      top: -30px;
+      right: -20px;
+    }
+    .ticket-card-image .ticket-deco::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      bottom: -10px;
+      left: 10px;
+    }
+    .ticket-card-image .ticket-label {
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      letter-spacing: 4px;
+    }
+    .ticket-card-image .ticket-face {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      background: rgba(0,0,0,0.25);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 1;
+    }
+    .statusbar-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .statusbar-icons svg {
+      width: 14px;
+      height: 14px;
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>14:30</span>
+      <div class="statusbar-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4H11V9h2v5z"/></svg>
+      </div>
+    </div>
+
+    <div class="customer-header">
+      <span class="customer-header-title">顶呱刮票种</span>
+    </div>
+
+    <div class="customer-filter-tabs">
+      <span class="customer-filter-tab active">全部</span>
+      <span class="customer-filter-tab">10元</span>
+      <span class="customer-filter-tab">20元</span>
+      <span class="customer-filter-tab">30元</span>
+      <span class="customer-filter-tab">热销排行</span>
+    </div>
+
+    <div class="customer-body">
+      <div class="ticket-card-grid">
+        <a href="ticket-detail.html" class="ticket-card">
+          <div class="ticket-card-image img-red">
+            <div class="ticket-deco"></div>
+            <span class="ticket-label">中国红</span>
+            <span class="ticket-face">¥10</span>
+            <div class="ticket-card-live-badge">直播推荐</div>
+          </div>
+          <div class="ticket-card-info">
+            <div class="ticket-card-name">中国红</div>
+            <div class="ticket-card-desc">经典红色主题，刮出好运连连</div>
+            <div class="ticket-card-price">
+              <span class="ticket-card-value">10</span>
+              <span class="ticket-card-prob">中奖率 33.3%</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="ticket-detail.html" class="ticket-card">
+          <div class="ticket-card-image img-blue">
+            <div class="ticket-deco"></div>
+            <span class="ticket-label">好运十倍</span>
+            <span class="ticket-face">¥20</span>
+          </div>
+          <div class="ticket-card-info">
+            <div class="ticket-card-name">好运十倍</div>
+            <div class="ticket-card-desc">十倍惊喜，最高奖金100万</div>
+            <div class="ticket-card-price">
+              <span class="ticket-card-value">20</span>
+              <span class="ticket-card-prob">中奖率 28.6%</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="ticket-detail.html" class="ticket-card">
+          <div class="ticket-card-image img-green">
+            <div class="ticket-deco"></div>
+            <span class="ticket-label">顶呱刮</span>
+            <span class="ticket-face">¥10</span>
+            <div class="ticket-card-live-badge">直播推荐</div>
+          </div>
+          <div class="ticket-card-info">
+            <div class="ticket-card-name">顶呱刮</div>
+            <div class="ticket-card-desc">全民喜爱的经典即开票</div>
+            <div class="ticket-card-price">
+              <span class="ticket-card-value">10</span>
+              <span class="ticket-card-prob">中奖率 35.2%</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="ticket-detail.html" class="ticket-card">
+          <div class="ticket-card-image img-purple">
+            <div class="ticket-deco"></div>
+            <span class="ticket-label">绿茵传奇</span>
+            <span class="ticket-face">¥30</span>
+          </div>
+          <div class="ticket-card-info">
+            <div class="ticket-card-name">绿茵传奇</div>
+            <div class="ticket-card-desc">足球主题，感受赛场激情</div>
+            <div class="ticket-card-price">
+              <span class="ticket-card-value">30</span>
+              <span class="ticket-card-prob">中奖率 25.0%</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="ticket-detail.html" class="ticket-card">
+          <div class="ticket-card-image img-orange">
+            <div class="ticket-deco"></div>
+            <span class="ticket-label">甜蜜蜜</span>
+            <span class="ticket-face">¥10</span>
+          </div>
+          <div class="ticket-card-info">
+            <div class="ticket-card-name">甜蜜蜜</div>
+            <div class="ticket-card-desc">甜蜜滋味，刮出幸福时光</div>
+            <div class="ticket-card-price">
+              <span class="ticket-card-value">10</span>
+              <span class="ticket-card-prob">中奖率 30.1%</span>
+            </div>
+          </div>
+        </a>
+
+        <a href="ticket-detail.html" class="ticket-card">
+          <div class="ticket-card-image img-gold">
+            <div class="ticket-deco"></div>
+            <span class="ticket-label">金光灿烂</span>
+            <span class="ticket-face">¥30</span>
+            <div class="ticket-card-live-badge">直播推荐</div>
+          </div>
+          <div class="ticket-card-info">
+            <div class="ticket-card-name">金光灿烂</div>
+            <div class="ticket-card-desc">金色主题，尊贵体验</div>
+            <div class="ticket-card-price">
+              <span class="ticket-card-value">30</span>
+              <span class="ticket-card-prob">中奖率 26.8%</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="customer-tabbar">
+      <a href="ticket-browse.html" class="customer-tabbar-item active">
+        <span class="customer-tabbar-icon">🎫</span>
+        <span>票种</span>
+      </a>
+      <a href="cart.html" class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">🛒</span>
+        <span>购物车</span>
+      </a>
+      <a href="live-interaction.html" class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">📺</span>
+        <span>直播</span>
+      </a>
+      <div class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">👤</span>
+        <span>我的</span>
+      </div>
+    </div>
+
+    <a href="cart.html" class="cart-float-btn">
+      🛒
+      <span class="badge">4</span>
+    </a>
+  </div>
+</body>
+</html>

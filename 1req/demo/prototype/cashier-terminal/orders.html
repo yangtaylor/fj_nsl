@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>收银台终端 - 订单处理</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .cashier-container {
+      width: 1280px;
+      height: 800px;
+      background: #f5f5f5;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #0066CC 0%, #1890ff 100%);
+      color: white;
+      padding: 16px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #0066CC;
+      font-size: 16px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+    }
+
+    .logout-btn {
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 220px;
+      background: white;
+      border-right: 1px solid #e8e8e8;
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #666;
+      font-size: 15px;
+    }
+
+    .nav-item:hover {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .nav-item.active {
+      background: #e6f7ff;
+      color: #0066CC;
+      border-right: 3px solid #0066CC;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .page-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    /* Stats Cards */
+    .stats-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .stat-icon.blue {
+      background: #e6f7ff;
+    }
+
+    .stat-icon.orange {
+      background: #fff7e6;
+    }
+
+    .stat-icon.green {
+      background: #f6ffed;
+    }
+
+    .stat-info {
+      flex: 1;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 4px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+    }
+
+    /* Order List */
+    .order-list {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .list-header {
+      display: flex;
+      padding: 16px 20px;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+      font-weight: 600;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .list-row {
+      display: flex;
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      align-items: center;
+      font-size: 14px;
+    }
+
+    .list-row:hover {
+      background: #fafafa;
+    }
+
+    .col-order {
+      width: 140px;
+    }
+
+    .col-time {
+      width: 160px;
+    }
+
+    .col-items {
+      flex: 1;
+    }
+
+    .col-amount {
+      width: 100px;
+      text-align: right;
+    }
+
+    .col-status {
+      width: 100px;
+      text-align: center;
+    }
+
+    .col-action {
+      width: 120px;
+      text-align: right;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .status-paid {
+      background: #e6f7ff;
+      color: #0066CC;
+    }
+
+    .status-issued {
+      background: #f6ffed;
+      color: #52c41a;
+    }
+
+    .action-btn {
+      padding: 6px 16px;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-issue {
+      background: #0066CC;
+      color: white;
+    }
+
+    .btn-issue:hover {
+      background: #0052a3;
+    }
+
+    .btn-print {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    /* Notification Toast */
+    .toast {
+      position: fixed;
+      top: 80px;
+      right: 40px;
+      background: white;
+      border-radius: 12px;
+      padding: 20px 24px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      animation: slideIn 0.4s ease;
+      z-index: 1000;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    .toast-icon {
+      width: 44px;
+      height: 44px;
+      background: #e6f7ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .toast-text {
+      font-size: 13px;
+      color: #999;
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">收银</div>
+        <div class="logo-text">订单处理</div>
+      </div>
+      <div class="header-right">
+        <div class="user-info">
+          <span>🏪 3504036001 - 福州鼓楼店</span>
+          <span>👤</span>
+          <span>销售员：张三</span>
+        </div>
+        <button class="logout-btn" onclick="location.href='login.html'">退出登录</button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="nav-item active" onclick="location.href='orders.html'">
+          <span class="nav-icon">📋</span>
+          <span>订单处理</span>
+        </div>
+        <div class="nav-item" onclick="location.href='quick-order.html'">
+          <span class="nav-icon">⚡</span>
+          <span>代客下单</span>
+        </div>
+        <div class="nav-item" onclick="location.href='inventory.html'">
+          <span class="nav-icon">📦</span>
+          <span>库存管理</span>
+        </div>
+        <div class="nav-item" onclick="location.href='dashboard.html'">
+          <span class="nav-icon">📊</span>
+          <span>销售看板</span>
+        </div>
+      </aside>
+
+      <!-- Content Area -->
+      <div class="content-area">
+        <h1 class="page-title">📋 订单处理</h1>
+
+        <!-- Stats -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon blue">📋</div>
+            <div class="stat-info">
+              <div class="stat-label">待处理订单</div>
+              <div class="stat-value">3</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">⏰</div>
+            <div class="stat-info">
+              <div class="stat-label">今日订单</div>
+              <div class="stat-value">28</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">💰</div>
+            <div class="stat-info">
+              <div class="stat-label">今日销售额</div>
+              <div class="stat-value">¥1,280</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order List -->
+        <div class="order-list">
+          <div class="list-header">
+            <div class="col-order">订单号</div>
+            <div class="col-time">下单时间</div>
+            <div class="col-items">商品</div>
+            <div class="col-amount">金额</div>
+            <div class="col-status">状态</div>
+            <div class="col-action">操作</div>
+          </div>
+
+          <div class="list-row">
+            <div class="col-order">ORD202605290003</div>
+            <div class="col-time">14:32:18</div>
+            <div class="col-items">好运十倍 x 2, 绿翡翠 x 1</div>
+            <div class="col-amount">¥70.00</div>
+            <div class="col-status">
+              <span class="status-badge status-paid">已支付</span>
+            </div>
+            <div class="col-action">
+              <button class="action-btn btn-issue">确认出票</button>
+            </div>
+          </div>
+
+          <div class="list-row">
+            <div class="col-order">ORD202605290002</div>
+            <div class="col-time">14:28:45</div>
+            <div class="col-items">点石成金 x 3</div>
+            <div class="col-amount">¥60.00</div>
+            <div class="col-status">
+              <span class="status-badge status-paid">已支付</span>
+            </div>
+            <div class="col-action">
+              <button class="action-btn btn-issue">确认出票</button>
+            </div>
+          </div>
+
+          <div class="list-row">
+            <div class="col-order">ORD202605290001</div>
+            <div class="col-time">14:15:22</div>
+            <div class="col-items">好运十倍 x 2, 点石成金 x 1, 绿翡翠 x 1</div>
+            <div class="col-amount">¥90.00</div>
+            <div class="col-status">
+              <span class="status-badge status-issued">已出票</span>
+            </div>
+            <div class="col-action">
+              <button class="action-btn btn-print">打印小票</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast -->
+  <div class="toast">
+    <div class="toast-icon">🔔</div>
+    <div class="toast-content">
+      <div class="toast-title">新订单提醒</div>
+      <div class="toast-text">收到新订单 ORD202605290003，请及时处理</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>体彩服务角 - 票种浏览</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .pad-container {
+      width: 1024px;
+      height: 768px;
+      background: #f5f5f5;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #E60012 0%, #ff4757 100%);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #E60012;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 14px;
+    }
+
+    .live-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #52c41a;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Sidebar Filters */
+    .sidebar {
+      width: 200px;
+      background: white;
+      padding: 20px;
+      border-right: 1px solid #e8e8e8;
+      overflow-y: auto;
+    }
+
+    .filter-section {
+      margin-bottom: 24px;
+    }
+
+    .filter-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .filter-option {
+      padding: 10px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+      color: #666;
+      border: 2px solid transparent;
+    }
+
+    .filter-option:hover {
+      background: #f0f0f0;
+    }
+
+    .filter-option.active {
+      background: #E60012;
+      color: white;
+      border-color: #E60012;
+    }
+
+    /* Product Grid */
+    .product-area {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .cart-summary {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      padding: 10px 20px;
+      border-radius: 25px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      cursor: pointer;
+    }
+
+    .cart-icon {
+      font-size: 20px;
+    }
+
+    .cart-count {
+      background: #E60012;
+      color: white;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .product-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      position: relative;
+    }
+
+    .product-image::before {
+      content: '🎫';
+      font-size: 48px;
+      margin-bottom: 8px;
+    }
+
+    .live-tag {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #E60012;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .product-info {
+      padding: 16px;
+    }
+
+    .product-name {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .product-desc {
+      font-size: 13px;
+      color: #999;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .product-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .product-price {
+      font-size: 20px;
+      font-weight: 700;
+      color: #E60012;
+    }
+
+    .product-price span {
+      font-size: 14px;
+      font-weight: 400;
+    }
+
+    .add-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #E60012;
+      color: white;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+    }
+
+    .add-btn:hover {
+      background: #c4000f;
+      transform: scale(1.1);
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      background: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 24px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #999;
+    }
+
+    .nav-item:hover {
+      background: #f0f0f0;
+      color: #666;
+    }
+
+    .nav-item.active {
+      color: #E60012;
+      background: rgba(230, 0, 18, 0.1);
+    }
+
+    .nav-icon {
+      font-size: 24px;
+    }
+
+    .nav-label {
+      font-size: 12px;
+    }
+
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+  <div class="pad-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">体彩</div>
+        <div class="logo-text">中国体育彩票 · 新场景服务角</div>
+      </div>
+      <div class="header-info">
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          <span>直播中</span>
+        </div>
+        <span>⏰ 14:32</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="filter-section">
+          <div class="filter-title">📂 票种分类</div>
+          <div class="filter-options">
+            <div class="filter-option active">全部票种</div>
+            <div class="filter-option">热销排行</div>
+            <div class="filter-option">直播推荐</div>
+            <div class="filter-option">新品上市</div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">💰 面值筛选</div>
+          <div class="filter-options">
+            <div class="filter-option">5元</div>
+            <div class="filter-option">10元</div>
+            <div class="filter-option">20元</div>
+            <div class="filter-option">50元</div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">🎨 主题筛选</div>
+          <div class="filter-options">
+            <div class="filter-option">经典系列</div>
+            <div class="filter-option">节日限定</div>
+            <div class="filter-option">运动主题</div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Product Area -->
+      <div class="product-area">
+        <div class="section-header">
+          <h2 class="section-title">🔥 热门顶呱刮</h2>
+          <a href="cart.html" class="cart-summary">
+            <span class="cart-icon">🛒</span>
+            <span>购物车</span>
+            <span class="cart-count">3</span>
+          </a>
+        </div>
+
+        <div class="product-grid">
+          <!-- Product Card 1 -->
+          <div class="product-card">
+            <div class="product-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+              <div class="live-tag">
+                <span class="live-dot"></span>
+                直播中
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">好运十倍</div>
+              <div class="product-desc">经典玩法，中奖率高，最高奖金25万元</div>
+              <div class="product-footer">
+                <div class="product-price">¥10<span>/张</span></div>
+                <button class="add-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 2 -->
+          <div class="product-card">
+            <div class="product-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            </div>
+            <div class="product-info">
+              <div class="product-name">点石成金</div>
+              <div class="product-desc">刮开涂层，寻找金元宝，最高奖金100万元</div>
+              <div class="product-footer">
+                <div class="product-price">¥20<span>/张</span></div>
+                <button class="add-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 3 -->
+          <div class="product-card">
+            <div class="product-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+              <div class="live-tag">
+                <span class="live-dot"></span>
+                直播中
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-name">绿翡翠</div>
+              <div class="product-desc">翡翠主题，清新雅致，最高奖金150万元</div>
+              <div class="product-footer">
+                <div class="product-price">¥50<span>/张</span></div>
+                <button class="add-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 4 -->
+          <div class="product-card">
+            <div class="product-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            </div>
+            <div class="product-info">
+              <div class="product-name">甜蜜蜜</div>
+              <div class="product-desc">甜蜜主题，浪漫温馨，适合情侣购买</div>
+              <div class="product-footer">
+                <div class="product-price">¥5<span>/张</span></div>
+                <button class="add-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 5 -->
+          <div class="product-card">
+            <div class="product-image" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);">
+            </div>
+            <div class="product-info">
+              <div class="product-name">中国红</div>
+              <div class="product-desc">国潮主题，喜庆吉祥，最高奖金100万元</div>
+              <div class="product-footer">
+                <div class="product-price">¥20<span>/张</span></div>
+                <button class="add-btn">+</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product Card 6 -->
+          <div class="product-card">
+            <div class="product-image" style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);">
+            </div>
+            <div class="product-info">
+              <div class="product-name">麻辣6</div>
+              <div class="product-desc">川味主题，火辣刺激，最高奖金60万元</div>
+              <div class="product-footer">
+                <div class="product-price">¥10<span>/张</span></div>
+                <button class="add-btn">+</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item active">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </a>
+      <a href="live.html" class="nav-item">
+        <span class="nav-icon">📺</span>
+        <span class="nav-label">直播</span>
+      </a>
+      <a href="cart.html" class="nav-item">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">购物车</span>
+      </a>
+      <a href="order-success.html" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">订单</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

@@ -1,0 +1,292 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>门店列表 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .admin-filter-select {
+      height: 36px;
+      padding: 0 28px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #FFF;
+      color: var(--admin-text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .admin-filter-select:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .tag-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .tag-status.open { background: #F6FFED; color: #52C41A; }
+    .tag-status.closed { background: #FFF1F0; color: #FF4D4F; }
+    .store-note {
+      margin-top: 16px;
+      padding: 10px 16px;
+      background: #FFFBE6;
+      border: 1px solid #FFE58F;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: #D48806;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item active" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">门店管理 / <span>门店列表</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="admin-toolbar">
+              <div class="admin-toolbar-left">
+                <input type="text" class="admin-search-input" placeholder="搜索门店名称">
+                <select class="admin-filter-select">
+                  <option>全部区域</option>
+                  <option>福州</option>
+                  <option>厦门</option>
+                  <option>泉州</option>
+                </select>
+                <select class="admin-filter-select">
+                  <option>全部业态</option>
+                  <option>休闲娱乐</option>
+                  <option>文旅景区</option>
+                </select>
+                <select class="admin-filter-select">
+                  <option>全部状态</option>
+                  <option>营业中</option>
+                  <option>已停业</option>
+                </select>
+              </div>
+              <div class="admin-toolbar-right">
+                <button class="admin-btn admin-btn-primary">＋ 新增门店</button>
+              </div>
+            </div>
+
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>门店ID</th>
+                  <th>门店名称</th>
+                  <th>地址</th>
+                  <th>业态类型</th>
+                  <th>区域</th>
+                  <th>营业状态</th>
+                  <th>设备数</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>3501001001</td>
+                  <td style="font-weight:500;">福州万达广场店</td>
+                  <td>福州市台江区万达广场B1层</td>
+                  <td>休闲娱乐</td>
+                  <td>福州</td>
+                  <td><span class="tag-status open">营业中</span></td>
+                  <td>5</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);">停业</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3502001001</td>
+                  <td style="font-weight:500;">厦门中山路店</td>
+                  <td>厦门市思明区中山路步行街18号</td>
+                  <td>文旅景区</td>
+                  <td>厦门</td>
+                  <td><span class="tag-status open">营业中</span></td>
+                  <td>4</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);">停业</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3505001001</td>
+                  <td style="font-weight:500;">泉州浦西万达店</td>
+                  <td>泉州市丰泽区浦西万达广场3F</td>
+                  <td>休闲娱乐</td>
+                  <td>泉州</td>
+                  <td><span class="tag-status open">营业中</span></td>
+                  <td>5</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);">停业</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3501001002</td>
+                  <td style="font-weight:500;">福州宝龙城市广场店</td>
+                  <td>福州市台江区宝龙城市广场1F</td>
+                  <td>休闲娱乐</td>
+                  <td>福州</td>
+                  <td><span class="tag-status open">营业中</span></td>
+                  <td>3</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);">停业</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3502001002</td>
+                  <td style="font-weight:500;">厦门SM广场店</td>
+                  <td>厦门市湖里区SM城市广场B1层</td>
+                  <td>休闲娱乐</td>
+                  <td>厦门</td>
+                  <td><span class="tag-status open">营业中</span></td>
+                  <td>4</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);">停业</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3501001003</td>
+                  <td style="font-weight:500;">福州东百中心店</td>
+                  <td>福州市鼓楼区东百中心A馆1F</td>
+                  <td>文旅景区</td>
+                  <td>福州</td>
+                  <td><span class="tag-status open">营业中</span></td>
+                  <td>3</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);">停业</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3505001002</td>
+                  <td style="font-weight:500;">泉州领SHOW天地店</td>
+                  <td>泉州市丰泽区领SHOW天地创意园</td>
+                  <td>文旅景区</td>
+                  <td>泉州</td>
+                  <td><span class="tag-status closed">已停业</span></td>
+                  <td>2</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--admin-success);">开业</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>3502001003</td>
+                  <td style="font-weight:500;">厦门曾厝垵店</td>
+                  <td>厦门市思明区曾厝垵文创村</td>
+                  <td>文旅景区</td>
+                  <td>厦门</td>
+                  <td><span class="tag-status closed">已停业</span></td>
+                  <td>2</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='store-edit.html'">编辑</button>
+                      <button class="admin-btn admin-btn-link" style="color:var(--admin-success);">开业</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="admin-pagination">
+              <span style="font-size:14px;color:var(--admin-text-hint);margin-right:12px;">共 8 条</span>
+              <div class="admin-pagination-item active">1</div>
+            </div>
+
+            <div class="store-note">
+              ⚠️ 删除在线门店时提示"请先停业"
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

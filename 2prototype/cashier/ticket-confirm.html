@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>出票确认 - 体彩收银台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .confirm-layout {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .confirm-main {
+      flex: 1;
+    }
+    .confirm-side {
+      width: 320px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .confirm-order-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+    .confirm-order-header {
+      padding: 16px 20px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .confirm-order-id {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .confirm-order-status {
+      padding: 3px 10px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .confirm-order-body {
+      padding: 20px;
+    }
+    .confirm-info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+    .confirm-info-row:not(:last-child) {
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .confirm-info-label {
+      color: var(--color-text-hint);
+    }
+    .confirm-info-value {
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+    .confirm-items-section {
+      margin-top: 16px;
+    }
+    .confirm-items-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 12px;
+    }
+    .confirm-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #FAFAFA;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+    .confirm-item-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .confirm-item-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .confirm-item-dot.red { background: var(--color-primary); }
+    .confirm-item-dot.blue { background: var(--admin-primary); }
+    .confirm-item-dot.gold { background: #D4A017; }
+    .confirm-item-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .confirm-item-qty {
+      font-size: 13px;
+      color: var(--color-text-hint);
+      margin-left: 4px;
+    }
+    .confirm-item-price {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-primary);
+    }
+    .confirm-item-price::before {
+      content: '¥';
+      font-size: 12px;
+    }
+    .confirm-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 0;
+      margin-top: 8px;
+      border-top: 2px solid var(--color-border-light);
+    }
+    .confirm-total-label {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+    }
+    .confirm-total-amount {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .confirm-total-amount::before {
+      content: '¥';
+      font-size: 14px;
+    }
+    .confirm-payment-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      font-size: 14px;
+    }
+    .confirm-payment-label {
+      color: var(--color-text-hint);
+    }
+    .confirm-payment-value {
+      color: var(--color-success);
+      font-weight: 500;
+    }
+    .confirm-serials-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 20px;
+    }
+    .confirm-serials-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .confirm-serials-title::before {
+      content: '';
+      width: 3px;
+      height: 16px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+    .confirm-serial-group {
+      margin-bottom: 14px;
+    }
+    .confirm-serial-group:last-child {
+      margin-bottom: 0;
+    }
+    .confirm-serial-group-name {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .confirm-serial-num {
+      font-size: 13px;
+      color: var(--color-text-primary);
+      padding: 6px 12px;
+      background: #F5F5F5;
+      border-radius: var(--radius-sm);
+      margin-bottom: 4px;
+      font-family: 'Courier New', 'Consolas', monospace;
+      letter-spacing: 0.5px;
+    }
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .confirm-btn-issue {
+      flex: 1;
+      height: 52px;
+      background: linear-gradient(135deg, #52C41A, #389E0D);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(82,196,26,0.3);
+      transition: all 0.2s;
+    }
+    .confirm-btn-issue:hover {
+      box-shadow: 0 6px 20px rgba(82,196,26,0.4);
+      transform: translateY(-1px);
+    }
+    .confirm-btn-print {
+      width: 140px;
+      height: 52px;
+      background: #FFF;
+      border: 2px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .confirm-btn-print:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+    .receipt-preview {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+    }
+    .receipt-preview-header {
+      padding: 12px 16px;
+      background: #FAFAFA;
+      border-bottom: 1px solid var(--color-border-light);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .receipt-preview-body {
+      padding: 20px;
+      background: #FFFEF5;
+      font-family: 'Courier New', 'Consolas', monospace;
+      font-size: 12px;
+      line-height: 1.8;
+      color: var(--color-text-primary);
+    }
+    .receipt-preview-body .receipt-center {
+      text-align: center;
+    }
+    .receipt-preview-body .receipt-bold {
+      font-weight: 700;
+    }
+    .receipt-preview-body .receipt-line {
+      border-top: 1px dashed var(--color-border);
+      margin: 8px 0;
+    }
+    .success-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .success-modal {
+      width: 360px;
+      background: #FFF;
+      border-radius: var(--radius-xl);
+      padding: 48px 40px;
+      text-align: center;
+      box-shadow: var(--shadow-modal);
+      animation: slideUp 0.3s ease;
+    }
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #F6FFED;
+      border: 3px solid var(--color-success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .success-icon svg {
+      width: 36px;
+      height: 36px;
+      fill: var(--color-success);
+    }
+    .success-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+      margin-bottom: 8px;
+    }
+    .success-desc {
+      font-size: 14px;
+      color: var(--color-text-hint);
+      margin-bottom: 24px;
+    }
+    .success-btn {
+      width: 100%;
+      height: 44px;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-app">
+    <div class="cashier-sidebar">
+      <div class="cashier-sidebar-logo">
+        <span class="cashier-sidebar-logo-text">体彩<em>收银台</em></span>
+      </div>
+      <div class="cashier-sidebar-menu">
+        <a href="main-workspace.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="order-process.html" class="cashier-sidebar-item active">
+          <span class="cashier-sidebar-item-icon">📋</span>
+          <span>订单处理</span>
+        </a>
+        <a href="proxy-order.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">🛒</span>
+          <span>代客下单</span>
+        </a>
+        <a href="stock-in.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📦</span>
+          <span>库存管理</span>
+        </a>
+        <div class="cashier-sidebar-sub">
+          <a href="stock-in.html">入库签收</a>
+          <a href="inventory-check.html">库存盘点</a>
+          <a href="inventory-query.html">库存查询</a>
+          <a href="inventory-alert.html">库存预警</a>
+        </div>
+        <a href="sales-dashboard.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📈</span>
+          <span>销售看板</span>
+        </a>
+      </div>
+      <div class="cashier-sidebar-user">
+        <div class="cashier-sidebar-avatar">张</div>
+        <span>张销售</span>
+        <a href="login.html" class="cashier-sidebar-logout">退出登录</a>
+      </div>
+    </div>
+
+    <div class="cashier-main">
+      <div class="cashier-topbar">
+        <span class="cashier-topbar-title">出票确认</span>
+        <div class="cashier-topbar-actions">
+          <span style="font-size:13px;color:var(--color-text-hint);">2026-05-29 14:30</span>
+        </div>
+      </div>
+
+      <div class="cashier-content">
+        <div class="confirm-layout">
+          <div class="confirm-main">
+            <div class="confirm-order-card">
+              <div class="confirm-order-header">
+                <span class="confirm-order-id">ORD20260529001</span>
+                <span class="confirm-order-status">待出票</span>
+              </div>
+              <div class="confirm-order-body">
+                <div class="confirm-info-row">
+                  <span class="confirm-info-label">顾客来源</span>
+                  <span class="confirm-info-value">顾客点单</span>
+                </div>
+                <div class="confirm-info-row">
+                  <span class="confirm-info-label">下单时间</span>
+                  <span class="confirm-info-value">2026-05-29 14:28:35</span>
+                </div>
+
+                <div class="confirm-items-section">
+                  <div class="confirm-items-title">商品明细</div>
+                  <div class="confirm-item-row">
+                    <div class="confirm-item-left">
+                      <span class="confirm-item-dot red"></span>
+                      <span class="confirm-item-name">中国红</span>
+                      <span class="confirm-item-qty">×2</span>
+                    </div>
+                    <span class="confirm-item-price">20</span>
+                  </div>
+                  <div class="confirm-item-row">
+                    <div class="confirm-item-left">
+                      <span class="confirm-item-dot blue"></span>
+                      <span class="confirm-item-name">好运十倍</span>
+                      <span class="confirm-item-qty">×1</span>
+                    </div>
+                    <span class="confirm-item-price">20</span>
+                  </div>
+                </div>
+
+                <div class="confirm-total-row">
+                  <span class="confirm-total-label">合计</span>
+                  <span class="confirm-total-amount">40</span>
+                </div>
+
+                <div class="confirm-payment-row">
+                  <span class="confirm-payment-label">支付方式</span>
+                  <span class="confirm-payment-value">微信支付 ✓已支付</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="confirm-serials-card" style="margin-top:16px;">
+              <div class="confirm-serials-title">分配票号</div>
+              <div class="confirm-serial-group">
+                <div class="confirm-serial-group-name">中国红</div>
+                <div class="confirm-serial-num">SN20260529001001</div>
+                <div class="confirm-serial-num">SN20260529001002</div>
+              </div>
+              <div class="confirm-serial-group">
+                <div class="confirm-serial-group-name">好运十倍</div>
+                <div class="confirm-serial-num">SN20260529002001</div>
+              </div>
+            </div>
+
+            <div class="confirm-actions">
+              <button class="confirm-btn-issue" onclick="this.textContent='✓ 已出票';this.style.background='#888';this.style.cursor='default';">确认出票</button>
+              <button class="confirm-btn-print" onclick="this.textContent='✓ 已发送打印';">打印小票</button>
+              <a href="order-process.html" style="display:inline-flex;align-items:center;justify-content:center;width:140px;height:52px;background:#FFF;border:2px solid var(--color-border);border-radius:var(--radius-md);font-size:16px;font-weight:500;color:var(--color-text-secondary);text-decoration:none;transition:all 0.2s;">返回订单列表</a>
+            </div>
+          </div>
+
+          <div class="confirm-side">
+            <div class="receipt-preview">
+              <div class="receipt-preview-header">小票预览</div>
+              <div class="receipt-preview-body">
+                <div class="receipt-center receipt-bold" style="font-size:14px;">中国体育彩票</div>
+                <div class="receipt-center" style="font-size:11px;">福建省体育彩票管理中心</div>
+                <div class="receipt-line"></div>
+                <div>订单号: ORD20260529001</div>
+                <div>时间: 2026-05-29 14:28</div>
+                <div>门店: 福州万达广场店</div>
+                <div class="receipt-line"></div>
+                <div class="receipt-bold">中国红 ×2</div>
+                <div style="padding-left:12px;">SN20260529001001</div>
+                <div style="padding-left:12px;">SN20260529001002</div>
+                <div class="receipt-bold">好运十倍 ×1</div>
+                <div style="padding-left:12px;">SN20260529002001</div>
+                <div class="receipt-line"></div>
+                <div style="display:flex;justify-content:space-between;">
+                  <span>合计:</span>
+                  <span class="receipt-bold">¥40.00</span>
+                </div>
+                <div>支付: 微信支付</div>
+                <div class="receipt-line"></div>
+                <div class="receipt-center" style="font-size:11px;color:var(--color-text-hint);">感谢您购买中国体育彩票</div>
+                <div class="receipt-center" style="font-size:11px;color:var(--color-text-hint);">公益体彩 乐善人生</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="success-overlay">
+    <div class="success-modal">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
+      </div>
+      <div class="success-title">出票成功</div>
+      <div class="success-desc">订单 ORD20260529001 已完成出票</div>
+      <a href="order-process.html" class="success-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;">返回订单列表</a>
+    </div>
+  </div>
+</body>
+</html>

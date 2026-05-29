@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>订单详情 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: var(--admin-primary);
+      cursor: pointer;
+      margin-bottom: 16px;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .detail-back:hover {
+      color: var(--admin-primary-light);
+    }
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+    }
+    .detail-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .detail-section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .detail-section-body {
+      padding: 20px;
+    }
+    .detail-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .detail-info-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .detail-info-label {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      margin-bottom: 4px;
+    }
+    .detail-info-value {
+      font-size: 14px;
+      color: var(--admin-text);
+      font-weight: 500;
+    }
+    .detail-info-value.amount {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .detail-timeline-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      padding: 20px;
+    }
+    .detail-timeline-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 16px;
+    }
+    .detail-timeline {
+      padding: 0;
+    }
+    .detail-timeline-item {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 24px;
+      position: relative;
+    }
+    .detail-timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 20px;
+      bottom: 0;
+      width: 1px;
+      background: var(--admin-border);
+    }
+    .detail-timeline-item:last-child::before {
+      display: none;
+    }
+    .detail-timeline-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .detail-timeline-dot.blue { background: var(--admin-primary); }
+    .detail-timeline-dot.green { background: var(--admin-success); }
+    .detail-timeline-dot.gray { background: #D9D9D9; }
+    .detail-timeline-content {
+      flex: 1;
+    }
+    .detail-timeline-status {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--admin-text);
+    }
+    .detail-timeline-time {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 2px;
+    }
+    .detail-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item active" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">订单管理 / 订单列表 / <span>订单详情</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <button class="detail-back" onclick="location.href='order-list.html'">← 返回列表</button>
+
+        <div class="detail-layout">
+          <div class="detail-left">
+            <div class="detail-section">
+              <div class="detail-section-header">订单信息</div>
+              <div class="detail-section-body">
+                <div class="detail-info-grid">
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">订单号</div>
+                    <div class="detail-info-value">ORD20260529001</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">下单时间</div>
+                    <div class="detail-info-value">2026-05-29 14:32:15</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">门店</div>
+                    <div class="detail-info-value">福州万达广场店</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">支付方式</div>
+                    <div class="detail-info-value">微信支付</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">支付时间</div>
+                    <div class="detail-info-value">2026-05-29 14:32:45</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">订单金额</div>
+                    <div class="detail-info-value amount">¥40</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="detail-section-header">商品明细</div>
+              <div class="detail-section-body" style="padding:0;">
+                <table class="admin-table">
+                  <thead>
+                    <tr>
+                      <th>票种</th>
+                      <th>面值</th>
+                      <th>数量</th>
+                      <th>小计</th>
+                      <th>序列号</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td style="font-weight:500;">中国红</td>
+                      <td>¥10</td>
+                      <td>2</td>
+                      <td style="font-weight:600;">¥20</td>
+                      <td style="color:var(--admin-text-hint);font-size:13px;">SN20260529001001, SN20260529001002</td>
+                    </tr>
+                    <tr>
+                      <td style="font-weight:500;">顶呱刮</td>
+                      <td>¥20</td>
+                      <td>1</td>
+                      <td style="font-weight:600;">¥20</td>
+                      <td style="color:var(--admin-text-hint);font-size:13px;">SN20260529001003</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button class="admin-btn admin-btn-danger">退款</button>
+              <button class="admin-btn admin-btn-primary">🖨️ 打印</button>
+            </div>
+          </div>
+
+          <div class="detail-right">
+            <div class="detail-timeline-section">
+              <div class="detail-timeline-title">订单状态</div>
+              <div class="detail-timeline">
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot blue"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">待支付</div>
+                    <div class="detail-timeline-time">2026-05-29 14:32:15</div>
+                  </div>
+                </div>
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot blue"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">已支付</div>
+                    <div class="detail-timeline-time">2026-05-29 14:32:45</div>
+                  </div>
+                </div>
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot green"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">已出票</div>
+                    <div class="detail-timeline-time">2026-05-29 14:35:20</div>
+                  </div>
+                </div>
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot green"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">已完成</div>
+                    <div class="detail-timeline-time">2026-05-29 14:36:00</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

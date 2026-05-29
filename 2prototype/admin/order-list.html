@@ -1,0 +1,371 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>订单列表 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .order-stats-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .order-stat-item {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .order-stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .order-stat-icon.blue { background: #E6F7FF; }
+    .order-stat-icon.orange { background: #FFF7E6; }
+    .order-stat-icon.green { background: #F6FFED; }
+    .order-stat-icon.red { background: #FFF1F0; }
+    .order-stat-label {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      margin-bottom: 2px;
+    }
+    .order-stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+    .order-stat-value span {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--admin-text-hint);
+    }
+    .admin-filter-select {
+      height: 36px;
+      padding: 0 28px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #FFF;
+      color: var(--admin-text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .admin-filter-select:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .admin-date-input {
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .admin-date-input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .date-range-sep {
+      color: var(--admin-text-hint);
+      font-size: 14px;
+    }
+    .tag-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .tag-status.pending { background: #FFF7E6; color: #D48806; }
+    .tag-status.paid { background: #E6F7FF; color: #1890FF; }
+    .tag-status.printed { background: #F6FFED; color: #52C41A; }
+    .tag-status.completed { background: #F5F5F5; color: #8C8C8C; }
+    .tag-status.cancelled { background: #FFF1F0; color: #FF4D4F; }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item active" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">订单管理 / <span>订单列表</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="order-stats-bar">
+          <div class="order-stat-item">
+            <div class="order-stat-icon blue">📋</div>
+            <div>
+              <div class="order-stat-label">今日订单</div>
+              <div class="order-stat-value">23 <span>笔</span></div>
+            </div>
+          </div>
+          <div class="order-stat-item">
+            <div class="order-stat-icon orange">⏳</div>
+            <div>
+              <div class="order-stat-label">待支付</div>
+              <div class="order-stat-value">3 <span>笔</span></div>
+            </div>
+          </div>
+          <div class="order-stat-item">
+            <div class="order-stat-icon green">✅</div>
+            <div>
+              <div class="order-stat-label">已出票</div>
+              <div class="order-stat-value">15 <span>笔</span></div>
+            </div>
+          </div>
+          <div class="order-stat-item">
+            <div class="order-stat-icon red">❌</div>
+            <div>
+              <div class="order-stat-label">异常</div>
+              <div class="order-stat-value">1 <span>笔</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="admin-toolbar">
+              <div class="admin-toolbar-left">
+                <input type="text" class="admin-search-input" placeholder="搜索订单号">
+                <select class="admin-filter-select">
+                  <option>全部门店</option>
+                  <option>福州万达广场店</option>
+                  <option>厦门中山路店</option>
+                  <option>泉州浦西万达店</option>
+                  <option>福州宝龙城市广场店</option>
+                </select>
+                <select class="admin-filter-select">
+                  <option>全部状态</option>
+                  <option>待支付</option>
+                  <option>已支付</option>
+                  <option>已出票</option>
+                  <option>已完成</option>
+                  <option>已取消</option>
+                </select>
+                <input type="date" class="admin-date-input" value="2026-05-29">
+                <span class="date-range-sep">至</span>
+                <input type="date" class="admin-date-input" value="2026-05-29">
+              </div>
+              <div class="admin-toolbar-right">
+                <button class="admin-btn admin-btn-primary">📥 导出</button>
+              </div>
+            </div>
+
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>订单号</th>
+                  <th>门店</th>
+                  <th>商品</th>
+                  <th>金额</th>
+                  <th>支付方式</th>
+                  <th>状态</th>
+                  <th>下单时间</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529001</td>
+                  <td>福州万达广场店</td>
+                  <td>中国红, 顶呱刮</td>
+                  <td style="font-weight:600;">¥40</td>
+                  <td>微信支付</td>
+                  <td><span class="tag-status completed">已完成</span></td>
+                  <td>2026-05-29 14:32:15</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529002</td>
+                  <td>厦门中山路店</td>
+                  <td>好运十倍</td>
+                  <td style="font-weight:600;">¥60</td>
+                  <td>支付宝</td>
+                  <td><span class="tag-status printed">已出票</span></td>
+                  <td>2026-05-29 14:28:30</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529003</td>
+                  <td>泉州浦西万达店</td>
+                  <td>甜蜜蜜, 金光闪闪×1</td>
+                  <td style="font-weight:600;">¥50</td>
+                  <td>微信支付</td>
+                  <td><span class="tag-status pending">待支付</span></td>
+                  <td>2026-05-29 14:25:10</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529004</td>
+                  <td>福州宝龙城市广场店</td>
+                  <td>绿茵传奇×1</td>
+                  <td style="font-weight:600;">¥20</td>
+                  <td>微信支付</td>
+                  <td><span class="tag-status paid">已支付</span></td>
+                  <td>2026-05-29 14:20:45</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529005</td>
+                  <td>福州万达广场店</td>
+                  <td>中国红</td>
+                  <td style="font-weight:600;">¥100</td>
+                  <td>支付宝</td>
+                  <td><span class="tag-status printed">已出票</span></td>
+                  <td>2026-05-29 14:15:22</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529006</td>
+                  <td>厦门SM广场店</td>
+                  <td>顶呱刮, 甜蜜蜜</td>
+                  <td style="font-weight:600;">¥80</td>
+                  <td>微信支付</td>
+                  <td><span class="tag-status cancelled">已取消</span></td>
+                  <td>2026-05-29 14:10:33</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529007</td>
+                  <td>泉州浦西万达店</td>
+                  <td>好运十倍</td>
+                  <td style="font-weight:600;">¥20</td>
+                  <td>支付宝</td>
+                  <td><span class="tag-status pending">待支付</span></td>
+                  <td>2026-05-29 14:05:18</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight:500;color:var(--admin-primary);">ORD20260529008</td>
+                  <td>福州宝龙城市广场店</td>
+                  <td>金光闪闪×3, 中国红</td>
+                  <td style="font-weight:600;">¥100</td>
+                  <td>微信支付</td>
+                  <td><span class="tag-status printed">已出票</span></td>
+                  <td>2026-05-29 13:58:42</td>
+                  <td>
+                    <div class="admin-table-actions">
+                      <button class="admin-btn admin-btn-link" onclick="location.href='order-detail.html'">查看</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="admin-pagination">
+              <span style="font-size:14px;color:var(--admin-text-hint);margin-right:12px;">共 86 条</span>
+              <div class="admin-pagination-item active">1</div>
+              <div class="admin-pagination-item">2</div>
+              <div class="admin-pagination-item">3</div>
+              <div class="admin-pagination-item">4</div>
+              <div class="admin-pagination-item">5</div>
+              <span style="font-size:14px;color:var(--admin-text-hint);">...</span>
+              <div class="admin-pagination-item">9</div>
+              <div class="admin-pagination-item">→</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

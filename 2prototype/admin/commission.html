@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>佣金计算 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .commission-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .commission-top-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .month-selector {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .month-selector-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      background: #FFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--admin-text-secondary);
+      transition: all 0.2s;
+    }
+    .month-selector-btn:hover {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+    .month-selector-value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+      min-width: 100px;
+      text-align: center;
+    }
+    .commission-rules {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .commission-rules-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .commission-rules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .commission-rule-item {
+      padding: 16px;
+      background: #FAFAFA;
+      border-radius: var(--radius-sm);
+      border: 1px solid #F0F0F0;
+    }
+    .commission-rule-label {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      margin-bottom: 6px;
+    }
+    .commission-rule-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+    .commission-rule-value.highlight {
+      color: var(--admin-primary);
+    }
+    .commission-rule-note {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 4px;
+    }
+    .commission-total-row {
+      background: #FAFAFA;
+    }
+    .commission-total-row td {
+      font-weight: 700 !important;
+      color: var(--admin-text) !important;
+      border-top: 2px solid var(--admin-border);
+    }
+    .commission-amount {
+      font-weight: 600;
+      color: var(--admin-primary);
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-tag.calculated { background: #E6F7FF; color: #1890FF; }
+    .status-tag.pending { background: #FFF7E6; color: #FAAD14; }
+    .status-tag.confirmed { background: #F6FFED; color: #52C41A; }
+    .commission-footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item active" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">财务管理 / <span>佣金计算</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="commission-top">
+          <div class="commission-top-left">
+            <div class="month-selector">
+              <button class="month-selector-btn">‹</button>
+              <span class="month-selector-value">2026年5月</span>
+              <button class="month-selector-btn">›</button>
+            </div>
+            <button class="admin-btn admin-btn-primary">计算佣金</button>
+          </div>
+        </div>
+
+        <div class="commission-rules">
+          <div class="commission-rules-title">📋 佣金规则</div>
+          <div class="commission-rules-grid">
+            <div class="commission-rule-item">
+              <div class="commission-rule-label">即开票佣金比例</div>
+              <div class="commission-rule-value highlight">8%</div>
+            </div>
+            <div class="commission-rule-item">
+              <div class="commission-rule-label">计算规则</div>
+              <div class="commission-rule-value">销售额 × 佣金比例</div>
+            </div>
+            <div class="commission-rule-item">
+              <div class="commission-rule-label">生效规则</div>
+              <div class="commission-rule-value" style="font-size:15px;">规则变更后次日生效</div>
+              <div class="commission-rule-note">修改佣金比例将在次日零点生效</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>门店</th>
+                  <th>销售额</th>
+                  <th>佣金比例</th>
+                  <th>佣金金额</th>
+                  <th>状态</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>福州万达广场店</td>
+                  <td>¥38,560.00</td>
+                  <td>8%</td>
+                  <td><span class="commission-amount">¥3,084.80</span></td>
+                  <td><span class="status-tag confirmed">已确认</span></td>
+                </tr>
+                <tr>
+                  <td>福州宝龙城市广场店</td>
+                  <td>¥42,180.00</td>
+                  <td>8%</td>
+                  <td><span class="commission-amount">¥3,374.40</span></td>
+                  <td><span class="status-tag confirmed">已确认</span></td>
+                </tr>
+                <tr>
+                  <td>厦门中山路店</td>
+                  <td>¥28,920.00</td>
+                  <td>8%</td>
+                  <td><span class="commission-amount">¥2,313.60</span></td>
+                  <td><span class="status-tag calculated">已计算</span></td>
+                </tr>
+                <tr>
+                  <td>厦门SM广场店</td>
+                  <td>¥22,450.00</td>
+                  <td>8%</td>
+                  <td><span class="commission-amount">¥1,796.00</span></td>
+                  <td><span class="status-tag calculated">已计算</span></td>
+                </tr>
+                <tr>
+                  <td>泉州浦西万达店</td>
+                  <td>¥11,450.00</td>
+                  <td>8%</td>
+                  <td><span class="commission-amount">¥916.00</span></td>
+                  <td><span class="status-tag pending">待确认</span></td>
+                </tr>
+                <tr class="commission-total-row">
+                  <td>合计</td>
+                  <td>¥143,560.00</td>
+                  <td>—</td>
+                  <td><span style="font-size:16px;color:var(--admin-primary);font-weight:700;">¥10,284.80</span></td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="commission-footer">
+              <button class="admin-btn admin-btn-default">导出佣金报表</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

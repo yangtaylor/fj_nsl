@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>设备绑定 - 体彩收银台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .bind-page {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #C4161C 0%, #8B0000 50%, #5C0011 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .bind-page::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,215,0,0.08) 0%, transparent 70%);
+    }
+    .bind-page::after {
+      content: '';
+      position: absolute;
+      bottom: -30%;
+      left: -10%;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+    }
+    .bind-card {
+      width: 500px;
+      background: #FFF;
+      border-radius: var(--radius-xl);
+      padding: 48px 40px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+      z-index: 1;
+      animation: slideUp 0.5s ease;
+    }
+    .bind-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+    .bind-title-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .bind-title-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+    .bind-title h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .bind-steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 36px;
+      gap: 0;
+    }
+    .bind-step {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .bind-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--color-border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-text-hint);
+      flex-shrink: 0;
+    }
+    .bind-step.active .bind-step-num {
+      background: var(--color-primary);
+      color: white;
+    }
+    .bind-step.active {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+    .bind-step.done .bind-step-num {
+      background: var(--color-success);
+      color: white;
+    }
+    .bind-step.done {
+      color: var(--color-success);
+    }
+    .bind-step-arrow {
+      width: 32px;
+      height: 1px;
+      background: var(--color-border);
+      margin: 0 8px;
+      flex-shrink: 0;
+    }
+    .bind-form {
+      margin-top: 8px;
+    }
+    .bind-form-group {
+      margin-bottom: 20px;
+    }
+    .bind-form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .bind-form-label .required {
+      color: var(--color-error);
+      margin-left: 2px;
+    }
+    .bind-form-input {
+      width: 100%;
+      height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      transition: border-color 0.2s;
+      background: #FFF;
+    }
+    .bind-form-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(196,22,28,0.1);
+    }
+    .bind-form-input.pre-filled {
+      background: #F5F5F5;
+      color: var(--color-text-secondary);
+    }
+    .bind-form-select {
+      width: 100%;
+      height: 44px;
+      padding: 0 16px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      font-size: 15px;
+      background: #FFF;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      cursor: pointer;
+    }
+    .bind-form-select:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(196,22,28,0.1);
+    }
+    .bind-submit {
+      width: 100%;
+      height: 48px;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 12px rgba(196,22,28,0.3);
+    }
+    .bind-submit:hover {
+      box-shadow: 0 6px 20px rgba(196,22,28,0.4);
+      transform: translateY(-1px);
+    }
+    .bind-submit:active {
+      transform: translateY(0);
+    }
+    .bind-note {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--color-text-hint);
+      line-height: 1.6;
+    }
+    .bind-note-icon {
+      display: inline-block;
+      margin-right: 4px;
+    }
+    .bind-watermark {
+      position: absolute;
+      bottom: 24px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="bind-page">
+    <div class="bind-card">
+      <div class="bind-title">
+        <div class="bind-title-icon">
+          <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg>
+        </div>
+        <h2>设备绑定</h2>
+      </div>
+
+      <div class="bind-steps">
+        <div class="bind-step active">
+          <span class="bind-step-num">1</span>
+          <span>录入设备信息</span>
+        </div>
+        <div class="bind-step-arrow"></div>
+        <div class="bind-step">
+          <span class="bind-step-num">2</span>
+          <span>验证设备</span>
+        </div>
+        <div class="bind-step-arrow"></div>
+        <div class="bind-step">
+          <span class="bind-step-num">3</span>
+          <span>获取证书</span>
+        </div>
+        <div class="bind-step-arrow"></div>
+        <div class="bind-step">
+          <span class="bind-step-num">4</span>
+          <span>绑定完成</span>
+        </div>
+      </div>
+
+      <div class="bind-form">
+        <div class="bind-form-group">
+          <label class="bind-form-label">MAC地址<span class="required">*</span></label>
+          <input type="text" class="bind-form-input pre-filled" value="A1:B2:C3:D4:E5:F6" readonly>
+        </div>
+        <div class="bind-form-group">
+          <label class="bind-form-label">硬件序列号<span class="required">*</span></label>
+          <input type="text" class="bind-form-input" placeholder="请输入设备硬件序列号">
+        </div>
+        <div class="bind-form-group">
+          <label class="bind-form-label">设备类型<span class="required">*</span></label>
+          <select class="bind-form-select">
+            <option>收银台终端</option>
+            <option>自助终端</option>
+            <option>移动终端</option>
+          </select>
+        </div>
+        <button class="bind-submit" onclick="location.href='cert-verify.html'">提交绑定</button>
+      </div>
+
+      <div style="text-align:center;margin-top:16px;">
+        <a href="cert-verify.html" style="color:var(--color-primary);font-size:14px;font-weight:500;text-decoration:none;">下一步：证书校验 →</a>
+      </div>
+
+      <div class="bind-note">
+        <span class="bind-note-icon">⚠</span>设备绑定后不可更改，请确认信息无误
+      </div>
+    </div>
+
+    <div class="bind-watermark">福建省新场景售彩系统 v1.0</div>
+  </div>
+</body>
+</html>

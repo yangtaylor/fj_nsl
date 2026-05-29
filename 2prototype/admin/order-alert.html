@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>异常预警 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .alert-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .alert-stat-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .alert-stat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .alert-stat-icon.red { background: #FFF1F0; }
+    .alert-stat-icon.orange { background: #FFF7E6; }
+    .alert-stat-icon.yellow { background: #FFFBE6; }
+    .alert-stat-label {
+      font-size: 14px;
+      color: var(--admin-text-hint);
+      margin-bottom: 4px;
+    }
+    .alert-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+    .alert-stat-value span {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--admin-text-hint);
+    }
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .alert-item {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 20px 24px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      border-left: 4px solid transparent;
+      transition: box-shadow 0.2s;
+    }
+    .alert-item:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .alert-item.p0 {
+      border-left-color: #FF4D4F;
+    }
+    .alert-item.p1 {
+      border-left-color: #FAAD14;
+    }
+    .alert-item.p2 {
+      border-left-color: #52C41A;
+    }
+    .alert-item.resolved {
+      border-left-color: #D9D9D9;
+      opacity: 0.7;
+    }
+    .alert-severity {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .alert-severity.p0 {
+      background: #FFF1F0;
+      color: #FF4D4F;
+    }
+    .alert-severity.p1 {
+      background: #FFF7E6;
+      color: #D48806;
+    }
+    .alert-severity.p2 {
+      background: #F6FFED;
+      color: #52C41A;
+    }
+    .alert-severity.resolved {
+      background: #F5F5F5;
+      color: #52C41A;
+      font-size: 20px;
+    }
+    .alert-body {
+      flex: 1;
+      min-width: 0;
+    }
+    .alert-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--admin-text);
+      margin-bottom: 6px;
+      line-height: 1.5;
+    }
+    .alert-title .order-id {
+      color: var(--admin-primary);
+      font-weight: 600;
+    }
+    .alert-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      color: var(--admin-text-hint);
+    }
+    .alert-level-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 8px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .alert-level-tag.p0 { background: #FFF1F0; color: #FF4D4F; }
+    .alert-level-tag.p1 { background: #FFF7E6; color: #D48806; }
+    .alert-level-tag.p2 { background: #F6FFED; color: #52C41A; }
+    .alert-level-tag.resolved { background: #F5F5F5; color: #8C8C8C; }
+    .alert-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item active" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">订单管理 / <span>异常预警</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="alert-stats">
+          <div class="alert-stat-card">
+            <div class="alert-stat-icon red">❗</div>
+            <div>
+              <div class="alert-stat-label">支付失败</div>
+              <div class="alert-stat-value">3 <span>笔</span></div>
+            </div>
+          </div>
+          <div class="alert-stat-card">
+            <div class="alert-stat-icon orange">⚡</div>
+            <div>
+              <div class="alert-stat-label">出票超时</div>
+              <div class="alert-stat-value">2 <span>笔</span></div>
+            </div>
+          </div>
+          <div class="alert-stat-card">
+            <div class="alert-stat-icon yellow">🔄</div>
+            <div>
+              <div class="alert-stat-label">退款异常</div>
+              <div class="alert-stat-value">1 <span>笔</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">预警列表</div>
+          </div>
+          <div class="admin-card-body">
+            <div class="alert-list">
+              <div class="alert-item p0">
+                <div class="alert-severity p0">🔴</div>
+                <div class="alert-body">
+                  <div class="alert-title">订单 <span class="order-id">ORD20260529015</span> 支付失败，顾客已付款但回调超时</div>
+                  <div class="alert-meta">
+                    <span class="alert-level-tag p0">P0 紧急</span>
+                    <span>5分钟前</span>
+                  </div>
+                </div>
+                <div class="alert-actions">
+                  <button class="admin-btn admin-btn-primary">处理</button>
+                  <button class="admin-btn admin-btn-link">查看详情</button>
+                </div>
+              </div>
+
+              <div class="alert-item p0">
+                <div class="alert-severity p0">🔴</div>
+                <div class="alert-body">
+                  <div class="alert-title">门店厦门中山路店 出票超时，3笔订单等待超过5分钟</div>
+                  <div class="alert-meta">
+                    <span class="alert-level-tag p0">P0 紧急</span>
+                    <span>12分钟前</span>
+                  </div>
+                </div>
+                <div class="alert-actions">
+                  <button class="admin-btn admin-btn-primary">处理</button>
+                  <button class="admin-btn admin-btn-link">查看详情</button>
+                </div>
+              </div>
+
+              <div class="alert-item p1">
+                <div class="alert-severity p1">🟡</div>
+                <div class="alert-body">
+                  <div class="alert-title">订单 <span class="order-id">ORD20260529008</span> 退款处理异常，资金未原路退回</div>
+                  <div class="alert-meta">
+                    <span class="alert-level-tag p1">P1 重要</span>
+                    <span>1小时前</span>
+                  </div>
+                </div>
+                <div class="alert-actions">
+                  <button class="admin-btn admin-btn-primary">处理</button>
+                  <button class="admin-btn admin-btn-link">查看详情</button>
+                </div>
+              </div>
+
+              <div class="alert-item p2">
+                <div class="alert-severity p2">🟢</div>
+                <div class="alert-body">
+                  <div class="alert-title">订单 <span class="order-id">ORD20260529003</span> 支付签名验证失败，已自动拒绝</div>
+                  <div class="alert-meta">
+                    <span class="alert-level-tag p2">P2 一般</span>
+                    <span>2小时前</span>
+                  </div>
+                </div>
+                <div class="alert-actions">
+                  <button class="admin-btn admin-btn-primary">处理</button>
+                  <button class="admin-btn admin-btn-link">查看详情</button>
+                </div>
+              </div>
+
+              <div class="alert-item resolved">
+                <div class="alert-severity resolved">✓</div>
+                <div class="alert-body">
+                  <div class="alert-title">订单 <span class="order-id">ORD20260529001</span> 出票超时，已重新出票成功</div>
+                  <div class="alert-meta">
+                    <span class="alert-level-tag resolved">已处理</span>
+                    <span>昨天 16:45</span>
+                  </div>
+                </div>
+                <div class="alert-actions">
+                  <button class="admin-btn admin-btn-link">查看详情</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

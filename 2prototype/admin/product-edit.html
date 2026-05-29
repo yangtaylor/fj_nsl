@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>编辑票种 - 体彩管理后台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .admin-form-section {
+      margin-bottom: 32px;
+    }
+    .admin-form-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+      padding-bottom: 12px;
+      border-bottom: 1px solid #F0F0F0;
+      margin-bottom: 20px;
+    }
+    .admin-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .admin-form-actions {
+      display: flex;
+      gap: 12px;
+      padding-top: 24px;
+      border-top: 1px solid #F0F0F0;
+      margin-top: 32px;
+    }
+    .admin-rule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+    .admin-rule-table th {
+      background: #FAFAFA;
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      font-weight: 500;
+      border: 1px solid var(--admin-border);
+    }
+    .admin-rule-table td {
+      padding: 8px 12px;
+      border: 1px solid var(--admin-border);
+    }
+    .admin-rule-table input {
+      width: 100%;
+      height: 32px;
+      padding: 0 8px;
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+    .admin-rule-table input:focus {
+      border-color: var(--admin-primary);
+      background: #FFF;
+    }
+    .admin-upload-area {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .admin-upload-item {
+      width: 120px;
+      height: 120px;
+      border: 1px dashed var(--admin-border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--admin-text-hint);
+      font-size: 13px;
+      gap: 6px;
+      transition: border-color 0.2s;
+    }
+    .admin-upload-item:hover {
+      border-color: var(--admin-primary);
+    }
+    .admin-upload-item-icon {
+      font-size: 28px;
+      color: var(--admin-primary);
+    }
+    .admin-upload-preview {
+      width: 120px;
+      height: 120px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, #FFF1F0, #FFE8E6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .admin-upload-preview-text {
+      font-size: 14px;
+      color: var(--color-primary);
+      font-weight: 500;
+    }
+    .admin-upload-preview-close {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 20px;
+      height: 20px;
+      background: #FF4D4F;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item active" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">商品管理 / 票种列表 / <span>编辑票种</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="admin-form">
+              <div class="admin-form-section">
+                <div class="admin-form-section-title">基本信息</div>
+                <div class="admin-form-row">
+                  <div class="admin-form-item">
+                    <label class="admin-form-label"><span class="required">*</span>票种名称</label>
+                    <input type="text" class="admin-form-input" value="中国红">
+                  </div>
+                  <div class="admin-form-item">
+                    <label class="admin-form-label"><span class="required">*</span>面值</label>
+                    <select class="admin-form-select">
+                      <option value="5">5元</option>
+                      <option value="10" selected>10元</option>
+                      <option value="20">20元</option>
+                      <option value="30">30元</option>
+                      <option value="50">50元</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="admin-form-row">
+                  <div class="admin-form-item">
+                    <label class="admin-form-label"><span class="required">*</span>玩法类型</label>
+                    <select class="admin-form-select">
+                      <option value="instant" selected>即开型</option>
+                    </select>
+                  </div>
+                  <div class="admin-form-item"></div>
+                </div>
+              </div>
+
+              <div class="admin-form-section">
+                <div class="admin-form-section-title">玩法说明</div>
+                <div class="admin-form-item">
+                  <textarea class="admin-form-textarea" rows="4">刮开覆盖膜，如果出现相同金额的标志3个，即中该金额的奖金；如果出现"中国红"标志，即中100元奖金。中奖奖金不能兑换其他票种。</textarea>
+                </div>
+              </div>
+
+              <div class="admin-form-section">
+                <div class="admin-form-section-title">中奖规则</div>
+                <table class="admin-rule-table">
+                  <thead>
+                    <tr>
+                      <th style="width:20%">奖级</th>
+                      <th style="width:40%">中奖条件</th>
+                      <th style="width:30%">奖金</th>
+                      <th style="width:10%">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><input type="text" value="一等奖"></td>
+                      <td><input type="text" value="3个相同金额标志"></td>
+                      <td><input type="text" value="100,000"></td>
+                      <td style="text-align:center"><button class="admin-btn-link danger">删除</button></td>
+                    </tr>
+                    <tr>
+                      <td><input type="text" value="二等奖"></td>
+                      <td><input type="text" value="2个相同金额标志"></td>
+                      <td><input type="text" value="1,000"></td>
+                      <td style="text-align:center"><button class="admin-btn-link danger">删除</button></td>
+                    </tr>
+                    <tr>
+                      <td><input type="text" value="三等奖"></td>
+                      <td><input type="text" value="出现"中国红"标志"></td>
+                      <td><input type="text" value="100"></td>
+                      <td style="text-align:center"><button class="admin-btn-link danger">删除</button></td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div style="margin-top:12px">
+                  <button class="admin-btn admin-btn-default">+ 添加奖级</button>
+                </div>
+              </div>
+
+              <div class="admin-form-section">
+                <div class="admin-form-section-title">票面图片</div>
+                <div class="admin-upload-area">
+                  <div class="admin-upload-preview">
+                    <span class="admin-upload-preview-text">中国红</span>
+                    <span class="admin-upload-preview-close">✕</span>
+                  </div>
+                  <div class="admin-upload-item">
+                    <span class="admin-upload-item-icon">+</span>
+                    上传图片
+                  </div>
+                </div>
+              </div>
+
+              <div class="admin-form-actions">
+                <button class="admin-btn admin-btn-primary" style="padding:10px 32px" onclick="location.href='product-list.html'">保存</button>
+                <button class="admin-btn admin-btn-default" style="padding:10px 32px" onclick="location.href='product-list.html'">取消</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>体彩服务角 - 空闲轮播</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .pad-container {
+      width: 1024px;
+      height: 768px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Carousel Content */
+    .carousel-content {
+      text-align: center;
+      color: white;
+      padding: 40px;
+      animation: fadeIn 1s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .carousel-icon {
+      font-size: 120px;
+      margin-bottom: 32px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .carousel-title {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .carousel-subtitle {
+      font-size: 20px;
+      opacity: 0.8;
+      margin-bottom: 40px;
+    }
+
+    /* Featured Products */
+    .featured-products {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+
+    .featured-card {
+      width: 200px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .featured-image {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .featured-name {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .featured-price {
+      font-size: 24px;
+      font-weight: 700;
+      color: #f5576c;
+    }
+
+    /* Winner Stories */
+    .winner-section {
+      background: rgba(255,255,255,0.05);
+      border-radius: 16px;
+      padding: 24px 40px;
+      margin-bottom: 40px;
+      max-width: 600px;
+    }
+
+    .winner-label {
+      font-size: 14px;
+      opacity: 0.6;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .winner-story {
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+    .winner-highlight {
+      color: #f5576c;
+      font-weight: 700;
+    }
+
+    /* Touch Prompt */
+    .touch-prompt {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(230, 0, 18, 0.8);
+      padding: 16px 32px;
+      border-radius: 30px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      animation: pulse 2s infinite;
+    }
+
+    .touch-icon {
+      font-size: 24px;
+    }
+
+    /* Slide Indicators */
+    .slide-indicators {
+      position: absolute;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+
+    .indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      transition: all 0.3s;
+    }
+
+    .indicator.active {
+      width: 24px;
+      border-radius: 4px;
+      background: white;
+    }
+
+    /* Brand Logo */
+    .brand-logo {
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #E60012;
+      font-size: 20px;
+    }
+
+    .brand-text {
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    /* Time Display */
+    .time-display {
+      position: absolute;
+      top: 24px;
+      right: 24px;
+      color: white;
+      font-size: 16px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="pad-container">
+    <!-- Brand Logo -->
+    <div class="brand-logo">
+      <div class="brand-icon">体彩</div>
+      <div class="brand-text">中国体育彩票</div>
+    </div>
+
+    <!-- Time Display -->
+    <div class="time-display">⏰ 14:32</div>
+
+    <!-- Carousel Content -->
+    <div class="carousel-content">
+      <div class="carousel-icon">🎉</div>
+      <div class="carousel-title">好运连连 惊喜不断</div>
+      <div class="carousel-subtitle">触摸屏幕开始您的购彩之旅</div>
+
+      <!-- Featured Products -->
+      <div class="featured-products">
+        <div class="featured-card">
+          <div class="featured-image">🎫</div>
+          <div class="featured-name">好运十倍</div>
+          <div class="featured-price">¥10</div>
+        </div>
+        <div class="featured-card">
+          <div class="featured-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">🎫</div>
+          <div class="featured-name">绿翡翠</div>
+          <div class="featured-price">¥50</div>
+        </div>
+        <div class="featured-card">
+          <div class="featured-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🎫</div>
+          <div class="featured-name">点石成金</div>
+          <div class="featured-price">¥20</div>
+        </div>
+      </div>
+
+      <!-- Winner Story -->
+      <div class="winner-section">
+        <div class="winner-label">🏆 中奖喜报</div>
+        <div class="winner-story">
+          恭喜福州彩民张先生购买<span class="winner-highlight">"绿翡翠"</span>喜中
+          <span class="winner-highlight">¥150,000</span>大奖！
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide Indicators -->
+    <div class="slide-indicators">
+      <div class="indicator active"></div>
+      <div class="indicator"></div>
+      <div class="indicator"></div>
+    </div>
+
+    <!-- Touch Prompt -->
+    <a href="index.html" class="touch-prompt" style="text-decoration:none;">
+      <span class="touch-icon">👆</span>
+      <span>触摸屏幕开始选购</span>
+    </a>
+  </div>
+</body>
+</html>

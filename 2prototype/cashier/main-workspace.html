@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>工作台 - 体彩收银台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .workspace-sections {
+      display: flex;
+      gap: 20px;
+    }
+    .workspace-section {
+      flex: 1;
+    }
+    .workspace-section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .workspace-section-title .more {
+      font-size: 13px;
+      color: var(--color-text-hint);
+      font-weight: 400;
+      cursor: pointer;
+    }
+    .workspace-section-title .more:hover {
+      color: var(--color-primary);
+    }
+    .workspace-order-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .workspace-order-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 16px;
+      box-shadow: var(--shadow-card);
+      border-left: 4px solid var(--color-primary);
+      transition: box-shadow 0.2s;
+    }
+    .workspace-order-card:hover {
+      box-shadow: var(--shadow-float);
+    }
+    .workspace-order-card.pending {
+      border-left-color: var(--color-warning);
+    }
+    .workspace-order-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    .workspace-order-id {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .workspace-order-time {
+      font-size: 12px;
+      color: var(--color-text-hint);
+    }
+    .workspace-order-items {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .workspace-order-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 10px;
+      border-top: 1px solid var(--color-border-light);
+    }
+    .workspace-order-amount {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .workspace-order-amount::before {
+      content: '¥';
+      font-size: 12px;
+    }
+    .workspace-order-btn {
+      padding: 6px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .workspace-order-btn.done {
+      background: #F6FFED;
+      color: var(--color-success);
+    }
+    .workspace-order-btn.pending {
+      background: #FFF7E6;
+      color: #D48806;
+    }
+    .workspace-shortcut-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .workspace-shortcut-btn {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 24px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .workspace-shortcut-btn:hover {
+      border-color: var(--color-primary);
+      box-shadow: var(--shadow-float);
+      transform: translateY(-2px);
+    }
+    .workspace-shortcut-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .workspace-shortcut-icon.red {
+      background: #FFF1F0;
+    }
+    .workspace-shortcut-icon.blue {
+      background: #E6F7FF;
+    }
+    .workspace-shortcut-icon.green {
+      background: #F6FFED;
+    }
+    .workspace-shortcut-icon.gold {
+      background: #FFF7E6;
+    }
+    .workspace-shortcut-text {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+    }
+    .cashier-topbar-time {
+      font-size: 13px;
+      color: var(--color-text-hint);
+    }
+    .cashier-topbar-bell {
+      position: relative;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: background 0.2s;
+    }
+    .cashier-topbar-bell:hover {
+      background: var(--color-bg-page);
+    }
+    .cashier-topbar-bell svg {
+      width: 20px;
+      height: 20px;
+      fill: var(--color-text-secondary);
+    }
+    .cashier-topbar-bell .badge {
+      position: absolute;
+      top: 2px;
+      right: 0;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      font-size: 10px;
+    }
+    .stat-card-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+    .cashier-stat-card {
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-app">
+    <div class="cashier-sidebar">
+      <div class="cashier-sidebar-logo">
+        <span class="cashier-sidebar-logo-text">体彩<em>收银台</em></span>
+      </div>
+      <div class="cashier-sidebar-menu">
+        <a href="main-workspace.html" class="cashier-sidebar-item active">
+          <span class="cashier-sidebar-item-icon">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="order-process.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📋</span>
+          <span>订单处理</span>
+        </a>
+        <a href="proxy-order.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">🛒</span>
+          <span>代客下单</span>
+        </a>
+        <a href="stock-in.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📦</span>
+          <span>库存管理</span>
+        </a>
+        <div class="cashier-sidebar-sub">
+          <a href="stock-in.html">入库签收</a>
+          <a href="inventory-check.html">库存盘点</a>
+          <a href="inventory-query.html">库存查询</a>
+          <a href="inventory-alert.html">库存预警</a>
+        </div>
+        <a href="sales-dashboard.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📈</span>
+          <span>销售看板</span>
+        </a>
+      </div>
+      <div class="cashier-sidebar-user">
+        <div class="cashier-sidebar-avatar">张</div>
+        <span>张销售</span>
+        <a href="login.html" class="cashier-sidebar-logout">退出登录</a>
+      </div>
+    </div>
+
+    <div class="cashier-main">
+      <div class="cashier-topbar">
+        <span class="cashier-topbar-title">工作台</span>
+        <div class="cashier-topbar-actions">
+          <div class="cashier-topbar-bell">
+            <svg viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/></svg>
+            <span class="badge">3</span>
+          </div>
+          <span class="cashier-topbar-time">2026-05-29 14:30</span>
+        </div>
+      </div>
+
+      <div class="cashier-content">
+        <div class="cashier-stat-cards">
+          <div class="cashier-stat-card">
+            <div class="stat-card-icon" style="background:#FFF1F0;">💰</div>
+            <div class="cashier-stat-card-label">今日销售额</div>
+            <div class="cashier-stat-card-value red">2,580</div>
+            <div class="cashier-stat-card-trend up">↑ 12.5% 较昨日</div>
+          </div>
+          <div class="cashier-stat-card">
+            <div class="stat-card-icon" style="background:#E6F7FF;">📋</div>
+            <div class="cashier-stat-card-label">今日订单</div>
+            <div class="cashier-stat-card-value">23<span style="font-size:14px;font-weight:400;color:var(--color-text-hint);">笔</span></div>
+            <div class="cashier-stat-card-trend up">↑ 8.3% 较昨日</div>
+          </div>
+          <div class="cashier-stat-card">
+            <div class="stat-card-icon" style="background:#FFF7E6;">⏳</div>
+            <div class="cashier-stat-card-label">待出票</div>
+            <div class="cashier-stat-card-value" style="color:#D48806;">5<span style="font-size:14px;font-weight:400;color:var(--color-text-hint);">笔</span></div>
+            <div class="cashier-stat-card-trend" style="color:#D48806;">需及时处理</div>
+          </div>
+          <div class="cashier-stat-card">
+            <div class="stat-card-icon" style="background:#FFF1F0;">⚠️</div>
+            <div class="cashier-stat-card-label">库存预警</div>
+            <div class="cashier-stat-card-value red">2<span style="font-size:14px;font-weight:400;color:var(--color-text-hint);">项</span></div>
+            <div class="cashier-stat-card-trend" style="color:var(--color-error);">请及时补货</div>
+          </div>
+        </div>
+
+        <div class="workspace-sections">
+          <div class="workspace-section" style="flex:1.4;">
+            <div class="workspace-section-title">
+              待处理订单
+              <span class="more"><a href="order-process.html" style="color:inherit;text-decoration:none;">查看全部 →</a></span>
+            </div>
+            <div class="workspace-order-list">
+              <div class="workspace-order-card pending">
+                <div class="workspace-order-header">
+                  <span class="workspace-order-id">ORD20260529018</span>
+                  <span class="workspace-order-time">14:25</span>
+                </div>
+                <div class="workspace-order-items">中国红 ×2, 好运十倍 ×1</div>
+                <div class="workspace-order-footer">
+                  <span class="workspace-order-amount">40</span>
+                  <a href="order-process.html" class="workspace-order-btn pending" style="text-decoration:none;">待出票</a>
+                </div>
+              </div>
+              <div class="workspace-order-card">
+                <div class="workspace-order-header">
+                  <span class="workspace-order-id">ORD20260529015</span>
+                  <span class="workspace-order-time">13:50</span>
+                </div>
+                <div class="workspace-order-items">金光灿烂 ×3</div>
+                <div class="workspace-order-footer">
+                  <span class="workspace-order-amount">90</span>
+                  <a href="ticket-confirm.html" class="workspace-order-btn done" style="text-decoration:none;">已出票</a>
+                </div>
+              </div>
+              <div class="workspace-order-card pending">
+                <div class="workspace-order-header">
+                  <span class="workspace-order-id">ORD20260529012</span>
+                  <span class="workspace-order-time">13:20</span>
+                </div>
+                <div class="workspace-order-items">好运十倍 ×2, 中国红 ×1</div>
+                <div class="workspace-order-footer">
+                  <span class="workspace-order-amount">50</span>
+                  <a href="order-process.html" class="workspace-order-btn pending" style="text-decoration:none;">待出票</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workspace-section">
+            <div class="workspace-section-title">快捷操作</div>
+            <div class="workspace-shortcut-grid">
+              <a href="proxy-order.html" class="workspace-shortcut-btn" style="text-decoration:none;">
+                <div class="workspace-shortcut-icon red">🛒</div>
+                <span class="workspace-shortcut-text">代客下单</span>
+              </a>
+              <a href="stock-in.html" class="workspace-shortcut-btn" style="text-decoration:none;">
+                <div class="workspace-shortcut-icon green">📥</div>
+                <span class="workspace-shortcut-text">入库签收</span>
+              </a>
+              <a href="inventory-query.html" class="workspace-shortcut-btn" style="text-decoration:none;">
+                <div class="workspace-shortcut-icon blue">🔍</div>
+                <span class="workspace-shortcut-text">库存查询</span>
+              </a>
+              <a href="sales-dashboard.html" class="workspace-shortcut-btn" style="text-decoration:none;">
+                <div class="workspace-shortcut-icon gold">📈</div>
+                <span class="workspace-shortcut-text">销售看板</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

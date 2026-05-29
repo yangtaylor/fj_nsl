@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>体彩服务角 - 直播互动</title>
+  <link rel="stylesheet" href="../assets/css/common.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .pad-container {
+      width: 1024px;
+      height: 768px;
+      background: #f5f5f5;
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #E60012 0%, #ff4757 100%);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: #E60012;
+      font-size: 18px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .live-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      background: #52c41a;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Live Video Area */
+    .live-area {
+      flex: 1;
+      background: #1a1a2e;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .video-placeholder {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+
+    .video-icon {
+      font-size: 80px;
+      margin-bottom: 16px;
+    }
+
+    .video-text {
+      font-size: 18px;
+      opacity: 0.8;
+    }
+
+    .live-overlay {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .host-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(0,0,0,0.6);
+      padding: 12px 20px;
+      border-radius: 25px;
+      color: white;
+    }
+
+    .host-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .host-name {
+      font-weight: 600;
+    }
+
+    .viewer-count {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.6);
+      padding: 8px 16px;
+      border-radius: 20px;
+      color: white;
+      font-size: 14px;
+    }
+
+    /* Live Chat */
+    .chat-area {
+      width: 300px;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid #e8e8e8;
+    }
+
+    .chat-header {
+      padding: 16px;
+      border-bottom: 1px solid #f0f0f0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 16px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chat-message {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .chat-content {
+      flex: 1;
+    }
+
+    .chat-user {
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 2px;
+    }
+
+    .chat-text {
+      font-size: 13px;
+      color: #666;
+      line-height: 1.4;
+    }
+
+    /* Recommended Products */
+    .recommended-section {
+      background: white;
+      padding: 20px;
+      border-top: 1px solid #e8e8e8;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #333;
+    }
+
+    .product-scroll {
+      display: flex;
+      gap: 16px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .product-card {
+      min-width: 160px;
+      background: #f5f5f5;
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .product-image {
+      width: 100%;
+      height: 100px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+    }
+
+    .product-info {
+      padding: 12px;
+    }
+
+    .product-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .product-price {
+      font-size: 16px;
+      font-weight: 700;
+      color: #E60012;
+    }
+
+    .quick-add-btn {
+      width: 100%;
+      padding: 8px;
+      background: #E60012;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      display: block;
+      text-align: center;
+      text-decoration: none;
+    }
+
+    /* Promotion Banner */
+    .promo-banner {
+      background: linear-gradient(135deg, #E60012 0%, #ff4757 100%);
+      color: white;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .promo-text {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .promo-tag {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="pad-container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <div class="logo-icon">体彩</div>
+        <div class="logo-text">直播互动</div>
+      </div>
+      <div class="live-indicator">
+        <span class="live-dot"></span>
+        <span>直播中</span>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Live Video Area -->
+      <div class="live-area">
+        <div class="video-placeholder">
+          <div class="video-icon">📺</div>
+          <div class="video-text">直播画面区域</div>
+        </div>
+        
+        <div class="live-overlay">
+          <div class="host-info">
+            <div class="host-avatar">👤</div>
+            <div>
+              <div class="host-name">主播小李</div>
+              <div style="font-size: 12px; opacity: 0.8;">正在刮奖中...</div>
+            </div>
+          </div>
+          <div class="viewer-count">
+            <span>👥</span>
+            <span>1,234 人观看</span>
+          </div>
+        </div>
+
+        <!-- Promotion Banner -->
+        <div class="promo-banner">
+          <span class="promo-text">🎁 直播专享：购买推荐票种满50元减5元</span>
+          <span class="promo-tag">限时优惠</span>
+        </div>
+      </div>
+
+      <!-- Chat Area -->
+      <div class="chat-area">
+        <div class="chat-header">💬 互动聊天</div>
+        <div class="chat-messages">
+          <div class="chat-message">
+            <div class="chat-avatar">A</div>
+            <div class="chat-content">
+              <div class="chat-user">用户A</div>
+              <div class="chat-text">好运十倍还有吗？</div>
+            </div>
+          </div>
+          <div class="chat-message">
+            <div class="chat-avatar">B</div>
+            <div class="chat-content">
+              <div class="chat-user">用户B</div>
+              <div class="chat-text">主播手气不错啊！</div>
+            </div>
+          </div>
+          <div class="chat-message">
+            <div class="chat-avatar">C</div>
+            <div class="chat-content">
+              <div class="chat-user">用户C</div>
+              <div class="chat-text">绿翡翠中奖率高吗？</div>
+            </div>
+          </div>
+          <div class="chat-message">
+            <div class="chat-avatar" style="background: linear-gradient(135deg, #E60012 0%, #ff4757 100%);">主</div>
+            <div class="chat-content">
+              <div class="chat-user" style="color: #E60012;">主播小李</div>
+              <div class="chat-text">绿翡翠最高奖金150万，推荐购买！</div>
+            </div>
+          </div>
+          <div class="chat-message">
+            <div class="chat-avatar">D</div>
+            <div class="chat-content">
+              <div class="chat-user">用户D</div>
+              <div class="chat-text">已下单，期待中奖！</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recommended Products -->
+    <div class="recommended-section">
+      <div class="section-title">🔥 主播推荐</div>
+      <div class="product-scroll">
+        <div class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">🎫</div>
+          <div class="product-info">
+            <div class="product-name">好运十倍</div>
+            <div class="product-price">¥10</div>
+            <a href="cart.html" class="quick-add-btn">+ 加入购物车</a>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">🎫</div>
+          <div class="product-info">
+            <div class="product-name">绿翡翠</div>
+            <div class="product-price">¥50</div>
+            <a href="cart.html" class="quick-add-btn">+ 加入购物车</a>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">🎫</div>
+          <div class="product-info">
+            <div class="product-name">点石成金</div>
+            <div class="product-price">¥20</div>
+            <a href="cart.html" class="quick-add-btn">+ 加入购物车</a>
+          </div>
+        </div>
+        <div class="product-card">
+          <div class="product-image" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">🎫</div>
+          <div class="product-info">
+            <div class="product-name">甜蜜蜜</div>
+            <div class="product-price">¥5</div>
+            <a href="cart.html" class="quick-add-btn">+ 加入购物车</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <a href="index.html" class="nav-item">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">首页</span>
+      </a>
+      <a href="live.html" class="nav-item active">
+        <span class="nav-icon">📺</span>
+        <span class="nav-label">直播</span>
+      </a>
+      <a href="cart.html" class="nav-item">
+        <span class="nav-icon">🛒</span>
+        <span class="nav-label">购物车</span>
+      </a>
+      <a href="order-success.html" class="nav-item">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">订单</span>
+      </a>
+    </nav>
+  </div>
+</body>
+</html>

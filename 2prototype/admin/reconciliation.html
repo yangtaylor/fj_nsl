@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>对账管理 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .recon-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .recon-date-input {
+      width: 180px;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .recon-date-input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .recon-stat-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .recon-stat-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      border-left: 4px solid transparent;
+    }
+    .recon-stat-card.date { border-left-color: var(--admin-primary); }
+    .recon-stat-card.total { border-left-color: var(--admin-warning); }
+    .recon-stat-card.match { border-left-color: var(--admin-success); }
+    .recon-stat-card.diff { border-left-color: var(--color-error); }
+    .recon-stat-label {
+      font-size: 14px;
+      color: var(--admin-text-hint);
+      margin-bottom: 8px;
+    }
+    .recon-stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--admin-text);
+    }
+    .recon-stat-value.red { color: var(--color-error); }
+    .recon-stat-value.green { color: var(--admin-success); }
+    .recon-alert {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #FFF7E6;
+      border: 1px solid #FFE58F;
+      border-radius: var(--radius-sm);
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #D48806;
+    }
+    .recon-alert-icon { font-size: 16px; }
+    .recon-expand-row td {
+      padding: 0 !important;
+      background: #FAFBFC;
+    }
+    .recon-expand-content {
+      padding: 16px 24px 16px 56px;
+      display: none;
+    }
+    .recon-expand-content.show { display: block; }
+    .recon-expand-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 12px;
+    }
+    .recon-expand-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px 32px;
+    }
+    .recon-expand-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+    .recon-expand-item-label {
+      color: var(--admin-text-hint);
+      min-width: 100px;
+    }
+    .recon-expand-item-value {
+      color: var(--admin-text);
+      font-weight: 500;
+    }
+    .recon-expand-item-value.red { color: var(--color-error); }
+    .recon-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .recon-status.match {
+      background: #F6FFED;
+      color: var(--admin-success);
+    }
+    .recon-status.diff {
+      background: #FFF1F0;
+      color: var(--color-error);
+    }
+    .recon-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+    .recon-status.match .recon-status-dot { background: var(--admin-success); }
+    .recon-status.diff .recon-status-dot { background: var(--color-error); }
+    .recon-diff-amount { color: var(--color-error); font-weight: 600; }
+    .recon-expand-toggle {
+      color: var(--admin-primary);
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .recon-expand-toggle:hover { text-decoration: underline; }
+    .recon-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item active" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">财务管理 / <span>对账管理</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-content">
+        <div class="recon-toolbar">
+          <label style="font-size:14px;color:var(--admin-text-secondary);">对账日期</label>
+          <input type="date" class="recon-date-input" value="2026-05-28">
+          <button class="admin-btn admin-btn-primary">🔄 执行对账</button>
+        </div>
+
+        <div class="recon-stat-row">
+          <div class="recon-stat-card date">
+            <div class="recon-stat-label">对账日期</div>
+            <div class="recon-stat-value">2026-05-28</div>
+          </div>
+          <div class="recon-stat-card total">
+            <div class="recon-stat-label">订单总数</div>
+            <div class="recon-stat-value">156<span style="font-size:14px;font-weight:400;color:var(--admin-text-hint);margin-left:4px;">笔</span></div>
+          </div>
+          <div class="recon-stat-card match">
+            <div class="recon-stat-label">一致</div>
+            <div class="recon-stat-value green">152<span style="font-size:14px;font-weight:400;color:var(--admin-text-hint);margin-left:4px;">笔</span></div>
+          </div>
+          <div class="recon-stat-card diff">
+            <div class="recon-stat-label">差异</div>
+            <div class="recon-stat-value red">4<span style="font-size:14px;font-weight:400;color:var(--admin-text-hint);margin-left:4px;">笔</span></div>
+          </div>
+        </div>
+
+        <div class="recon-alert">
+          <span class="recon-alert-icon">⚠️</span>
+          对账文件缺失时触发告警，请及时检查支付通道对账文件是否已上传。
+        </div>
+
+        <div class="admin-card">
+          <div class="admin-tabs">
+            <div class="admin-tab active">全部 (156)</div>
+            <div class="admin-tab">一致 (152)</div>
+            <div class="admin-tab">差异 (4)</div>
+          </div>
+          <div class="admin-card-body" style="padding-top:0;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>订单号</th>
+                  <th>门店</th>
+                  <th>交易金额</th>
+                  <th>支付通道金额</th>
+                  <th>差异金额</th>
+                  <th>状态</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>TY20260528001</td>
+                  <td>福州万达广场店</td>
+                  <td>¥500.00</td>
+                  <td>¥500.00</td>
+                  <td>¥0.00</td>
+                  <td><span class="recon-status match"><span class="recon-status-dot"></span>一致</span></td>
+                  <td><span class="recon-expand-toggle" onclick="toggleExpand('row1')">查看详情</span></td>
+                </tr>
+                <tr class="recon-expand-row">
+                  <td colspan="7">
+                    <div class="recon-expand-content" id="row1">
+                      <div class="recon-expand-title">差异详情</div>
+                      <div class="recon-expand-grid">
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">系统记录金额</span>
+                          <span class="recon-expand-item-value">¥500.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道金额</span>
+                          <span class="recon-expand-item-value">¥500.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道</span>
+                          <span class="recon-expand-item-value">微信支付</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">交易时间</span>
+                          <span class="recon-expand-item-value">2026-05-28 09:15:32</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>TY20260528002</td>
+                  <td>厦门中山路店</td>
+                  <td>¥1,200.00</td>
+                  <td>¥1,200.00</td>
+                  <td>¥0.00</td>
+                  <td><span class="recon-status match"><span class="recon-status-dot"></span>一致</span></td>
+                  <td><span class="recon-expand-toggle" onclick="toggleExpand('row2')">查看详情</span></td>
+                </tr>
+                <tr class="recon-expand-row">
+                  <td colspan="7">
+                    <div class="recon-expand-content" id="row2">
+                      <div class="recon-expand-title">差异详情</div>
+                      <div class="recon-expand-grid">
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">系统记录金额</span>
+                          <span class="recon-expand-item-value">¥1,200.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道金额</span>
+                          <span class="recon-expand-item-value">¥1,200.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道</span>
+                          <span class="recon-expand-item-value">支付宝</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">交易时间</span>
+                          <span class="recon-expand-item-value">2026-05-28 10:22:18</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>TY20260528003</td>
+                  <td>泉州浦西万达店</td>
+                  <td>¥800.00</td>
+                  <td>¥785.00</td>
+                  <td class="recon-diff-amount">¥15.00</td>
+                  <td><span class="recon-status diff"><span class="recon-status-dot"></span>差异</span></td>
+                  <td><span class="recon-expand-toggle" onclick="toggleExpand('row3')">查看详情</span></td>
+                </tr>
+                <tr class="recon-expand-row">
+                  <td colspan="7">
+                    <div class="recon-expand-content show" id="row3">
+                      <div class="recon-expand-title">差异详情</div>
+                      <div class="recon-expand-grid">
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">系统记录金额</span>
+                          <span class="recon-expand-item-value">¥800.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道金额</span>
+                          <span class="recon-expand-item-value red">¥785.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道</span>
+                          <span class="recon-expand-item-value">微信支付</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">差异原因</span>
+                          <span class="recon-expand-item-value red">支付通道金额与系统记录不一致，少到账¥15.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">交易时间</span>
+                          <span class="recon-expand-item-value">2026-05-28 11:08:45</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">处理状态</span>
+                          <span class="recon-expand-item-value red">待处理</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>TY20260528004</td>
+                  <td>福州宝龙城市广场店</td>
+                  <td>¥350.00</td>
+                  <td>¥350.00</td>
+                  <td>¥0.00</td>
+                  <td><span class="recon-status match"><span class="recon-status-dot"></span>一致</span></td>
+                  <td><span class="recon-expand-toggle" onclick="toggleExpand('row4')">查看详情</span></td>
+                </tr>
+                <tr class="recon-expand-row">
+                  <td colspan="7">
+                    <div class="recon-expand-content" id="row4">
+                      <div class="recon-expand-title">差异详情</div>
+                      <div class="recon-expand-grid">
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">系统记录金额</span>
+                          <span class="recon-expand-item-value">¥350.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道金额</span>
+                          <span class="recon-expand-item-value">¥350.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道</span>
+                          <span class="recon-expand-item-value">银联支付</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">交易时间</span>
+                          <span class="recon-expand-item-value">2026-05-28 13:45:20</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>TY20260528005</td>
+                  <td>福州东百中心店</td>
+                  <td>¥2,600.00</td>
+                  <td>¥2,580.00</td>
+                  <td class="recon-diff-amount">¥20.00</td>
+                  <td><span class="recon-status diff"><span class="recon-status-dot"></span>差异</span></td>
+                  <td><span class="recon-expand-toggle" onclick="toggleExpand('row5')">查看详情</span></td>
+                </tr>
+                <tr class="recon-expand-row">
+                  <td colspan="7">
+                    <div class="recon-expand-content" id="row5">
+                      <div class="recon-expand-title">差异详情</div>
+                      <div class="recon-expand-grid">
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">系统记录金额</span>
+                          <span class="recon-expand-item-value">¥2,600.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道金额</span>
+                          <span class="recon-expand-item-value red">¥2,580.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道</span>
+                          <span class="recon-expand-item-value">支付宝</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">差异原因</span>
+                          <span class="recon-expand-item-value red">支付通道金额与系统记录不一致，少到账¥20.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">交易时间</span>
+                          <span class="recon-expand-item-value">2026-05-28 14:30:12</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">处理状态</span>
+                          <span class="recon-expand-item-value red">待处理</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td>TY20260528006</td>
+                  <td>厦门SM广场店</td>
+                  <td>¥960.00</td>
+                  <td>¥960.00</td>
+                  <td>¥0.00</td>
+                  <td><span class="recon-status match"><span class="recon-status-dot"></span>一致</span></td>
+                  <td><span class="recon-expand-toggle" onclick="toggleExpand('row6')">查看详情</span></td>
+                </tr>
+                <tr class="recon-expand-row">
+                  <td colspan="7">
+                    <div class="recon-expand-content" id="row6">
+                      <div class="recon-expand-title">差异详情</div>
+                      <div class="recon-expand-grid">
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">系统记录金额</span>
+                          <span class="recon-expand-item-value">¥960.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道金额</span>
+                          <span class="recon-expand-item-value">¥960.00</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">支付通道</span>
+                          <span class="recon-expand-item-value">微信支付</span>
+                        </div>
+                        <div class="recon-expand-item">
+                          <span class="recon-expand-item-label">交易时间</span>
+                          <span class="recon-expand-item-value">2026-05-28 16:10:55</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="admin-pagination">
+              <span style="font-size:13px;color:var(--admin-text-hint);margin-right:auto;">共 156 条</span>
+              <div class="admin-pagination-item">‹</div>
+              <div class="admin-pagination-item active">1</div>
+              <div class="admin-pagination-item">2</div>
+              <div class="admin-pagination-item">3</div>
+              <div class="admin-pagination-item">...</div>
+              <div class="admin-pagination-item">16</div>
+              <div class="admin-pagination-item">›</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="recon-bottom-bar">
+          <div></div>
+          <button class="admin-btn admin-btn-primary">📥 导出对账报表</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function toggleExpand(id) {
+      var el = document.getElementById(id);
+      el.classList.toggle('show');
+    }
+  </script>
+</body>
+</html>

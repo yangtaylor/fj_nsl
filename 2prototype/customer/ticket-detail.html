@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>票种详情 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .detail-hero {
+      width: 100%;
+      height: 260px;
+      background: linear-gradient(135deg, #FF6B6B, #C4161C);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .detail-hero::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      top: -60px;
+      right: -40px;
+    }
+    .detail-hero::after {
+      content: '';
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      bottom: -30px;
+      left: 20px;
+    }
+    .detail-hero-name {
+      font-size: 42px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: 8px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.2);
+      position: relative;
+      z-index: 1;
+    }
+    .detail-hero-sub {
+      font-size: 16px;
+      color: rgba(255,255,255,0.85);
+      margin-top: 8px;
+      position: relative;
+      z-index: 1;
+    }
+    .detail-info {
+      background: white;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .detail-info-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .detail-info-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-text-primary);
+    }
+    .detail-info-type {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+    }
+    .detail-info-price {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .detail-info-price::before {
+      content: '¥';
+      font-size: 18px;
+    }
+    .detail-section {
+      background: white;
+      margin-top: 12px;
+      padding: 20px 24px;
+    }
+    .detail-section-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 12px;
+      padding-left: 10px;
+      border-left: 3px solid var(--color-primary);
+    }
+    .detail-section-body {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      line-height: 1.8;
+    }
+    .prize-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    .prize-table th {
+      background: var(--color-bg-page);
+      padding: 10px 12px;
+      text-align: center;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      border-bottom: 2px solid var(--color-border);
+    }
+    .prize-table td {
+      padding: 10px 12px;
+      text-align: center;
+      color: var(--color-text-secondary);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .prize-table tr:last-child td {
+      border-bottom: none;
+    }
+    .prize-amount {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+    .detail-bottom-bar {
+      height: 72px;
+      background: white;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      gap: 16px;
+      border-top: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .detail-bottom-bar .btn {
+      flex: 1;
+      height: 48px;
+      font-size: 17px;
+      border-radius: 24px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>14:30</span>
+      <div class="statusbar-icons" style="display:flex;align-items:center;gap:8px;">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:white;"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:white;"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4H11V9h2v5z"/></svg>
+      </div>
+    </div>
+
+    <div class="customer-header">
+      <a href="ticket-browse.html" class="customer-header-back">‹</a>
+      <span class="customer-header-title">票种详情</span>
+    </div>
+
+    <div class="customer-body">
+      <div class="detail-hero">
+        <span class="detail-hero-name">中国红</span>
+        <span class="detail-hero-sub">经典即开型彩票 · 面值10元</span>
+      </div>
+
+      <div class="detail-info">
+        <div class="detail-info-left">
+          <span class="detail-info-name">中国红</span>
+          <span class="detail-info-type">玩法：即开型 · 面值10元 · 中奖率33.3%</span>
+        </div>
+        <span class="detail-info-price">10</span>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">玩法说明</div>
+        <div class="detail-section-body">
+          刮开覆盖膜，如果任意一行或一列的三个符号相同，即可获得该行或该列右侧对应的奖金金额。如果刮出"中国红"特殊标志，则获得该标志下方标注的全部奖金。兼中兼得，最高奖金10万元。
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">中奖规则</div>
+        <table class="prize-table">
+          <thead>
+            <tr>
+              <th>奖级</th>
+              <th>中奖条件</th>
+              <th>奖金</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>一等奖</td>
+              <td>刮出"中国红"标志</td>
+              <td class="prize-amount">100,000元</td>
+            </tr>
+            <tr>
+              <td>二等奖</td>
+              <td>三行均为相同符号</td>
+              <td class="prize-amount">1,000元</td>
+            </tr>
+            <tr>
+              <td>三等奖</td>
+              <td>两行均为相同符号</td>
+              <td class="prize-amount">100元</td>
+            </tr>
+            <tr>
+              <td>四等奖</td>
+              <td>一行均为相同符号</td>
+              <td class="prize-amount">20元</td>
+            </tr>
+            <tr>
+              <td>五等奖</td>
+              <td>任意一列三个符号相同</td>
+              <td class="prize-amount">10元</td>
+            </tr>
+            <tr>
+              <td>六等奖</td>
+              <td>刮出"福"字标志</td>
+              <td class="prize-amount">5元</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="detail-bottom-bar">
+      <a href="cart.html" class="btn btn-secondary">加入购物车</a>
+      <a href="order-confirm.html" class="btn btn-primary">立即购买</a>
+    </div>
+  </div>
+</body>
+</html>

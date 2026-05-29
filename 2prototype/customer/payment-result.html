@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>支付结果 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .state-section {
+      padding: 20px 24px;
+    }
+    .state-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--color-text-hint);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      padding-left: 4px;
+    }
+    .state-card {
+      border-radius: var(--radius-xl);
+      padding: 32px 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    .state-card.success-card {
+      background: linear-gradient(135deg, #F6FFED 0%, #D9F7BE 100%);
+      border: 1px solid #B7EB8F;
+    }
+    .state-card.fail-card {
+      background: linear-gradient(135deg, #FFF1F0 0%, #FFCCC7 100%);
+      border: 1px solid #FFA39E;
+    }
+    .state-card.timeout-card {
+      background: linear-gradient(135deg, #FFF7E6 0%, #FFE58F 100%);
+      border: 1px solid #FFD666;
+    }
+    .state-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .state-icon.icon-success {
+      background: var(--color-success);
+      box-shadow: 0 4px 16px rgba(82, 196, 26, 0.35);
+    }
+    .state-icon.icon-fail {
+      background: var(--color-error);
+      box-shadow: 0 4px 16px rgba(255, 77, 79, 0.35);
+    }
+    .state-icon.icon-timeout {
+      background: var(--color-warning);
+      box-shadow: 0 4px 16px rgba(250, 173, 20, 0.35);
+    }
+    .state-icon svg {
+      width: 36px;
+      height: 36px;
+      fill: none;
+      stroke: white;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .state-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .state-card.success-card .state-title { color: #389E0D; }
+    .state-card.fail-card .state-title { color: #CF1322; }
+    .state-card.timeout-card .state-title { color: #D48806; }
+    .state-order-no {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      margin-bottom: 4px;
+    }
+    .state-desc {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+      margin-bottom: 24px;
+    }
+    .state-btns {
+      display: flex;
+      gap: 16px;
+    }
+    .state-btn {
+      padding: 10px 32px;
+      border-radius: 24px;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all var(--transition-fast);
+    }
+    .state-btn.btn-green {
+      background: var(--color-success);
+      color: white;
+    }
+    .state-btn.btn-green:active { background: #389E0D; }
+    .state-btn.btn-green-outline {
+      background: transparent;
+      border: 2px solid var(--color-success);
+      color: #389E0D;
+    }
+    .state-btn.btn-red {
+      background: var(--color-error);
+      color: white;
+    }
+    .state-btn.btn-red:active { background: #CF1322; }
+    .state-btn.btn-red-outline {
+      background: transparent;
+      border: 2px solid var(--color-error);
+      color: #CF1322;
+    }
+    .state-btn.btn-yellow {
+      background: var(--color-warning);
+      color: var(--color-text-primary);
+    }
+    .state-btn.btn-yellow:active { background: #D48806; color: white; }
+    .states-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>12:30</span>
+      <span>福建省体育彩票</span>
+      <span>WiFi</span>
+    </div>
+    <div class="customer-header">
+      <div class="customer-header-back">‹</div>
+      <div class="customer-header-title">支付结果</div>
+    </div>
+    <div class="customer-body">
+      <div class="states-wrapper">
+        <div class="state-section">
+          <div class="state-label">状态一：支付成功</div>
+          <div class="state-card success-card">
+            <div class="state-icon icon-success">
+              <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <div class="state-title">支付成功</div>
+            <div class="state-order-no">订单号: ORD20260529001</div>
+            <div class="state-desc">请等待出票...</div>
+            <div class="state-btns">
+              <a href="ticket-notification.html" class="state-btn btn-green-outline">查看订单</a>
+              <a href="ticket-browse.html" class="state-btn btn-green">继续选购</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="state-section">
+          <div class="state-label">状态二：支付失败</div>
+          <div class="state-card fail-card">
+            <div class="state-icon icon-fail">
+              <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </div>
+            <div class="state-title">支付失败</div>
+            <div class="state-desc">请重新尝试支付</div>
+            <div class="state-btns">
+              <a href="ticket-browse.html" class="state-btn btn-red-outline">返回首页</a>
+              <a href="payment.html" class="state-btn btn-red">重新支付</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="state-section">
+          <div class="state-label">状态三：支付超时</div>
+          <div class="state-card timeout-card">
+            <div class="state-icon icon-timeout">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="state-title">支付超时</div>
+            <div class="state-desc">订单已自动取消，库存已释放</div>
+            <div class="state-btns">
+              <a href="cart.html" class="state-btn btn-yellow">重新下单</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="customer-tabbar">
+      <a href="ticket-browse.html" class="customer-tabbar-item">
+        <div class="customer-tabbar-icon">🎫</div>
+        <span>票种</span>
+      </a>
+      <a href="cart.html" class="customer-tabbar-item">
+        <div class="customer-tabbar-icon">🛒</div>
+        <span>购物车</span>
+      </a>
+      <a href="live-interaction.html" class="customer-tabbar-item">
+        <div class="customer-tabbar-icon">📺</div>
+        <span>直播</span>
+      </a>
+      <div class="customer-tabbar-item">
+        <div class="customer-tabbar-icon">👤</div>
+        <span>我的</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

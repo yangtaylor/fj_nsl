@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>购物车 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .cart-header-count {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+      margin-left: 8px;
+      font-weight: 400;
+    }
+    .cart-list {
+      padding: 16px;
+    }
+    .cart-item {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow-card);
+    }
+    .cart-item-color {
+      width: 64px;
+      height: 64px;
+      border-radius: var(--radius-md);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .cart-item-color.c-red { background: linear-gradient(135deg, #FF6B6B, #C4161C); }
+    .cart-item-color.c-blue { background: linear-gradient(135deg, #4FACFE, #1A5BC4); }
+    .cart-item-color.c-gold { background: linear-gradient(135deg, #FFE44D, #D4A017); color: #5C4300; }
+    .cart-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .cart-item-name {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 4px;
+    }
+    .cart-item-price {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .cart-item-price::before {
+      content: '¥';
+      font-size: 13px;
+    }
+    .cart-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .cart-stepper {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .cart-stepper-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg-page);
+      font-size: 18px;
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      border: none;
+      user-select: none;
+    }
+    .cart-stepper-btn:active {
+      background: var(--color-border);
+    }
+    .cart-stepper-num {
+      width: 40px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      border-left: 1px solid var(--color-border);
+      border-right: 1px solid var(--color-border);
+    }
+    .cart-item-delete {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--color-text-hint);
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+    }
+    .cart-item-delete:active {
+      color: var(--color-error);
+      background: #FFF1F0;
+    }
+    .cart-bottom-bar {
+      height: 72px;
+      background: white;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      border-top: 1px solid var(--color-border-light);
+      flex-shrink: 0;
+    }
+    .cart-total {
+      flex: 1;
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+    .cart-total-label {
+      font-size: 15px;
+      color: var(--color-text-secondary);
+    }
+    .cart-total-amount {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .cart-total-amount::before {
+      content: '¥';
+      font-size: 16px;
+    }
+    .cart-bottom-bar .btn {
+      width: 180px;
+      height: 48px;
+      font-size: 17px;
+      border-radius: 24px;
+      font-weight: 600;
+    }
+    .cart-empty {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+    }
+    .cart-empty-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--color-bg-page);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    .cart-empty-text {
+      font-size: 16px;
+      color: var(--color-text-hint);
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>14:30</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:white;"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:white;"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4H11V9h2v5z"/></svg>
+      </div>
+    </div>
+
+    <div class="customer-header">
+      <span class="customer-header-title">购物车<span class="cart-header-count">(3件)</span></span>
+    </div>
+
+    <div class="customer-body">
+      <div class="cart-list">
+        <div class="cart-item">
+          <div class="cart-item-color c-red">中国红</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">中国红</div>
+            <div class="cart-item-price">10</div>
+          </div>
+          <div class="cart-item-actions">
+            <div class="cart-stepper">
+              <button class="cart-stepper-btn">−</button>
+              <span class="cart-stepper-num">2</span>
+              <button class="cart-stepper-btn">+</button>
+            </div>
+            <span class="cart-item-delete">✕</span>
+          </div>
+        </div>
+
+        <div class="cart-item">
+          <div class="cart-item-color c-blue">好运</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">好运十倍</div>
+            <div class="cart-item-price">20</div>
+          </div>
+          <div class="cart-item-actions">
+            <div class="cart-stepper">
+              <button class="cart-stepper-btn">−</button>
+              <span class="cart-stepper-num">1</span>
+              <button class="cart-stepper-btn">+</button>
+            </div>
+            <span class="cart-item-delete">✕</span>
+          </div>
+        </div>
+
+        <div class="cart-item">
+          <div class="cart-item-color c-gold">金光</div>
+          <div class="cart-item-info">
+            <div class="cart-item-name">金光灿烂</div>
+            <div class="cart-item-price">30</div>
+          </div>
+          <div class="cart-item-actions">
+            <div class="cart-stepper">
+              <button class="cart-stepper-btn">−</button>
+              <span class="cart-stepper-num">1</span>
+              <button class="cart-stepper-btn">+</button>
+            </div>
+            <span class="cart-item-delete">✕</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="cart-empty">
+        <div class="cart-empty-icon">🛒</div>
+        <div class="cart-empty-text">购物车空空如也，去选几张试试手气吧</div>
+      </div>
+    </div>
+
+    <div class="customer-tabbar">
+      <a href="ticket-browse.html" class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">🎫</span>
+        <span>票种</span>
+      </a>
+      <a href="cart.html" class="customer-tabbar-item active">
+        <span class="customer-tabbar-icon">🛒</span>
+        <span>购物车</span>
+      </a>
+      <a href="live-interaction.html" class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">📺</span>
+        <span>直播</span>
+      </a>
+      <div class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">👤</span>
+        <span>我的</span>
+      </div>
+    </div>
+
+    <div class="cart-bottom-bar">
+      <div class="cart-total">
+        <span class="cart-total-label">合计：</span>
+        <span class="cart-total-amount">70</span>
+      </div>
+      <a href="order-confirm.html" class="btn btn-primary">去结算</a>
+    </div>
+  </div>
+</body>
+</html>

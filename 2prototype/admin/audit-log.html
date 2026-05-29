@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>操作日志 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .admin-filter-select {
+      height: 36px;
+      padding: 0 32px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+      background: #FFF;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .admin-date-input {
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .admin-date-input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .date-range-sep {
+      color: var(--admin-text-hint);
+      font-size: 14px;
+      margin: 0 4px;
+    }
+    .op-type-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .op-type-tag.login { background: #E6F7FF; color: #1890FF; }
+    .op-type-tag.add { background: #F6FFED; color: #52C41A; }
+    .op-type-tag.edit { background: #FFF7E6; color: #FAAD14; }
+    .op-type-tag.delete { background: #FFF1F0; color: #FF4D4F; }
+    .op-type-tag.export { background: #F9F0FF; color: #722ED1; }
+    .op-result-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+    .op-result-tag.success { background: #F6FFED; color: #52C41A; }
+    .op-result-tag.fail { background: #FFF1F0; color: #FF4D4F; }
+    .admin-note {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: #FFF1F0;
+      border: 1px solid #FFCCC7;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: #CF1322;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item active" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">系统管理 / <span>操作日志</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-card">
+          <div class="admin-card-body">
+            <div class="admin-toolbar">
+              <div class="admin-toolbar-left">
+                <input type="text" class="admin-search-input" placeholder="搜索操作人">
+                <select class="admin-filter-select">
+                  <option value="">全部类型</option>
+                  <option>登录</option>
+                  <option>新增</option>
+                  <option>编辑</option>
+                  <option>删除</option>
+                  <option>导出</option>
+                </select>
+                <input type="date" class="admin-date-input" value="2026-05-01">
+                <span class="date-range-sep">至</span>
+                <input type="date" class="admin-date-input" value="2026-05-29">
+                <button class="admin-btn admin-btn-primary">查询</button>
+              </div>
+            </div>
+
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>操作时间</th>
+                  <th>操作人</th>
+                  <th>操作类型</th>
+                  <th>操作内容</th>
+                  <th>IP地址</th>
+                  <th>操作结果</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2026-05-29 09:15:23</td>
+                  <td>王建国</td>
+                  <td><span class="op-type-tag login">登录</span></td>
+                  <td>管理员登录系统</td>
+                  <td>192.168.1.100</td>
+                  <td><span class="op-result-tag success">成功</span></td>
+                </tr>
+                <tr>
+                  <td>2026-05-29 09:32:47</td>
+                  <td>李伟</td>
+                  <td><span class="op-type-tag edit">编辑</span></td>
+                  <td>编辑票种「中国红」售价 10元→10元</td>
+                  <td>192.168.1.101</td>
+                  <td><span class="op-result-tag success">成功</span></td>
+                </tr>
+                <tr>
+                  <td>2026-05-29 10:05:12</td>
+                  <td>王建国</td>
+                  <td><span class="op-type-tag edit">编辑</span></td>
+                  <td>禁用用户「张三」账号</td>
+                  <td>192.168.1.100</td>
+                  <td><span class="op-result-tag success">成功</span></td>
+                </tr>
+                <tr>
+                  <td>2026-05-29 10:18:35</td>
+                  <td>李伟</td>
+                  <td><span class="op-type-tag add">新增</span></td>
+                  <td>新增门店「福州东百中心店」</td>
+                  <td>192.168.1.101</td>
+                  <td><span class="op-result-tag success">成功</span></td>
+                </tr>
+                <tr>
+                  <td>2026-05-29 11:22:08</td>
+                  <td>王建国</td>
+                  <td><span class="op-type-tag export">导出</span></td>
+                  <td>导出5月销售报表</td>
+                  <td>192.168.1.100</td>
+                  <td><span class="op-result-tag success">成功</span></td>
+                </tr>
+                <tr>
+                  <td>2026-05-29 13:45:19</td>
+                  <td>陈志强</td>
+                  <td><span class="op-type-tag login">登录</span></td>
+                  <td>店长登录系统</td>
+                  <td>192.168.2.50</td>
+                  <td><span class="op-result-tag success">成功</span></td>
+                </tr>
+                <tr>
+                  <td>2026-05-29 14:10:33</td>
+                  <td>王建国</td>
+                  <td><span class="op-type-tag delete">删除</span></td>
+                  <td>删除过期设备证书 DEV-2025-008</td>
+                  <td>192.168.1.100</td>
+                  <td><span class="op-result-tag success">成功</span></td>
+                </tr>
+                <tr>
+                  <td>2026-05-29 15:03:56</td>
+                  <td>李伟</td>
+                  <td><span class="op-type-tag edit">编辑</span></td>
+                  <td>修改角色「销售员」权限配置</td>
+                  <td>192.168.1.101</td>
+                  <td><span class="op-result-tag fail">失败</span></td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="admin-pagination">
+              <span style="font-size:13px;color:var(--admin-text-hint);margin-right:8px;">共 8 条</span>
+              <div class="admin-pagination-item">‹</div>
+              <div class="admin-pagination-item active">1</div>
+              <div class="admin-pagination-item">›</div>
+            </div>
+
+            <div class="admin-note">
+              <span>🔒</span>
+              日志不可被普通用户删除或修改
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

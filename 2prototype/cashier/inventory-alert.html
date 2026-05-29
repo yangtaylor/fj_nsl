@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>库存预警 - 收银台终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .alert-summary-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .alert-summary-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .alert-summary-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .alert-summary-icon.warning {
+      background: #FFF7E6;
+    }
+    .alert-summary-icon.done {
+      background: #F6FFED;
+    }
+    .alert-summary-info {
+      flex: 1;
+    }
+    .alert-summary-label {
+      font-size: 13px;
+      color: var(--color-text-hint);
+      margin-bottom: 4px;
+    }
+    .alert-summary-value {
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .alert-summary-value.orange { color: var(--color-warning); }
+    .alert-summary-value.green { color: var(--color-success); }
+    .alert-summary-unit {
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--color-text-secondary);
+    }
+    .alert-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert-section-title::before {
+      content: '';
+      width: 3px;
+      height: 16px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+    .alert-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .alert-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-card);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: transform 0.2s;
+    }
+    .alert-card:hover {
+      transform: translateY(-1px);
+    }
+    .alert-card-level {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+    .alert-card-level.urgent {
+      background: #FFF1F0;
+    }
+    .alert-card-level.normal {
+      background: #FFF7E6;
+    }
+    .alert-card-level.resolved {
+      background: #F6FFED;
+    }
+    .alert-card-body {
+      flex: 1;
+    }
+    .alert-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .alert-card-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .alert-card-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 1px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .alert-card-tag.urgent {
+      background: #FFF1F0;
+      color: var(--color-error);
+    }
+    .alert-card-tag.normal {
+      background: #FFF7E6;
+      color: var(--color-warning);
+    }
+    .alert-card-tag.resolved {
+      background: #F6FFED;
+      color: var(--color-success);
+    }
+    .alert-card-desc {
+      font-size: 13px;
+      color: var(--color-text-secondary);
+      line-height: 1.6;
+    }
+    .alert-card-meta {
+      display: flex;
+      gap: 16px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: var(--color-text-hint);
+    }
+    .alert-card-action {
+      flex-shrink: 0;
+    }
+    .alert-btn {
+      padding: 8px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .alert-btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+    .alert-btn-primary:hover {
+      background: var(--color-primary-dark);
+    }
+    .alert-btn-disabled {
+      background: #F5F5F5;
+      color: var(--color-text-hint);
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-app">
+    <div class="cashier-sidebar">
+      <div class="cashier-sidebar-logo">
+        <span class="cashier-sidebar-logo-text">体彩<em>收银台</em></span>
+      </div>
+      <div class="cashier-sidebar-menu">
+        <a href="main-workspace.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="order-process.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📋</span>
+          <span>订单处理</span>
+        </a>
+        <a href="proxy-order.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">🛒</span>
+          <span>代客下单</span>
+        </a>
+        <div class="cashier-sidebar-item active">
+          <span class="cashier-sidebar-item-icon">📦</span>
+          <span>库存管理</span>
+        </div>
+        <div class="cashier-sidebar-sub show">
+          <a href="stock-in.html">入库签收</a>
+          <a href="inventory-check.html">库存盘点</a>
+          <a href="inventory-query.html">库存查询</a>
+          <a href="inventory-alert.html" class="active">库存预警</a>
+        </div>
+        <a href="sales-dashboard.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📈</span>
+          <span>销售看板</span>
+        </a>
+      </div>
+      <div class="cashier-sidebar-user">
+        <div class="cashier-sidebar-avatar">张</div>
+        <span>张销售</span>
+        <a href="login.html" class="cashier-sidebar-logout">退出登录</a>
+      </div>
+    </div>
+    <div class="cashier-main">
+      <div class="cashier-topbar">
+        <span class="cashier-topbar-title">库存预警</span>
+        <div class="cashier-topbar-actions">
+          <span style="font-size:13px;color:var(--color-text-hint);">2026-05-29 14:32</span>
+        </div>
+      </div>
+      <div class="cashier-content">
+        <div class="alert-summary-row">
+          <div class="alert-summary-card">
+            <div class="alert-summary-icon warning">⚠️</div>
+            <div class="alert-summary-info">
+              <div class="alert-summary-label">预警中</div>
+              <div class="alert-summary-value orange">2<span class="alert-summary-unit"> 项</span></div>
+            </div>
+          </div>
+          <div class="alert-summary-card">
+            <div class="alert-summary-icon done">✅</div>
+            <div class="alert-summary-info">
+              <div class="alert-summary-label">已处理</div>
+              <div class="alert-summary-value green">5<span class="alert-summary-unit"> 项</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="alert-section-title">预警通知</div>
+        <div class="alert-list">
+          <div class="alert-card">
+            <div class="alert-card-level urgent">🔴</div>
+            <div class="alert-card-body">
+              <div class="alert-card-header">
+                <span class="alert-card-name">金光灿烂</span>
+                <span class="alert-card-tag urgent">紧急</span>
+              </div>
+              <div class="alert-card-desc">库存8张，低于预警阈值20张，请尽快补货</div>
+              <div class="alert-card-meta">
+                <span>当前库存：8张</span>
+                <span>预警阈值：20张</span>
+                <span>时间：2026-05-29 10:15</span>
+              </div>
+            </div>
+            <div class="alert-card-action">
+              <button class="alert-btn alert-btn-primary">申请补货</button>
+            </div>
+          </div>
+
+          <div class="alert-card">
+            <div class="alert-card-level normal">🟡</div>
+            <div class="alert-card-body">
+              <div class="alert-card-header">
+                <span class="alert-card-name">绿茵传奇</span>
+                <span class="alert-card-tag normal">一般</span>
+              </div>
+              <div class="alert-card-desc">库存15张，低于预警阈值20张</div>
+              <div class="alert-card-meta">
+                <span>当前库存：15张</span>
+                <span>预警阈值：20张</span>
+                <span>时间：2026-05-29 09:30</span>
+              </div>
+            </div>
+            <div class="alert-card-action">
+              <button class="alert-btn alert-btn-primary">申请补货</button>
+            </div>
+          </div>
+
+          <div class="alert-card">
+            <div class="alert-card-level resolved">✅</div>
+            <div class="alert-card-body">
+              <div class="alert-card-header">
+                <span class="alert-card-name">好运十倍</span>
+                <span class="alert-card-tag resolved">已处理</span>
+              </div>
+              <div class="alert-card-desc">已补货，库存恢复至60张</div>
+              <div class="alert-card-meta">
+                <span>当前库存：60张</span>
+                <span>预警阈值：20张</span>
+                <span>处理时间：2026-05-28 16:45</span>
+              </div>
+            </div>
+            <div class="alert-card-action">
+              <button class="alert-btn alert-btn-disabled">已处理</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

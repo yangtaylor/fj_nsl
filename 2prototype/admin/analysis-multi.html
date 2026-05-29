@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>多维分析 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .multi-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .multi-filter-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .multi-filter-label {
+      font-size: 14px;
+      color: var(--admin-text-secondary);
+      white-space: nowrap;
+    }
+    .multi-filter-select {
+      width: 160px;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+      background: #FFF;
+    }
+    .multi-filter-select:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .multi-date-input {
+      width: 150px;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .multi-date-input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .multi-chart-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .multi-chart-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 20px;
+    }
+    .multi-chart-area {
+      height: 280px;
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      padding: 0 20px 40px 50px;
+      position: relative;
+      border-bottom: 2px solid #E8E8E8;
+    }
+    .multi-chart-yaxis {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 40px;
+      width: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-right: 10px;
+    }
+    .multi-chart-yaxis span {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+    }
+    .multi-chart-grid {
+      position: absolute;
+      left: 50px;
+      right: 20px;
+      top: 0;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .multi-chart-grid-line {
+      width: 100%;
+      height: 1px;
+      background: #F5F5F5;
+    }
+    .multi-chart-bars {
+      display: flex;
+      align-items: flex-end;
+      flex: 1;
+      gap: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .multi-chart-bar-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .multi-chart-bar {
+      width: 48px;
+      border-radius: 4px 4px 0 0;
+      transition: all 0.3s;
+      position: relative;
+    }
+    .multi-chart-bar:hover {
+      opacity: 0.85;
+    }
+    .multi-chart-bar-value {
+      position: absolute;
+      top: -22px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 12px;
+      color: var(--admin-text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .multi-chart-bar-label {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--admin-text-secondary);
+      text-align: center;
+    }
+    .multi-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: #F6FFED;
+      border: 1px solid #B7EB8F;
+      border-radius: var(--radius-sm);
+      margin-bottom: 24px;
+      font-size: 13px;
+      color: #389E0D;
+    }
+    .multi-table-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .multi-table-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .multi-table-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .multi-percent-bar {
+      width: 100px;
+      height: 8px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      overflow: hidden;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 8px;
+    }
+    .multi-percent-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: var(--admin-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item active" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">经营分析 / <span>多维分析</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+      <div class="admin-content">
+        <div class="multi-filter-bar">
+          <div class="multi-filter-item">
+            <span class="multi-filter-label">门店</span>
+            <select class="multi-filter-select">
+              <option>全部门店</option>
+              <option>福州万达广场店</option>
+              <option>厦门SM广场店</option>
+              <option>泉州浦西万达店</option>
+              <option>福州宝龙城市广场店</option>
+              <option>厦门曾厝垵店</option>
+            </select>
+          </div>
+          <div class="multi-filter-item">
+            <span class="multi-filter-label">票种</span>
+            <select class="multi-filter-select">
+              <option>全部票种</option>
+              <option>中国红</option>
+              <option>好运十倍</option>
+              <option>顶呱刮</option>
+              <option>绿茵传奇</option>
+              <option>金光灿烂</option>
+            </select>
+          </div>
+          <div class="multi-filter-item">
+            <span class="multi-filter-label">时段</span>
+            <select class="multi-filter-select">
+              <option>全天</option>
+              <option>上午 (08:00-12:00)</option>
+              <option>下午 (12:00-18:00)</option>
+              <option>晚间 (18:00-22:00)</option>
+            </select>
+          </div>
+          <div class="multi-filter-item">
+            <span class="multi-filter-label">日期范围</span>
+            <input type="date" class="multi-date-input" value="2026-05-01">
+            <span style="color:var(--admin-text-hint);">至</span>
+            <input type="date" class="multi-date-input" value="2026-05-28">
+          </div>
+          <button class="admin-btn admin-btn-primary">查询</button>
+        </div>
+
+        <div class="multi-chart-card">
+          <div class="multi-chart-title">销售额维度分布</div>
+          <div class="multi-chart-area">
+            <div class="multi-chart-yaxis">
+              <span>50万</span>
+              <span>40万</span>
+              <span>30万</span>
+              <span>20万</span>
+              <span>10万</span>
+              <span>0</span>
+            </div>
+            <div class="multi-chart-grid">
+              <div class="multi-chart-grid-line"></div>
+              <div class="multi-chart-grid-line"></div>
+              <div class="multi-chart-grid-line"></div>
+              <div class="multi-chart-grid-line"></div>
+              <div class="multi-chart-grid-line"></div>
+              <div class="multi-chart-grid-line"></div>
+            </div>
+            <div class="multi-chart-bars">
+              <div class="multi-chart-bar-group">
+                <div class="multi-chart-bar" style="height:200px;background:linear-gradient(180deg,#69C0FF,#1890FF);">
+                  <span class="multi-chart-bar-value">¥48.6万</span>
+                </div>
+                <span class="multi-chart-bar-label">福州万达</span>
+              </div>
+              <div class="multi-chart-bar-group">
+                <div class="multi-chart-bar" style="height:168px;background:linear-gradient(180deg,#69C0FF,#1890FF);">
+                  <span class="multi-chart-bar-value">¥42.3万</span>
+                </div>
+                <span class="multi-chart-bar-label">厦门SM</span>
+              </div>
+              <div class="multi-chart-bar-group">
+                <div class="multi-chart-bar" style="height:140px;background:linear-gradient(180deg,#69C0FF,#1890FF);">
+                  <span class="multi-chart-bar-value">¥35.8万</span>
+                </div>
+                <span class="multi-chart-bar-label">泉州丰泽</span>
+              </div>
+              <div class="multi-chart-bar-group">
+                <div class="multi-chart-bar" style="height:96px;background:linear-gradient(180deg,#69C0FF,#1890FF);">
+                  <span class="multi-chart-bar-value">¥26.2万</span>
+                </div>
+                <span class="multi-chart-bar-label">福州宝龙</span>
+              </div>
+              <div class="multi-chart-bar-group">
+                <div class="multi-chart-bar" style="height:72px;background:linear-gradient(180deg,#69C0FF,#1890FF);">
+                  <span class="multi-chart-bar-value">¥18.5万</span>
+                </div>
+                <span class="multi-chart-bar-label">厦门曾厝垵</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="multi-note">
+          <span>💡</span>
+          数据不足时图表正常降级展示，缺失维度不显示对应柱状图。
+        </div>
+
+        <div class="multi-table-card">
+          <div class="multi-table-header">
+            <div class="multi-table-title">维度明细数据</div>
+            <button class="admin-btn admin-btn-primary">📥 导出分析数据</button>
+          </div>
+          <div style="padding:0;">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>维度</th>
+                  <th>销售额</th>
+                  <th>订单数</th>
+                  <th>占比</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>福州万达广场店</td>
+                  <td>¥486,200</td>
+                  <td>1,286</td>
+                  <td>
+                    <span class="multi-percent-bar"><span class="multi-percent-fill" style="width:28.5%;"></span></span>
+                    28.5%
+                  </td>
+                </tr>
+                <tr>
+                  <td>厦门SM广场店</td>
+                  <td>¥423,500</td>
+                  <td>1,105</td>
+                  <td>
+                    <span class="multi-percent-bar"><span class="multi-percent-fill" style="width:24.8%;"></span></span>
+                    24.8%
+                  </td>
+                </tr>
+                <tr>
+                  <td>泉州浦西万达店</td>
+                  <td>¥358,000</td>
+                  <td>942</td>
+                  <td>
+                    <span class="multi-percent-bar"><span class="multi-percent-fill" style="width:21.0%;"></span></span>
+                    21.0%
+                  </td>
+                </tr>
+                <tr>
+                  <td>福州宝龙城市广场店</td>
+                  <td>¥262,300</td>
+                  <td>728</td>
+                  <td>
+                    <span class="multi-percent-bar"><span class="multi-percent-fill" style="width:15.4%;"></span></span>
+                    15.4%
+                  </td>
+                </tr>
+                <tr>
+                  <td>厦门曾厝垵店</td>
+                  <td>¥185,000</td>
+                  <td>512</td>
+                  <td>
+                    <span class="multi-percent-bar"><span class="multi-percent-fill" style="width:10.3%;"></span></span>
+                    10.3%
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

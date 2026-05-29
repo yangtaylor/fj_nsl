@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>上下架管理 - 体彩管理后台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-tag.online { background: #F6FFED; color: #52C41A; }
+    .status-tag.offline { background: #F5F5F5; color: #999; }
+    .admin-table-wrap {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    }
+    .shelf-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 64px;
+      height: 28px;
+      padding: 0 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid;
+      transition: all 0.2s;
+    }
+    .shelf-btn.off {
+      background: #FFF1F0;
+      border-color: #FFCCC7;
+      color: #FF4D4F;
+    }
+    .shelf-btn.off:hover {
+      background: #FF7875;
+      border-color: #FF7875;
+      color: #FFF;
+    }
+    .shelf-btn.on {
+      background: #F6FFED;
+      border-color: #B7EB8F;
+      color: #52C41A;
+    }
+    .shelf-btn.on:hover {
+      background: #52C41A;
+      border-color: #52C41A;
+      color: #FFF;
+    }
+    .admin-modal-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .admin-modal-mask.visible {
+      display: flex;
+    }
+    .admin-modal {
+      width: 420px;
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .admin-modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .admin-modal-close {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--admin-text-hint);
+      font-size: 18px;
+      border: none;
+      background: none;
+    }
+    .admin-modal-body {
+      padding: 24px;
+    }
+    .admin-modal-body p {
+      font-size: 14px;
+      color: var(--admin-text);
+      line-height: 1.8;
+    }
+    .admin-modal-body .warn-text {
+      color: var(--color-error);
+      font-weight: 500;
+    }
+    .admin-modal-body .success-text {
+      color: #52C41A;
+      font-weight: 500;
+    }
+    .admin-modal-footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--admin-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .admin-info-bar {
+      padding: 10px 16px;
+      background: #E6F7FF;
+      border: 1px solid #91D5FF;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--admin-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .admin-info-bar-icon {
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item active" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">商品管理 / <span>上下架管理</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="admin-info-bar">
+          <span class="admin-info-bar-icon">ℹ️</span>
+          已售出的票种下架不影响历史订单
+        </div>
+
+        <div class="admin-table-wrap">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>票种名称</th>
+                <th>面值</th>
+                <th>当前状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="shelfTableBody">
+              <tr data-name="中国红" data-online="true">
+                <td>中国红</td>
+                <td>¥10</td>
+                <td><span class="status-tag online">上架中</span></td>
+                <td><button class="shelf-btn off" onclick="openShelfModal(this)">下架</button></td>
+              </tr>
+              <tr data-name="好运十倍" data-online="true">
+                <td>好运十倍</td>
+                <td>¥20</td>
+                <td><span class="status-tag online">上架中</span></td>
+                <td><button class="shelf-btn off" onclick="openShelfModal(this)">下架</button></td>
+              </tr>
+              <tr data-name="金光闪闪" data-online="true">
+                <td>金光闪闪</td>
+                <td>¥30</td>
+                <td><span class="status-tag online">上架中</span></td>
+                <td><button class="shelf-btn off" onclick="openShelfModal(this)">下架</button></td>
+              </tr>
+              <tr data-name="幸运5" data-online="true">
+                <td>幸运5</td>
+                <td>¥5</td>
+                <td><span class="status-tag online">上架中</span></td>
+                <td><button class="shelf-btn off" onclick="openShelfModal(this)">下架</button></td>
+              </tr>
+              <tr data-name="福星高照" data-online="false">
+                <td>福星高照</td>
+                <td>¥10</td>
+                <td><span class="status-tag offline">已下架</span></td>
+                <td><button class="shelf-btn on" onclick="openShelfModal(this)">上架</button></td>
+              </tr>
+              <tr data-name="财运亨通" data-online="false">
+                <td>财运亨通</td>
+                <td>¥20</td>
+                <td><span class="status-tag offline">已下架</span></td>
+                <td><button class="shelf-btn on" onclick="openShelfModal(this)">上架</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-mask" id="shelfModal">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <span class="admin-modal-title" id="modalTitle">确认下架</span>
+        <button class="admin-modal-close" onclick="closeShelfModal()">✕</button>
+      </div>
+      <div class="admin-modal-body" id="modalBody">
+        <p>确认下架<span class="warn-text">「中国红」</span>？</p>
+        <p style="color:var(--admin-text-secondary);margin-top:8px">下架后顾客端将不再展示该票种</p>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-default" onclick="closeShelfModal()">取消</button>
+        <button class="admin-btn admin-btn-primary" id="modalConfirmBtn" onclick="confirmShelf()">确认下架</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var pendingRow = null;
+    var pendingAction = '';
+
+    function openShelfModal(btn) {
+      var row = btn.closest('tr');
+      var name = row.getAttribute('data-name');
+      var isOnline = row.getAttribute('data-online') === 'true';
+      pendingRow = row;
+      pendingAction = isOnline ? 'off' : 'on';
+
+      var title = document.getElementById('modalTitle');
+      var body = document.getElementById('modalBody');
+      var confirmBtn = document.getElementById('modalConfirmBtn');
+
+      if (pendingAction === 'off') {
+        title.textContent = '确认下架';
+        body.innerHTML = '<p>确认下架<span class="warn-text">「' + name + '」</span>？</p>' +
+          '<p style="color:var(--admin-text-secondary);margin-top:8px">下架后顾客端将不再展示该票种</p>';
+        confirmBtn.textContent = '确认下架';
+        confirmBtn.className = 'admin-btn admin-btn-primary';
+      } else {
+        title.textContent = '确认上架';
+        body.innerHTML = '<p>确认上架<span class="success-text">「' + name + '」</span>？</p>' +
+          '<p style="color:var(--admin-text-secondary);margin-top:8px">上架后顾客端将展示该票种</p>';
+        confirmBtn.textContent = '确认上架';
+        confirmBtn.className = 'admin-btn admin-btn-primary';
+        confirmBtn.style.background = '#52C41A';
+        confirmBtn.style.borderColor = '#52C41A';
+      }
+
+      document.getElementById('shelfModal').classList.add('visible');
+    }
+
+    function closeShelfModal() {
+      document.getElementById('shelfModal').classList.remove('visible');
+      pendingRow = null;
+      pendingAction = '';
+      var confirmBtn = document.getElementById('modalConfirmBtn');
+      confirmBtn.style.background = '';
+      confirmBtn.style.borderColor = '';
+    }
+
+    function confirmShelf() {
+      if (!pendingRow) return;
+      var statusCell = pendingRow.querySelector('.status-tag');
+      var btnCell = pendingRow.querySelector('.shelf-btn');
+
+      if (pendingAction === 'off') {
+        pendingRow.setAttribute('data-online', 'false');
+        statusCell.className = 'status-tag offline';
+        statusCell.textContent = '已下架';
+        btnCell.className = 'shelf-btn on';
+        btnCell.textContent = '上架';
+      } else {
+        pendingRow.setAttribute('data-online', 'true');
+        statusCell.className = 'status-tag online';
+        statusCell.textContent = '上架中';
+        btnCell.className = 'shelf-btn off';
+        btnCell.textContent = '下架';
+      }
+
+      closeShelfModal();
+    }
+  </script>
+</body>
+</html>

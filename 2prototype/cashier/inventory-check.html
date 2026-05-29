@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1366">
+  <title>库存盘点 - 收银台终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/cashier-terminal.css">
+  <style>
+    .check-section-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .check-section-title::before {
+      content: '';
+      width: 3px;
+      height: 16px;
+      background: var(--color-primary);
+      border-radius: 2px;
+    }
+    .check-table {
+      width: 100%;
+      background: #FFF;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+    }
+    .check-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .check-table th {
+      background: #FAFAFA;
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--color-text-hint);
+      font-weight: 500;
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .check-table td {
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--color-text-primary);
+      border-bottom: 1px solid var(--color-border-light);
+    }
+    .check-table tr:last-child td {
+      border-bottom: none;
+    }
+    .check-table tr.row-abnormal {
+      background: #FFF1F0;
+    }
+    .check-table tr.row-abnormal td {
+      color: #CF1322;
+    }
+    .check-input {
+      width: 80px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .check-input:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 2px rgba(196, 22, 28, 0.1);
+    }
+    .check-diff {
+      font-weight: 700;
+      font-size: 15px;
+    }
+    .check-diff.zero {
+      color: var(--color-text-primary);
+    }
+    .check-diff.negative {
+      color: var(--color-error);
+    }
+    .check-status {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .check-status.normal {
+      background: #F6FFED;
+      color: var(--color-success);
+    }
+    .check-status.abnormal {
+      background: #FFF1F0;
+      color: var(--color-error);
+    }
+    .check-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .check-btn {
+      padding: 10px 28px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+    }
+    .check-btn-primary {
+      background: var(--color-primary);
+      color: white;
+    }
+    .check-btn-primary:hover {
+      background: var(--color-primary-dark);
+    }
+    .check-btn-default {
+      background: #FFF;
+      border: 1px solid var(--color-border);
+      color: var(--color-text-secondary);
+    }
+    .check-btn-default:hover {
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="cashier-app">
+    <div class="cashier-sidebar">
+      <div class="cashier-sidebar-logo">
+        <span class="cashier-sidebar-logo-text">体彩<em>收银台</em></span>
+      </div>
+      <div class="cashier-sidebar-menu">
+        <a href="main-workspace.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="order-process.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📋</span>
+          <span>订单处理</span>
+        </a>
+        <a href="proxy-order.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">🛒</span>
+          <span>代客下单</span>
+        </a>
+        <div class="cashier-sidebar-item active">
+          <span class="cashier-sidebar-item-icon">📦</span>
+          <span>库存管理</span>
+        </div>
+        <div class="cashier-sidebar-sub show">
+          <a href="stock-in.html">入库签收</a>
+          <a href="inventory-check.html" class="active">库存盘点</a>
+          <a href="inventory-query.html">库存查询</a>
+          <a href="inventory-alert.html">库存预警</a>
+        </div>
+        <a href="sales-dashboard.html" class="cashier-sidebar-item">
+          <span class="cashier-sidebar-item-icon">📈</span>
+          <span>销售看板</span>
+        </a>
+      </div>
+      <div class="cashier-sidebar-user">
+        <div class="cashier-sidebar-avatar">张</div>
+        <span>张销售</span>
+        <a href="login.html" class="cashier-sidebar-logout">退出登录</a>
+      </div>
+    </div>
+    <div class="cashier-main">
+      <div class="cashier-topbar">
+        <span class="cashier-topbar-title">库存盘点</span>
+        <div class="cashier-topbar-actions">
+          <span style="font-size:13px;color:var(--color-text-hint);">2026-05-29 14:32</span>
+        </div>
+      </div>
+      <div class="cashier-content">
+        <div class="cashier-alert-bar">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          发现2项库存差异，请核实
+        </div>
+
+        <div class="check-section-title">盘点明细</div>
+        <div class="check-table">
+          <table>
+            <thead>
+              <tr>
+                <th>票种</th>
+                <th>账面数量</th>
+                <th>实际数量</th>
+                <th>差异</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>中国红</td>
+                <td>85</td>
+                <td><input class="check-input" type="number" value="85"></td>
+                <td><span class="check-diff zero">0</span></td>
+                <td><span class="check-status normal">正常</span></td>
+              </tr>
+              <tr class="row-abnormal">
+                <td>好运十倍</td>
+                <td>60</td>
+                <td><input class="check-input" type="number" value="58"></td>
+                <td><span class="check-diff negative">-2</span></td>
+                <td><span class="check-status abnormal">异常</span></td>
+              </tr>
+              <tr>
+                <td>顶呱刮</td>
+                <td>45</td>
+                <td><input class="check-input" type="number" value="45"></td>
+                <td><span class="check-diff zero">0</span></td>
+                <td><span class="check-status normal">正常</span></td>
+              </tr>
+              <tr class="row-abnormal">
+                <td>绿茵传奇</td>
+                <td>30</td>
+                <td><input class="check-input" type="number" value="28"></td>
+                <td><span class="check-diff negative">-2</span></td>
+                <td><span class="check-status abnormal">异常</span></td>
+              </tr>
+              <tr>
+                <td>金光灿烂</td>
+                <td>50</td>
+                <td><input class="check-input" type="number" value="50"></td>
+                <td><span class="check-diff zero">0</span></td>
+                <td><span class="check-status normal">正常</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="check-actions">
+          <button class="check-btn check-btn-primary">提交盘点</button>
+          <button class="check-btn check-btn-default">导出盘点表</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

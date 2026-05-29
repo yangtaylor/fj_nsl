@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>经营分析 - 后台管理系统</title>
+    <link rel="stylesheet" href="../assets/css/common.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+        }
+
+        .admin-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 220px;
+            background: #001529;
+            color: #fff;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-header .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: #1890ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .sidebar-header .logo-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            padding: 10px 0;
+        }
+
+        .nav-group {
+            margin-bottom: 5px;
+        }
+
+        .nav-group-title {
+            padding: 10px 20px;
+            font-size: 12px;
+            color: rgba(255,255,255,0.45);
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: rgba(255,255,255,0.65);
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-item.active {
+            color: #fff;
+            background: #1890ff;
+        }
+
+        .nav-item .icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 220px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-header {
+            background: #fff;
+            padding: 0 25px;
+            height: 64px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .breadcrumb {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .breadcrumb .current {
+            color: #1f2937;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            font-size: 18px;
+        }
+
+        .header-icon:hover {
+            background: #f3f4f6;
+        }
+
+        .badge {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 18px;
+            height: 18px;
+            background: #f5222d;
+            color: #fff;
+            border-radius: 50%;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 6px 10px;
+            border-radius: 6px;
+        }
+
+        .user-dropdown:hover {
+            background: #f3f4f6;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #1890ff;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .user-name {
+            font-size: 14px;
+            color: #1f2937;
+        }
+
+        .content-area {
+            padding: 24px;
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 24px;
+        }
+
+        .page-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .page-header .subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .filter-panel {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-item label {
+            font-size: 14px;
+            color: #6b7280;
+            white-space: nowrap;
+        }
+
+        .filter-item input,
+        .filter-item select {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            min-width: 140px;
+        }
+
+        .filter-item input:focus,
+        .filter-item select:focus {
+            outline: none;
+            border-color: #1890ff;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #1890ff;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #40a9ff;
+        }
+
+        .btn-default {
+            background: #fff;
+            border: 1px solid #d9d9d9;
+            color: #595959;
+        }
+
+        .btn-default:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .stat-card .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .stat-card .label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .stat-card .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .icon-box.blue { background: #e6f7ff; }
+        .icon-box.green { background: #f6ffed; }
+        .icon-box.orange { background: #fff7e6; }
+        .icon-box.purple { background: #f9f0ff; }
+
+        .stat-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .trend {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .trend.up { color: #52c41a; }
+        .trend.down { color: #f5222d; }
+
+        .chart-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .panel-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-text {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-text:hover {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .btn-text.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .chart-container {
+            height: 300px;
+            position: relative;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 240px;
+            padding: 20px 0;
+            gap: 12px;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            background: linear-gradient(180deg, #40a9ff 0%, #1890ff 100%);
+            border-radius: 4px 4px 0 0;
+            min-height: 20px;
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .bar:hover {
+            background: linear-gradient(180deg, #69c0ff 0%, #40a9ff 100%);
+        }
+
+        .bar-label {
+            font-size: 12px;
+            color: #8c8c8c;
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: #595959;
+            white-space: nowrap;
+        }
+
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .pie-chart svg {
+            transform: rotate(-90deg);
+        }
+
+        .pie-legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #595959;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: #fafafa;
+            font-weight: 600;
+            color: #262626;
+        }
+
+        .data-table td {
+            color: #595959;
+        }
+
+        .data-table tr:hover td {
+            background: #f5f5f5;
+        }
+
+        .amount {
+            font-weight: 500;
+            color: #f5222d;
+        }
+
+        .amount.positive {
+            color: #52c41a;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .pagination-btn {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination-btn:hover:not(:disabled) {
+            border-color: #1890ff;
+            color: #1890ff;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+
+        .page-info {
+            font-size: 13px;
+            color: #8c8c8c;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">🏪</div>
+                <div class="logo-text">体彩管理系统</div>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-group">
+                    <a href="dashboard.html" class="nav-item">
+                        <span class="icon">📊</span>
+                        <span>数据仪表盘</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">商品管理</div>
+                    <a href="products.html" class="nav-item">
+                        <span class="icon">🎫</span>
+                        <span>票种管理</span>
+                    </a>
+                    <a href="serial-numbers.html" class="nav-item">
+                        <span class="icon">🔢</span>
+                        <span>序列号管理</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">订单管理</div>
+                    <a href="orders.html" class="nav-item">
+                        <span class="icon">📋</span>
+                        <span>订单监控</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">门店管理</div>
+                    <a href="stores.html" class="nav-item">
+                        <span class="icon">🏪</span>
+                        <span>门店列表</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">系统管理</div>
+                    <a href="users.html" class="nav-item">
+                        <span class="icon">👥</span>
+                        <span>账号权限</span>
+                    </a>
+                    <a href="devices.html" class="nav-item">
+                        <span class="icon">💻</span>
+                        <span>设备授权</span>
+                    </a>
+                </div>
+                <div class="nav-group">
+                    <div class="nav-group-title">财务分析</div>
+                    <a href="finance.html" class="nav-item">
+                        <span class="icon">💰</span>
+                        <span>财务结算</span>
+                    </a>
+                    <a href="analytics.html" class="nav-item active">
+                        <span class="icon">📈</span>
+                        <span>经营分析</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div class="breadcrumb">
+                    首页 / 财务分析 / <span class="current">经营分析</span>
+                </div>
+                <div class="header-actions">
+                    <div class="header-icon">
+                        🔔
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="header-icon">⚙️</div>
+                    <div class="user-dropdown">
+                        <div class="user-avatar">管</div>
+                        <span class="user-name">管理员</span>
+                        <span>▼</span>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-area">
+                <div class="page-header">
+                    <h1>经营分析</h1>
+                    <div class="subtitle">多维度销售数据分析与趋势洞察</div>
+                </div>
+
+                <div class="filter-panel">
+                    <div class="filter-row">
+                        <div class="filter-item">
+                            <label>时间范围</label>
+                            <input type="date" value="2024-05-01"> ~ <input type="date" value="2024-05-31">
+                        </div>
+                        <div class="filter-item">
+                            <label>地区</label>
+                            <select>
+                                <option>全部地区</option>
+                                <option>福州市</option>
+                                <option>厦门市</option>
+                                <option>泉州市</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>门店</label>
+                            <select>
+                                <option>全部门店</option>
+                                <option>福州鼓楼旗舰店</option>
+                                <option>厦门思明体验店</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label>票种</label>
+                            <select>
+                                <option>全部票种</option>
+                                <option>即开票</option>
+                                <option>竞彩</option>
+                                <option>大乐透</option>
+                            </select>
+                        </div>
+                        <div class="filter-item" style="margin-left: auto;">
+                            <button class="btn btn-primary">查询</button>
+                            <button class="btn btn-default">重置</button>
+                            <button class="btn btn-default">导出报表</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="header">
+                            <span class="label">总销售额</span>
+                            <div class="icon-box blue">💰</div>
+                        </div>
+                        <div class="value">¥3,856,420</div>
+                        <div class="trend up">↑ 15.3% 环比增长</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="header">
+                            <span class="label">总订单数</span>
+                            <div class="icon-box green">📋</div>
+                        </div>
+                        <div class="value">45,280</div>
+                        <div class="trend up">↑ 8.7% 环比增长</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="header">
+                            <span class="label">平均客单价</span>
+                            <div class="icon-box orange">📊</div>
+                        </div>
+                        <div class="value">¥85.2</div>
+                        <div class="trend up">↑ 5.2% 环比增长</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="header">
+                            <span class="label">活跃门店数</span>
+                            <div class="icon-box purple">🏪</div>
+                        </div>
+                        <div class="value">156</div>
+                        <div class="trend up">↑ 3 家新增</div>
+                    </div>
+                </div>
+
+                <div class="chart-row">
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-title">销售趋势分析</span>
+                            <div class="panel-actions">
+                                <button class="btn-text active">按日</button>
+                                <button class="btn-text">按周</button>
+                                <button class="btn-text">按月</button>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="chart-container">
+                                <div class="bar-chart">
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: 45%;">
+                                            <span class="bar-value">¥12.8w</span>
+                                        </div>
+                                        <span class="bar-label">05-01</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: 55%;">
+                                            <span class="bar-value">¥15.6w</span>
+                                        </div>
+                                        <span class="bar-label">05-05</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: 40%;">
+                                            <span class="bar-value">¥11.3w</span>
+                                        </div>
+                                        <span class="bar-label">05-10</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: 70%;">
+                                            <span class="bar-value">¥19.8w</span>
+                                        </div>
+                                        <span class="bar-label">05-15</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: 60%;">
+                                            <span class="bar-value">¥17.2w</span>
+                                        </div>
+                                        <span class="bar-label">05-20</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: 85%;">
+                                            <span class="bar-value">¥24.5w</span>
+                                        </div>
+                                        <span class="bar-label">05-25</span>
+                                    </div>
+                                    <div class="bar-item">
+                                        <div class="bar" style="height: 100%;">
+                                            <span class="bar-value">¥28.6w</span>
+                                        </div>
+                                        <span class="bar-label">05-31</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel">
+                        <div class="panel-header">
+                            <span class="panel-title">票种销售占比</span>
+                            <button class="btn-text">详情</button>
+                        </div>
+                        <div class="panel-body">
+                            <div class="pie-chart">
+                                <svg width="200" height="200" viewBox="0 0 200 200">
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#1890ff" stroke-width="40" stroke-dasharray="175.9 326.7" stroke-dashoffset="0"/>
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#52c41a" stroke-width="40" stroke-dasharray="140.7 326.7" stroke-dashoffset="-175.9"/>
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#fa8c16" stroke-width="40" stroke-dasharray="100.5 326.7" stroke-dashoffset="-316.6"/>
+                                    <circle cx="100" cy="100" r="80" fill="none" stroke="#f5222d" stroke-width="40" stroke-dasharray="85.4 326.7" stroke-dashoffset="-417.1"/>
+                                </svg>
+                            </div>
+                            <div class="pie-legend">
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #1890ff;"></div>
+                                    <span>即开票 35%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #52c41a;"></div>
+                                    <span>竞彩 28%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #fa8c16;"></div>
+                                    <span>大乐透 20%</span>
+                                </div>
+                                <div class="legend-item">
+                                    <div class="legend-color" style="background: #f5222d;"></div>
+                                    <span>其他 17%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <div class="panel-header">
+                        <span class="panel-title">门店销售排行</span>
+                        <div class="panel-actions">
+                            <button class="btn-text active">按销售额</button>
+                            <button class="btn-text">按订单数</button>
+                            <button class="btn-text">按增长率</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>排名</th>
+                                    <th>门店名称</th>
+                                    <th>所属地区</th>
+                                    <th>销售额</th>
+                                    <th>订单数</th>
+                                    <th>客单价</th>
+                                    <th>环比增长</th>
+                                    <th>占比</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong style="color: #cf1322;">1</strong></td>
+                                    <td>福州鼓楼旗舰店</td>
+                                    <td>福州市</td>
+                                    <td><span class="amount">¥425,680</span></td>
+                                    <td>5,234</td>
+                                    <td>¥81.3</td>
+                                    <td><span class="trend up">↑ 18.5%</span></td>
+                                    <td>11.0%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: #d46b08;">2</strong></td>
+                                    <td>厦门思明体验店</td>
+                                    <td>厦门市</td>
+                                    <td><span class="amount">¥398,520</span></td>
+                                    <td>4,856</td>
+                                    <td>¥82.1</td>
+                                    <td><span class="trend up">↑ 15.2%</span></td>
+                                    <td>10.3%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong style="color: #7cb305;">3</strong></td>
+                                    <td>泉州丰泽店</td>
+                                    <td>泉州市</td>
+                                    <td><span class="amount">¥356,240</span></td>
+                                    <td>4,523</td>
+                                    <td>¥78.8</td>
+                                    <td><span class="trend up">↑ 12.8%</span></td>
+                                    <td>9.2%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>4</strong></td>
+                                    <td>莆田城厢店</td>
+                                    <td>莆田市</td>
+                                    <td><span class="amount">¥298,650</span></td>
+                                    <td>3,890</td>
+                                    <td>¥76.8</td>
+                                    <td><span class="trend up">↑ 10.5%</span></td>
+                                    <td>7.7%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>5</strong></td>
+                                    <td>漳州芗城店</td>
+                                    <td>漳州市</td>
+                                    <td><span class="amount">¥276,480</span></td>
+                                    <td>3,654</td>
+                                    <td>¥75.7</td>
+                                    <td><span class="trend up">↑ 8.3%</span></td>
+                                    <td>7.2%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>6</strong></td>
+                                    <td>福州台江店</td>
+                                    <td>福州市</td>
+                                    <td><span class="amount">¥245,320</span></td>
+                                    <td>3,210</td>
+                                    <td>¥76.4</td>
+                                    <td><span class="trend up">↑ 6.8%</span></td>
+                                    <td>6.4%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>7</strong></td>
+                                    <td>厦门湖里店</td>
+                                    <td>厦门市</td>
+                                    <td><span class="amount">¥228,960</span></td>
+                                    <td>2,987</td>
+                                    <td>¥76.7</td>
+                                    <td><span class="trend down">↓ 2.1%</span></td>
+                                    <td>5.9%</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>8</strong></td>
+                                    <td>龙岩新罗店</td>
+                                    <td>龙岩市</td>
+                                    <td><span class="amount">¥198,750</span></td>
+                                    <td>2,654</td>
+                                    <td>¥74.9</td>
+                                    <td><span class="trend up">↑ 4.5%</span></td>
+                                    <td>5.2%</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <span class="page-info">共 156 条记录，第 1/20 页</span>
+                            <button class="pagination-btn" disabled>上一页</button>
+                            <button class="pagination-btn active">1</button>
+                            <button class="pagination-btn">2</button>
+                            <button class="pagination-btn">3</button>
+                            <span>...</span>
+                            <button class="pagination-btn">20</button>
+                            <button class="pagination-btn">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.querySelectorAll('.btn-text').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parent = this.closest('.panel-actions');
+                if (parent) {
+                    parent.querySelectorAll('.btn-text').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
