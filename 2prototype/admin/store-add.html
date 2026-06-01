@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>新增门店 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .store-form-wrap {
+      max-width: 800px;
+    }
+    .store-form-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .store-form-section-title {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .store-form-section-body {
+      padding: 20px;
+    }
+    .store-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
+    }
+    .store-form-grid .full-width {
+      grid-column: 1 / -1;
+    }
+    .admin-form-item {
+      margin-bottom: 20px;
+    }
+    .admin-form-item:last-child {
+      margin-bottom: 0;
+    }
+    .admin-form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--admin-text);
+      margin-bottom: 8px;
+    }
+    .admin-form-label .required {
+      color: var(--color-error);
+      margin-right: 4px;
+    }
+    .admin-form-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+    }
+    .admin-form-input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .admin-form-input.error {
+      border-color: var(--color-error);
+    }
+    .admin-form-input.error:focus {
+      box-shadow: 0 0 0 2px rgba(255,77,79,0.1);
+    }
+    .admin-form-select {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #FFF;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .admin-form-select:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .admin-form-number {
+      width: 160px;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+    }
+    .admin-form-number:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .form-hint {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 4px;
+    }
+    .form-error {
+      font-size: 12px;
+      color: var(--color-error);
+      margin-top: 4px;
+      display: none;
+    }
+    .form-error.show {
+      display: block;
+    }
+    .radio-group {
+      display: flex;
+      gap: 24px;
+    }
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .radio-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .radio-dot.checked {
+      border-color: var(--admin-primary);
+    }
+    .radio-dot.checked::after {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--admin-primary);
+    }
+    .time-range {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .time-range input {
+      width: 120px;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+    }
+    .time-range input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .time-range-sep {
+      color: var(--admin-text-hint);
+    }
+    .form-footer {
+      display: flex;
+      gap: 12px;
+      padding-top: 8px;
+    }
+    /* 确认弹窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.show {
+      display: flex;
+    }
+    .modal-box {
+      background: #FFF;
+      border-radius: 8px;
+      width: 420px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .modal-body {
+      padding: 24px;
+      font-size: 14px;
+      color: var(--admin-text);
+      line-height: 1.6;
+    }
+    .modal-body .highlight {
+      font-weight: 600;
+      color: var(--admin-primary);
+    }
+    .modal-footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--admin-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    /* 成功提示 */
+    .success-toast {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #FFF;
+      border-radius: 8px;
+      padding: 40px 48px;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+      z-index: 1001;
+    }
+    .success-toast.show {
+      display: block;
+    }
+    .success-toast-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #F6FFED;
+      color: #52C41A;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+    .success-toast-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 8px;
+    }
+    .success-toast-desc {
+      font-size: 14px;
+      color: var(--admin-text-hint);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item active" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">门店管理 / 门店列表 / <span>新增门店</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="store-form-wrap">
+          <!-- 基本信息 -->
+          <div class="store-form-section">
+            <div class="store-form-section-title">基本信息</div>
+            <div class="store-form-section-body">
+              <div class="store-form-grid">
+                <div class="admin-form-item full-width">
+                  <label class="admin-form-label"><span class="required">*</span>门店编号</label>
+                  <input type="text" id="storeId" class="admin-form-input" placeholder="请输入10位纯数字门店编号" pattern="[0-9]{10}" maxlength="10">
+                  <div class="form-hint">门店编号为10位数字，前4位为行政区划代码（如3501=福州、3502=厦门、3505=泉州），创建后不可修改</div>
+                  <div class="form-error" id="storeIdError">请输入10位纯数字门店编号</div>
+                </div>
+                <div class="admin-form-item full-width">
+                  <label class="admin-form-label"><span class="required">*</span>门店名称</label>
+                  <input type="text" id="storeName" class="admin-form-input" placeholder="请输入门店名称，如：福州万达广场店">
+                  <div class="form-error" id="storeNameError">请输入门店名称</div>
+                </div>
+                <div class="admin-form-item full-width">
+                  <label class="admin-form-label"><span class="required">*</span>地址</label>
+                  <input type="text" id="storeAddress" class="admin-form-input" placeholder="请输入门店详细地址">
+                  <div class="form-error" id="storeAddressError">请输入门店地址</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>业态类型</label>
+                  <select id="storeBizType" class="admin-form-select">
+                    <option value="">请选择业态类型</option>
+                    <option>休闲娱乐</option>
+                    <option>文旅景区</option>
+                  </select>
+                  <div class="form-error" id="storeBizTypeError">请选择业态类型</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>区域</label>
+                  <select id="storeRegion" class="admin-form-select">
+                    <option value="">请选择区域</option>
+                    <option>福州</option>
+                    <option>厦门</option>
+                    <option>泉州</option>
+                  </select>
+                  <div class="form-error" id="storeRegionError">请选择区域</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 联系信息 -->
+          <div class="store-form-section">
+            <div class="store-form-section-title">联系信息</div>
+            <div class="store-form-section-body">
+              <div class="store-form-grid">
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>联系人</label>
+                  <input type="text" id="storeContact" class="admin-form-input" placeholder="请输入联系人姓名">
+                  <div class="form-error" id="storeContactError">请输入联系人姓名</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>联系电话</label>
+                  <input type="text" id="storePhone" class="admin-form-input" placeholder="请输入联系电话" maxlength="11">
+                  <div class="form-error" id="storePhoneError">请输入正确的联系电话</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 设备配置 -->
+          <div class="store-form-section">
+            <div class="store-form-section-title">设备配置</div>
+            <div class="store-form-section-body">
+              <div class="store-form-grid">
+                <div class="admin-form-item">
+                  <label class="admin-form-label">点单终端数量</label>
+                  <input type="number" id="orderDevices" class="admin-form-number" value="0" min="0">
+                  <div class="form-hint">顾客自助点单使用的平板终端</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label">收银终端数量</label>
+                  <input type="number" id="cashierDevices" class="admin-form-number" value="1" min="0">
+                  <div class="form-hint">收银台一体机（含小票打印机）</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label">直播手机</label>
+                  <input type="number" id="livePhones" class="admin-form-number" value="0" min="0">
+                  <div class="form-hint">直播刮票用手机（含支架+补光灯）</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label">监控摄像头</label>
+                  <input type="number" id="cameras" class="admin-form-number" value="2" min="0">
+                  <div class="form-hint">覆盖收银区和体彩服务角</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 营业设置 -->
+          <div class="store-form-section">
+            <div class="store-form-section-title">营业设置</div>
+            <div class="store-form-section-body">
+              <div class="admin-form-item">
+                <label class="admin-form-label">营业状态</label>
+                <div class="radio-group">
+                  <label class="radio-item" onclick="selectStatus(this, 'open')">
+                    <span class="radio-dot checked" data-value="open"></span>
+                    营业中
+                  </label>
+                  <label class="radio-item" onclick="selectStatus(this, 'closed')">
+                    <span class="radio-dot" data-value="closed"></span>
+                    已停业
+                  </label>
+                </div>
+                <div class="form-hint">新建门店默认为"营业中"状态</div>
+              </div>
+              <div class="admin-form-item">
+                <label class="admin-form-label">营业时间</label>
+                <div class="time-range">
+                  <input type="time" id="openTime" value="09:00">
+                  <span class="time-range-sep">至</span>
+                  <input type="time" id="closeTime" value="22:00">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 备注 -->
+          <div class="store-form-section">
+            <div class="store-form-section-title">备注信息</div>
+            <div class="store-form-section-body">
+              <div class="admin-form-item">
+                <label class="admin-form-label">备注</label>
+                <textarea class="admin-form-input" id="storeRemark" rows="3" placeholder="请输入备注信息（选填）" style="height:auto;min-height:80px;padding:8px 12px;resize:vertical;"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button class="admin-btn admin-btn-primary" style="padding:10px 32px;font-size:15px;" onclick="handleSubmit()">提交</button>
+            <button class="admin-btn admin-btn-default" style="padding:10px 32px;font-size:15px;" onclick="location.href='store-list.html'">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 确认弹窗 -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal-box">
+      <div class="modal-header">确认新增门店</div>
+      <div class="modal-body" id="confirmBody">
+        请确认以下门店信息：<br><br>
+        门店编号：<span class="highlight" id="confirmId"></span><br>
+        门店名称：<span class="highlight" id="confirmName"></span><br>
+        区域：<span class="highlight" id="confirmRegion"></span><br>
+        业态类型：<span class="highlight" id="confirmBizType"></span><br><br>
+        门店编号创建后不可修改，请确认无误。
+      </div>
+      <div class="modal-footer">
+        <button class="admin-btn admin-btn-default" onclick="closeModal()">取消</button>
+        <button class="admin-btn admin-btn-primary" onclick="doSubmit()">确认提交</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div class="success-toast" id="successToast">
+    <div class="success-toast-icon">✓</div>
+    <div class="success-toast-title">新增门店成功</div>
+    <div class="success-toast-desc">门店已创建，3秒后自动返回门店列表</div>
+  </div>
+
+  <script>
+    var selectedStatus = 'open';
+
+    function selectStatus(el, value) {
+      selectedStatus = value;
+      document.querySelectorAll('.radio-dot').forEach(function(dot) {
+        dot.classList.remove('checked');
+      });
+      el.querySelector('.radio-dot').classList.add('checked');
+    }
+
+    function clearErrors() {
+      document.querySelectorAll('.form-error').forEach(function(el) {
+        el.classList.remove('show');
+      });
+      document.querySelectorAll('.admin-form-input, .admin-form-select').forEach(function(el) {
+        el.classList.remove('error');
+      });
+    }
+
+    function showError(inputId, errorId) {
+      var input = document.getElementById(inputId);
+      var error = document.getElementById(errorId);
+      if (input) input.classList.add('error');
+      if (error) error.classList.add('show');
+    }
+
+    function validate() {
+      clearErrors();
+      var valid = true;
+      var storeId = document.getElementById('storeId').value.trim();
+      var storeName = document.getElementById('storeName').value.trim();
+      var storeAddress = document.getElementById('storeAddress').value.trim();
+      var storeBizType = document.getElementById('storeBizType').value;
+      var storeRegion = document.getElementById('storeRegion').value;
+      var storeContact = document.getElementById('storeContact').value.trim();
+      var storePhone = document.getElementById('storePhone').value.trim();
+
+      // 门店编号：10位纯数字
+      if (!/^\d{10}$/.test(storeId)) {
+        showError('storeId', 'storeIdError');
+        valid = false;
+      }
+      if (!storeName) {
+        showError('storeName', 'storeNameError');
+        valid = false;
+      }
+      if (!storeAddress) {
+        showError('storeAddress', 'storeAddressError');
+        valid = false;
+      }
+      if (!storeBizType) {
+        showError('storeBizType', 'storeBizTypeError');
+        valid = false;
+      }
+      if (!storeRegion) {
+        showError('storeRegion', 'storeRegionError');
+        valid = false;
+      }
+      if (!storeContact) {
+        showError('storeContact', 'storeContactError');
+        valid = false;
+      }
+      if (!/^1[3-9]\d{9}$/.test(storePhone)) {
+        showError('storePhone', 'storePhoneError');
+        valid = false;
+      }
+      return valid;
+    }
+
+    function handleSubmit() {
+      if (!validate()) return;
+      // 填充确认弹窗
+      document.getElementById('confirmId').textContent = document.getElementById('storeId').value.trim();
+      document.getElementById('confirmName').textContent = document.getElementById('storeName').value.trim();
+      document.getElementById('confirmRegion').textContent = document.getElementById('storeRegion').value;
+      document.getElementById('confirmBizType').textContent = document.getElementById('storeBizType').value;
+      document.getElementById('confirmModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('confirmModal').classList.remove('show');
+    }
+
+    function doSubmit() {
+      closeModal();
+      document.getElementById('successToast').classList.add('show');
+      setTimeout(function() {
+        location.href = 'store-list.html';
+      }, 3000);
+    }
+
+    // 门店编号只允许输入数字
+    document.getElementById('storeId').addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d]/g, '');
+    });
+    // 联系电话只允许输入数字
+    document.getElementById('storePhone').addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d]/g, '');
+    });
+  </script>
+</body>
+</html>

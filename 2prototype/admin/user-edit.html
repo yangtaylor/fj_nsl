@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>编辑用户 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .user-form-wrap { max-width: 720px; }
+    .user-form-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .user-form-section-title {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .user-form-section-body { padding: 20px; }
+    .user-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
+    }
+    .user-form-grid .full-width { grid-column: 1 / -1; }
+    .form-hint {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 4px;
+    }
+    .form-error {
+      font-size: 12px;
+      color: var(--color-error);
+      margin-top: 4px;
+      display: none;
+    }
+    .form-error.show { display: block; }
+    .admin-form-input.error,
+    .admin-form-select.error {
+      border-color: var(--color-error);
+    }
+    .admin-form-input.error:focus,
+    .admin-form-select.error:focus {
+      box-shadow: 0 0 0 2px rgba(255,77,79,0.1);
+    }
+    .form-footer {
+      display: flex;
+      gap: 12px;
+      padding-top: 8px;
+    }
+    .role-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .role-tag { padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .role-tag.admin { background: #E6F7FF; color: #1890FF; }
+    .role-tag.operator { background: #F6FFED; color: #52C41A; }
+    .role-tag.sales { background: #FFF7E6; color: #FAAD14; }
+    .role-tag.manager { background: #F9F0FF; color: #722ED1; }
+    .status-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+    .status-tag.normal { background: #F6FFED; color: #52C41A; }
+    .status-tag.disabled { background: #FFF1F0; color: #FF4D4F; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .status-dot.green { background: #52C41A; }
+    .status-dot.red { background: #FF4D4F; }
+    .info-row {
+      display: flex;
+      gap: 24px;
+      padding: 12px 0;
+      border-bottom: 1px solid #F5F5F5;
+      font-size: 14px;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label {
+      width: 100px;
+      color: var(--admin-text-hint);
+      flex-shrink: 0;
+    }
+    .info-value {
+      flex: 1;
+      color: var(--admin-text);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item active" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">系统管理 / 用户管理 / <span>编辑用户</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="user-form-wrap">
+          <!-- 基本信息（只读） -->
+          <div class="user-form-section">
+            <div class="user-form-section-title">基本信息</div>
+            <div class="user-form-section-body">
+              <div class="info-row">
+                <div class="info-label">用户ID</div>
+                <div class="info-value">U10003</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">用户名</div>
+                <div class="info-value">store_chen</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">状态</div>
+                <div class="info-value"><span class="status-tag normal"><span class="status-dot green"></span>正常</span></div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">创建时间</div>
+                <div class="info-value">2026-04-15 10:30</div>
+              </div>
+              <div class="info-row">
+                <div class="info-label">最后登录</div>
+                <div class="info-value">2026-05-28 18:30</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 编辑区域 -->
+          <div class="user-form-section">
+            <div class="user-form-section-title">编辑信息</div>
+            <div class="user-form-section-body">
+              <div class="user-form-grid">
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>姓名</label>
+                  <input type="text" id="realName" class="admin-form-input" value="陈志强">
+                  <div class="form-error" id="realNameError">请输入姓名</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>手机号</label>
+                  <input type="text" id="phone" class="admin-form-input" value="13905012345" maxlength="11">
+                  <div class="form-error" id="phoneError">请输入正确的手机号</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label">邮箱</label>
+                  <input type="email" id="email" class="admin-form-input" value="chen@lottery.com">
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>角色</label>
+                  <select id="role" class="admin-form-select">
+                    <option>系统管理员</option>
+                    <option>运营专员</option>
+                    <option selected>店长</option>
+                    <option>销售员</option>
+                  </select>
+                  <div class="form-error" id="roleError">请选择角色</div>
+                </div>
+                <div class="admin-form-item" id="storeField">
+                  <label class="admin-form-label"><span class="required">*</span>所属门店</label>
+                  <select id="store" class="admin-form-select">
+                    <option>总部</option>
+                    <option selected>福州万达广场店</option>
+                    <option>厦门中山路店</option>
+                    <option>泉州浦西万达店</option>
+                    <option>福州宝龙城市广场店</option>
+                    <option>厦门SM广场店</option>
+                    <option>福州东百中心店</option>
+                  </select>
+                  <div class="form-hint">店长和销售员需绑定门店</div>
+                  <div class="form-error" id="storeError">请选择所属门店</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button class="admin-btn admin-btn-primary" style="padding:10px 32px;font-size:15px;" onclick="handleSubmit()">保存</button>
+            <button class="admin-btn admin-btn-default" style="padding:10px 32px;font-size:15px;" onclick="location.href='user-manage.html'">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 角色-门店联动
+    document.getElementById('role').addEventListener('change', function() {
+      var role = this.value;
+      var storeField = document.getElementById('storeField');
+      if (role === '店长' || role === '销售员') {
+        storeField.style.display = '';
+      } else {
+        storeField.style.display = 'none';
+      }
+    });
+
+    function clearErrors() {
+      document.querySelectorAll('.form-error').forEach(function(el) { el.classList.remove('show'); });
+      document.querySelectorAll('.admin-form-input, .admin-form-select').forEach(function(el) { el.classList.remove('error'); });
+    }
+
+    function showError(inputId, errorId) {
+      var input = document.getElementById(inputId);
+      var error = document.getElementById(errorId);
+      if (input) input.classList.add('error');
+      if (error) error.classList.add('show');
+    }
+
+    function handleSubmit() {
+      clearErrors();
+      var valid = true;
+      var realName = document.getElementById('realName').value.trim();
+      var phone = document.getElementById('phone').value.trim();
+      var role = document.getElementById('role').value;
+
+      if (!realName) { showError('realName', 'realNameError'); valid = false; }
+      if (!/^1[3-9]\d{9}$/.test(phone)) { showError('phone', 'phoneError'); valid = false; }
+      if ((role === '店长' || role === '销售员') && !document.getElementById('store').value) {
+        showError('store', 'storeError'); valid = false;
+      }
+
+      if (valid) {
+        alert('保存成功');
+        location.href = 'user-manage.html';
+      }
+    }
+
+    document.getElementById('phone').addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d]/g, '');
+    });
+  </script>
+</body>
+</html>

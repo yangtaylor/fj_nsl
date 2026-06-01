@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>批次详情 - 体彩管理后台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: var(--admin-primary);
+      cursor: pointer;
+      margin-bottom: 16px;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .detail-back:hover {
+      color: var(--admin-primary-light);
+    }
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 20px;
+    }
+    .detail-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .detail-section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .detail-section-body {
+      padding: 20px;
+    }
+    .detail-info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .detail-info-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .detail-info-label {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      margin-bottom: 4px;
+    }
+    .detail-info-value {
+      font-size: 14px;
+      color: var(--admin-text);
+      font-weight: 500;
+    }
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .status-tag.in-stock { background: #F6FFED; color: #52C41A; }
+    .status-tag.sold { background: #E6F7FF; color: #1890FF; }
+    .status-tag.partial { background: #FFF7E6; color: #FA8C16; }
+    .serial-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .serial-filter-select {
+      height: 32px;
+      padding: 0 28px 0 10px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--admin-text);
+      background: #FFF;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' fill='none' stroke='%23999' stroke-width='1.5'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      cursor: pointer;
+    }
+    .serial-search-input {
+      width: 200px;
+      height: 32px;
+      padding: 0 10px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+    .serial-search-input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+    }
+    .serial-stat-bar {
+      display: flex;
+      gap: 24px;
+      font-size: 13px;
+      color: var(--admin-text-secondary);
+      margin-left: auto;
+    }
+    .serial-stat-bar span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .serial-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .serial-dot.available { background: #52C41A; }
+    .serial-dot.sold { background: #D9D9D9; }
+    .serial-dot.reserved { background: #FAAD14; }
+    .serial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .serial-grid::-webkit-scrollbar {
+      width: 6px;
+    }
+    .serial-grid::-webkit-scrollbar-thumb {
+      background: #D9D9D9;
+      border-radius: 3px;
+    }
+    .serial-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: #FFF;
+      border: 1px solid #F0F0F0;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--admin-text);
+      transition: border-color 0.2s;
+    }
+    .serial-item:hover {
+      border-color: var(--admin-primary);
+      background: #FAFCFF;
+    }
+    .serial-item .serial-dot {
+      flex-shrink: 0;
+    }
+    .detail-timeline-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .detail-timeline-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 16px;
+    }
+    .detail-timeline {
+      padding: 0;
+    }
+    .detail-timeline-item {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 24px;
+      position: relative;
+    }
+    .detail-timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 20px;
+      bottom: 0;
+      width: 1px;
+      background: var(--admin-border);
+    }
+    .detail-timeline-item:last-child::before {
+      display: none;
+    }
+    .detail-timeline-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+    .detail-timeline-dot.blue { background: var(--admin-primary); }
+    .detail-timeline-dot.green { background: var(--admin-success); }
+    .detail-timeline-dot.orange { background: var(--admin-warning); }
+    .detail-timeline-content {
+      flex: 1;
+    }
+    .detail-timeline-status {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--admin-text);
+    }
+    .detail-timeline-desc {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 2px;
+    }
+    .detail-timeline-time {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 2px;
+    }
+    .detail-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .serial-pagination {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0 0;
+      font-size: 13px;
+      color: var(--admin-text-hint);
+    }
+    .serial-pagination-pages {
+      display: flex;
+      gap: 6px;
+    }
+    .serial-pagination-page {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .serial-pagination-page.active {
+      background: var(--admin-primary);
+      color: #FFF;
+      border-color: var(--admin-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item active" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">商品管理 / 序列号管理 / <span>批次详情</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <button class="detail-back" onclick="location.href='serial-number.html'">← 返回列表</button>
+
+        <div class="detail-layout">
+          <div class="detail-left">
+            <div class="detail-section">
+              <div class="detail-section-header">
+                批次信息
+                <span class="status-tag partial">部分售</span>
+              </div>
+              <div class="detail-section-body">
+                <div class="detail-info-grid">
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">批次号</div>
+                    <div class="detail-info-value">B20260501001</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">票种</div>
+                    <div class="detail-info-value">中国红</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">面值</div>
+                    <div class="detail-info-value">¥10</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">起始序列号</div>
+                    <div class="detail-info-value">ZGH20260501001</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">结束序列号</div>
+                    <div class="detail-info-value">ZGH20260501500</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">总数量</div>
+                    <div class="detail-info-value">500</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">在库数量</div>
+                    <div class="detail-info-value" style="color:#52C41A">312</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">已售数量</div>
+                    <div class="detail-info-value" style="color:#1890FF">168</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">预留数量</div>
+                    <div class="detail-info-value" style="color:#FAAD14">20</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">入库时间</div>
+                    <div class="detail-info-value">2026-05-01 09:00:00</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">操作人</div>
+                    <div class="detail-info-value">张三</div>
+                  </div>
+                  <div class="detail-info-item">
+                    <div class="detail-info-label">备注</div>
+                    <div class="detail-info-value">五一活动备货</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <div class="detail-section-header">序列号明细</div>
+              <div class="detail-section-body">
+                <div class="serial-filter-bar">
+                  <select class="serial-filter-select">
+                    <option value="">全部状态</option>
+                    <option value="available">在库</option>
+                    <option value="sold">已售</option>
+                    <option value="reserved">预留</option>
+                  </select>
+                  <input type="text" class="serial-search-input" placeholder="搜索序列号">
+                  <div class="serial-stat-bar">
+                    <span><span class="serial-dot available"></span>在库 312</span>
+                    <span><span class="serial-dot sold"></span>已售 168</span>
+                    <span><span class="serial-dot reserved"></span>预留 20</span>
+                  </div>
+                </div>
+                <div class="serial-grid">
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501001</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501002</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501003</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501004</div>
+                  <div class="serial-item"><span class="serial-dot reserved"></span>ZGH20260501005</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501006</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501007</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501008</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501009</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501010</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501011</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501012</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501013</div>
+                  <div class="serial-item"><span class="serial-dot reserved"></span>ZGH20260501014</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501015</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501016</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501017</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501018</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501019</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501020</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501021</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501022</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501023</div>
+                  <div class="serial-item"><span class="serial-dot reserved"></span>ZGH20260501024</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501025</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501026</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501027</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501028</div>
+                  <div class="serial-item"><span class="serial-dot sold"></span>ZGH20260501029</div>
+                  <div class="serial-item"><span class="serial-dot available"></span>ZGH20260501030</div>
+                </div>
+                <div class="serial-pagination">
+                  <span>共 500 条，每页 30 条</span>
+                  <div class="serial-pagination-pages">
+                    <div class="serial-pagination-page active">1</div>
+                    <div class="serial-pagination-page">2</div>
+                    <div class="serial-pagination-page">3</div>
+                    <div class="serial-pagination-page">...</div>
+                    <div class="serial-pagination-page">17</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="detail-actions">
+              <button class="admin-btn admin-btn-primary">📤 导出明细</button>
+              <button class="admin-btn admin-btn-default">🖨️ 打印</button>
+            </div>
+          </div>
+
+          <div class="detail-right">
+            <div class="detail-timeline-section">
+              <div class="detail-timeline-title">批次操作记录</div>
+              <div class="detail-timeline">
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot blue"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">批次入库</div>
+                    <div class="detail-timeline-desc">导入500张中国红序列号</div>
+                    <div class="detail-timeline-time">2026-05-01 09:00:00</div>
+                  </div>
+                </div>
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot green"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">开始销售</div>
+                    <div class="detail-timeline-desc">序列号分配至福州万达广场店</div>
+                    <div class="detail-timeline-time">2026-05-01 10:30:00</div>
+                  </div>
+                </div>
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot orange"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">预留操作</div>
+                    <div class="detail-timeline-desc">预留20张用于活动赠票</div>
+                    <div class="detail-timeline-time">2026-05-05 14:00:00</div>
+                  </div>
+                </div>
+                <div class="detail-timeline-item">
+                  <div class="detail-timeline-dot green"></div>
+                  <div class="detail-timeline-content">
+                    <div class="detail-timeline-status">持续销售</div>
+                    <div class="detail-timeline-desc">已售出168张，在库312张</div>
+                    <div class="detail-timeline-time">2026-05-29 16:00:00</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

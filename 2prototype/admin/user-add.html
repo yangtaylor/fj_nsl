@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>新增用户 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .user-form-wrap { max-width: 720px; }
+    .user-form-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .user-form-section-title {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .user-form-section-body { padding: 20px; }
+    .user-form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 24px;
+    }
+    .user-form-grid .full-width { grid-column: 1 / -1; }
+    .form-hint {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 4px;
+    }
+    .form-error {
+      font-size: 12px;
+      color: var(--color-error);
+      margin-top: 4px;
+      display: none;
+    }
+    .form-error.show { display: block; }
+    .admin-form-input.error,
+    .admin-form-select.error {
+      border-color: var(--color-error);
+    }
+    .admin-form-input.error:focus,
+    .admin-form-select.error:focus {
+      box-shadow: 0 0 0 2px rgba(255,77,79,0.1);
+    }
+    .form-footer {
+      display: flex;
+      gap: 12px;
+      padding-top: 8px;
+    }
+    .password-gen {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .password-gen .admin-form-input { flex: 1; }
+    .password-gen-btn {
+      height: 40px;
+      padding: 0 16px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      background: #FFF;
+      color: var(--admin-text-secondary);
+      font-size: 13px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .password-gen-btn:hover {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item active" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">系统管理 / 用户管理 / <span>新增用户</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="user-form-wrap">
+          <!-- 账号信息 -->
+          <div class="user-form-section">
+            <div class="user-form-section-title">账号信息</div>
+            <div class="user-form-section-body">
+              <div class="user-form-grid">
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>用户名</label>
+                  <input type="text" id="username" class="admin-form-input" placeholder="请输入用户名（字母开头，4-20位字母数字）" maxlength="20">
+                  <div class="form-hint">用户名创建后不可修改</div>
+                  <div class="form-error" id="usernameError">请输入4-20位字母数字组合的用户名</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>姓名</label>
+                  <input type="text" id="realName" class="admin-form-input" placeholder="请输入真实姓名">
+                  <div class="form-error" id="realNameError">请输入姓名</div>
+                </div>
+                <div class="admin-form-item full-width">
+                  <label class="admin-form-label"><span class="required">*</span>初始密码</label>
+                  <div class="password-gen">
+                    <input type="text" id="password" class="admin-form-input" placeholder="请输入初始密码（至少8位）" value="" readonly style="background:#F5F5F5;">
+                    <button type="button" class="password-gen-btn" onclick="generatePassword()">随机生成</button>
+                    <button type="button" class="password-gen-btn" onclick="copyPassword()">复制</button>
+                  </div>
+                  <div class="form-hint">建议使用随机生成密码，创建后通知用户首次登录修改</div>
+                  <div class="form-error" id="passwordError">请生成或输入初始密码</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>手机号</label>
+                  <input type="text" id="phone" class="admin-form-input" placeholder="请输入手机号" maxlength="11">
+                  <div class="form-error" id="phoneError">请输入正确的手机号</div>
+                </div>
+                <div class="admin-form-item">
+                  <label class="admin-form-label">邮箱</label>
+                  <input type="email" id="email" class="admin-form-input" placeholder="请输入邮箱（选填）">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 角色与权限 -->
+          <div class="user-form-section">
+            <div class="user-form-section-title">角色与权限</div>
+            <div class="user-form-section-body">
+              <div class="user-form-grid">
+                <div class="admin-form-item">
+                  <label class="admin-form-label"><span class="required">*</span>角色</label>
+                  <select id="role" class="admin-form-select">
+                    <option value="">请选择角色</option>
+                    <option>系统管理员</option>
+                    <option>运营专员</option>
+                    <option>店长</option>
+                    <option>销售员</option>
+                  </select>
+                  <div class="form-error" id="roleError">请选择角色</div>
+                </div>
+                <div class="admin-form-item" id="storeField">
+                  <label class="admin-form-label"><span class="required">*</span>所属门店</label>
+                  <select id="store" class="admin-form-select">
+                    <option value="">请选择门店</option>
+                    <option>总部</option>
+                    <option>福州万达广场店</option>
+                    <option>厦门中山路店</option>
+                    <option>泉州浦西万达店</option>
+                    <option>福州宝龙城市广场店</option>
+                    <option>厦门SM广场店</option>
+                    <option>福州东百中心店</option>
+                  </select>
+                  <div class="form-hint">店长和销售员需绑定门店</div>
+                  <div class="form-error" id="storeError">请选择所属门店</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-footer">
+            <button class="admin-btn admin-btn-primary" style="padding:10px 32px;font-size:15px;" onclick="handleSubmit()">创建用户</button>
+            <button class="admin-btn admin-btn-default" style="padding:10px 32px;font-size:15px;" onclick="location.href='user-manage.html'">取消</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div id="successOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);z-index:1000;justify-content:center;align-items:center;">
+    <div style="background:#FFF;border-radius:8px;padding:40px 48px;text-align:center;box-shadow:0 6px 16px rgba(0,0,0,0.12);">
+      <div style="width:48px;height:48px;border-radius:50%;background:#F6FFED;color:#52C41A;font-size:24px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">✓</div>
+      <div style="font-size:16px;font-weight:600;color:var(--admin-text);margin-bottom:8px;">用户创建成功</div>
+      <div style="font-size:14px;color:var(--admin-text-hint);margin-bottom:4px;">请通知用户使用初始密码登录并修改密码</div>
+      <div style="font-size:14px;color:var(--admin-text-hint);margin-bottom:20px;">3秒后自动返回用户列表</div>
+      <button class="admin-btn admin-btn-primary" onclick="location.href='user-manage.html'">返回列表</button>
+    </div>
+  </div>
+
+  <script>
+    // 初始自动生成密码
+    window.onload = function() { generatePassword(); };
+
+    function generatePassword() {
+      var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhjkmnprstwxyz2345678';
+      var len = 10;
+      var pwd = '';
+      for (var i = 0; i < len; i++) {
+        pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      document.getElementById('password').value = pwd;
+      document.getElementById('passwordError').classList.remove('show');
+      document.getElementById('password').classList.remove('error');
+    }
+
+    function copyPassword() {
+      var pwd = document.getElementById('password').value;
+      if (pwd) {
+        navigator.clipboard && navigator.clipboard.writeText(pwd);
+        alert('密码已复制到剪贴板');
+      }
+    }
+
+    // 角色-门店联动
+    document.getElementById('role').addEventListener('change', function() {
+      var role = this.value;
+      var storeField = document.getElementById('storeField');
+      if (role === '店长' || role === '销售员') {
+        storeField.style.display = '';
+      } else {
+        storeField.style.display = 'none';
+      }
+    });
+
+    function clearErrors() {
+      document.querySelectorAll('.form-error').forEach(function(el) { el.classList.remove('show'); });
+      document.querySelectorAll('.admin-form-input, .admin-form-select').forEach(function(el) { el.classList.remove('error'); });
+    }
+
+    function showError(inputId, errorId) {
+      var input = document.getElementById(inputId);
+      var error = document.getElementById(errorId);
+      if (input) input.classList.add('error');
+      if (error) error.classList.add('show');
+    }
+
+    function handleSubmit() {
+      clearErrors();
+      var valid = true;
+      var username = document.getElementById('username').value.trim();
+      var realName = document.getElementById('realName').value.trim();
+      var password = document.getElementById('password').value;
+      var phone = document.getElementById('phone').value.trim();
+      var role = document.getElementById('role').value;
+
+      if (!/^[a-zA-Z][a-zA-Z0-9]{3,19}$/.test(username)) { showError('username', 'usernameError'); valid = false; }
+      if (!realName) { showError('realName', 'realNameError'); valid = false; }
+      if (!password || password.length < 8) { showError('password', 'passwordError'); valid = false; }
+      if (!/^1[3-9]\d{9}$/.test(phone)) { showError('phone', 'phoneError'); valid = false; }
+      if (!role) { showError('role', 'roleError'); valid = false; }
+      if ((role === '店长' || role === '销售员') && !document.getElementById('store').value) {
+        showError('store', 'storeError'); valid = false;
+      }
+
+      if (valid) {
+        document.getElementById('successOverlay').style.display = 'flex';
+        setTimeout(function() { location.href = 'user-manage.html'; }, 3000);
+      }
+    }
+
+    document.getElementById('username').addEventListener('input', function() {
+      this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');
+    });
+    document.getElementById('phone').addEventListener('input', function() {
+      this.value = this.value.replace(/[^\d]/g, '');
+    });
+  </script>
+</body>
+</html>

@@ -151,6 +151,211 @@
       flex-shrink: 0;
       margin-top: 4px;
     }
+    .admin-modal-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .admin-modal-mask.visible {
+      display: flex;
+    }
+    .admin-modal {
+      width: 560px;
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .admin-modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .admin-modal-close {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--admin-text-hint);
+      font-size: 18px;
+      border: none;
+      background: none;
+    }
+    .admin-modal-body {
+      padding: 24px;
+    }
+    .admin-modal-footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--admin-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .handle-form-item {
+      margin-bottom: 20px;
+    }
+    .handle-form-item:last-child {
+      margin-bottom: 0;
+    }
+    .handle-form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--admin-text);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .handle-form-label .required {
+      color: var(--color-error);
+      margin-right: 4px;
+    }
+    .handle-form-select {
+      width: 100%;
+      height: 36px;
+      padding: 0 28px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #FFF;
+      color: var(--admin-text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .handle-form-select:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .handle-form-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 8px 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+      resize: vertical;
+    }
+    .handle-form-textarea:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .handle-alert-info {
+      background: #FAFAFA;
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .handle-alert-info-row {
+      display: flex;
+      margin-bottom: 8px;
+    }
+    .handle-alert-info-row:last-child {
+      margin-bottom: 0;
+    }
+    .handle-alert-info-label {
+      width: 80px;
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      flex-shrink: 0;
+    }
+    .handle-alert-info-value {
+      font-size: 13px;
+      color: var(--admin-text);
+      flex: 1;
+    }
+    .detail-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+    }
+    .detail-info-item {
+      padding: 12px 0;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .detail-info-label {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      margin-bottom: 4px;
+    }
+    .detail-info-value {
+      font-size: 14px;
+      color: var(--admin-text);
+      font-weight: 500;
+    }
+    .detail-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-top: 20px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    .detail-section-title:first-child {
+      margin-top: 0;
+    }
+    .detail-timeline {
+      padding: 0;
+    }
+    .detail-timeline-item {
+      display: flex;
+      gap: 12px;
+      padding-bottom: 16px;
+      position: relative;
+    }
+    .detail-timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 5px;
+      top: 18px;
+      bottom: 0;
+      width: 1px;
+      background: var(--admin-border);
+    }
+    .detail-timeline-item:last-child::before {
+      display: none;
+    }
+    .detail-timeline-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .detail-timeline-dot.red { background: #FF4D4F; }
+    .detail-timeline-dot.orange { background: #FAAD14; }
+    .detail-timeline-dot.green { background: #52C41A; }
+    .detail-timeline-dot.gray { background: #D9D9D9; }
+    .detail-timeline-content {
+      flex: 1;
+    }
+    .detail-timeline-text {
+      font-size: 13px;
+      color: var(--admin-text);
+    }
+    .detail-timeline-time {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+      margin-top: 2px;
+    }
   </style>
 </head>
 <body>
@@ -245,7 +450,7 @@
           </div>
           <div class="admin-card-body">
             <div class="alert-list">
-              <div class="alert-item p0">
+              <div class="alert-item p0" data-id="1" data-type="payment_fail" data-level="P0" data-title="支付失败" data-desc="顾客已付款但回调超时" data-order="ORD20260529015" data-store="福州万达广场店" data-time="2026-05-29 14:27:15">
                 <div class="alert-severity p0">🔴</div>
                 <div class="alert-body">
                   <div class="alert-title">订单 <span class="order-id">ORD20260529015</span> 支付失败，顾客已付款但回调超时</div>
@@ -255,12 +460,12 @@
                   </div>
                 </div>
                 <div class="alert-actions">
-                  <button class="admin-btn admin-btn-primary">处理</button>
-                  <button class="admin-btn admin-btn-link">查看详情</button>
+                  <button class="admin-btn admin-btn-primary" onclick="openHandleModal(this)">处理</button>
+                  <button class="admin-btn admin-btn-link" onclick="openDetailModal(this)">查看详情</button>
                 </div>
               </div>
 
-              <div class="alert-item p0">
+              <div class="alert-item p0" data-id="2" data-type="print_timeout" data-level="P0" data-title="出票超时" data-desc="3笔订单等待超过5分钟" data-order="" data-store="厦门中山路店" data-time="2026-05-29 14:20:15">
                 <div class="alert-severity p0">🔴</div>
                 <div class="alert-body">
                   <div class="alert-title">门店厦门中山路店 出票超时，3笔订单等待超过5分钟</div>
@@ -270,12 +475,12 @@
                   </div>
                 </div>
                 <div class="alert-actions">
-                  <button class="admin-btn admin-btn-primary">处理</button>
-                  <button class="admin-btn admin-btn-link">查看详情</button>
+                  <button class="admin-btn admin-btn-primary" onclick="openHandleModal(this)">处理</button>
+                  <button class="admin-btn admin-btn-link" onclick="openDetailModal(this)">查看详情</button>
                 </div>
               </div>
 
-              <div class="alert-item p1">
+              <div class="alert-item p1" data-id="3" data-type="refund_error" data-level="P1" data-title="退款异常" data-desc="资金未原路退回" data-order="ORD20260529008" data-store="福州宝龙城市广场店" data-time="2026-05-29 13:32:15">
                 <div class="alert-severity p1">🟡</div>
                 <div class="alert-body">
                   <div class="alert-title">订单 <span class="order-id">ORD20260529008</span> 退款处理异常，资金未原路退回</div>
@@ -285,12 +490,12 @@
                   </div>
                 </div>
                 <div class="alert-actions">
-                  <button class="admin-btn admin-btn-primary">处理</button>
-                  <button class="admin-btn admin-btn-link">查看详情</button>
+                  <button class="admin-btn admin-btn-primary" onclick="openHandleModal(this)">处理</button>
+                  <button class="admin-btn admin-btn-link" onclick="openDetailModal(this)">查看详情</button>
                 </div>
               </div>
 
-              <div class="alert-item p2">
+              <div class="alert-item p2" data-id="4" data-type="sign_fail" data-level="P2" data-title="签名验证失败" data-desc="支付签名验证失败，已自动拒绝" data-order="ORD20260529003" data-store="泉州浦西万达店" data-time="2026-05-29 12:32:15">
                 <div class="alert-severity p2">🟢</div>
                 <div class="alert-body">
                   <div class="alert-title">订单 <span class="order-id">ORD20260529003</span> 支付签名验证失败，已自动拒绝</div>
@@ -300,12 +505,12 @@
                   </div>
                 </div>
                 <div class="alert-actions">
-                  <button class="admin-btn admin-btn-primary">处理</button>
-                  <button class="admin-btn admin-btn-link">查看详情</button>
+                  <button class="admin-btn admin-btn-primary" onclick="openHandleModal(this)">处理</button>
+                  <button class="admin-btn admin-btn-link" onclick="openDetailModal(this)">查看详情</button>
                 </div>
               </div>
 
-              <div class="alert-item resolved">
+              <div class="alert-item resolved" data-id="5" data-type="print_timeout" data-level="resolved" data-title="出票超时" data-desc="已重新出票成功" data-order="ORD20260529001" data-store="福州万达广场店" data-time="2026-05-28 16:45:00">
                 <div class="alert-severity resolved">✓</div>
                 <div class="alert-body">
                   <div class="alert-title">订单 <span class="order-id">ORD20260529001</span> 出票超时，已重新出票成功</div>
@@ -315,7 +520,7 @@
                   </div>
                 </div>
                 <div class="alert-actions">
-                  <button class="admin-btn admin-btn-link">查看详情</button>
+                  <button class="admin-btn admin-btn-link" onclick="openDetailModal(this)">查看详情</button>
                 </div>
               </div>
             </div>
@@ -324,5 +529,258 @@
       </div>
     </div>
   </div>
+
+  <div class="admin-modal-mask" id="handleModal">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <span class="admin-modal-title">处理预警</span>
+        <button class="admin-modal-close" onclick="closeHandleModal()">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <div class="handle-alert-info" id="handleAlertInfo"></div>
+        <div class="handle-form-item">
+          <div class="handle-form-label"><span class="required">*</span>处理方式</div>
+          <select class="handle-form-select" id="handleAction">
+            <option value="">请选择处理方式</option>
+          </select>
+        </div>
+        <div class="handle-form-item">
+          <div class="handle-form-label"><span class="required">*</span>处理说明</div>
+          <textarea class="handle-form-textarea" id="handleRemark" placeholder="请输入处理说明，至少10个字"></textarea>
+        </div>
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-default" onclick="closeHandleModal()">取消</button>
+        <button class="admin-btn admin-btn-primary" onclick="confirmHandle()">确认处理</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="admin-modal-mask" id="detailModal">
+    <div class="admin-modal" style="width:640px;">
+      <div class="admin-modal-header">
+        <span class="admin-modal-title">预警详情</span>
+        <button class="admin-modal-close" onclick="closeDetailModal()">✕</button>
+      </div>
+      <div class="admin-modal-body" id="detailModalBody">
+      </div>
+      <div class="admin-modal-footer">
+        <button class="admin-btn admin-btn-default" onclick="closeDetailModal()">关闭</button>
+        <button class="admin-btn admin-btn-primary" id="detailHandleBtn" onclick="detailToHandle()">处理</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var currentAlertItem = null;
+
+    var actionOptions = {
+      payment_fail: [
+        { value: 'manual_confirm', text: '手动确认到账' },
+        { value: 'refund', text: '发起退款' },
+        { value: 'contact_pay', text: '联系支付通道排查' }
+      ],
+      print_timeout: [
+        { value: 'reprint', text: '重新出票' },
+        { value: 'contact_store', text: '联系门店处理' },
+        { value: 'cancel_order', text: '取消订单并退款' }
+      ],
+      refund_error: [
+        { value: 'retry_refund', text: '重新发起退款' },
+        { value: 'manual_transfer', text: '人工转账' },
+        { value: 'contact_pay', text: '联系支付通道排查' }
+      ],
+      sign_fail: [
+        { value: 'ignore', text: '标记为已处理（自动拒绝无需操作）' },
+        { value: 'investigate', text: '排查签名异常原因' }
+      ]
+    };
+
+    function getAlertData(btn) {
+      var item = btn.closest('.alert-item');
+      return {
+        element: item,
+        id: item.getAttribute('data-id'),
+        type: item.getAttribute('data-type'),
+        level: item.getAttribute('data-level'),
+        title: item.getAttribute('data-title'),
+        desc: item.getAttribute('data-desc'),
+        order: item.getAttribute('data-order'),
+        store: item.getAttribute('data-store'),
+        time: item.getAttribute('data-time')
+      };
+    }
+
+    function getLevelText(level) {
+      var map = { P0: 'P0 紧急', P1: 'P1 重要', P2: 'P2 一般', resolved: '已处理' };
+      return map[level] || level;
+    }
+
+    function getTypeText(type) {
+      var map = { payment_fail: '支付失败', print_timeout: '出票超时', refund_error: '退款异常', sign_fail: '签名验证失败' };
+      return map[type] || type;
+    }
+
+    function openHandleModal(btn) {
+      var data = getAlertData(btn);
+      currentAlertItem = data;
+
+      var infoHtml = '<div class="handle-alert-info-row">' +
+        '<div class="handle-alert-info-label">预警类型</div>' +
+        '<div class="handle-alert-info-value">' + getTypeText(data.type) + '</div>' +
+        '</div>' +
+        '<div class="handle-alert-info-row">' +
+        '<div class="handle-alert-info-label">预警等级</div>' +
+        '<div class="handle-alert-info-value">' + getLevelText(data.level) + '</div>' +
+        '</div>' +
+        '<div class="handle-alert-info-row">' +
+        '<div class="handle-alert-info-label">问题描述</div>' +
+        '<div class="handle-alert-info-value">' + data.desc + '</div>' +
+        '</div>';
+
+      if (data.order) {
+        infoHtml += '<div class="handle-alert-info-row">' +
+          '<div class="handle-alert-info-label">关联订单</div>' +
+          '<div class="handle-alert-info-value" style="color:var(--admin-primary);font-weight:500;">' + data.order + '</div>' +
+          '</div>';
+      }
+
+      infoHtml += '<div class="handle-alert-info-row">' +
+        '<div class="handle-alert-info-label">关联门店</div>' +
+        '<div class="handle-alert-info-value">' + data.store + '</div>' +
+        '</div>';
+
+      document.getElementById('handleAlertInfo').innerHTML = infoHtml;
+
+      var select = document.getElementById('handleAction');
+      select.innerHTML = '<option value="">请选择处理方式</option>';
+      var options = actionOptions[data.type] || [];
+      for (var i = 0; i < options.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = options[i].value;
+        opt.textContent = options[i].text;
+        select.appendChild(opt);
+      }
+
+      document.getElementById('handleRemark').value = '';
+      document.getElementById('handleModal').classList.add('visible');
+    }
+
+    function closeHandleModal() {
+      document.getElementById('handleModal').classList.remove('visible');
+      currentAlertItem = null;
+    }
+
+    function confirmHandle() {
+      var action = document.getElementById('handleAction').value;
+      var remark = document.getElementById('handleRemark').value.trim();
+
+      if (!action) {
+        alert('请选择处理方式');
+        return;
+      }
+      if (remark.length < 10) {
+        alert('处理说明至少10个字');
+        return;
+      }
+
+      if (currentAlertItem && currentAlertItem.element) {
+        var item = currentAlertItem.element;
+        item.className = 'alert-item resolved';
+        item.setAttribute('data-level', 'resolved');
+        item.querySelector('.alert-severity').className = 'alert-severity resolved';
+        item.querySelector('.alert-severity').textContent = '✓';
+        item.querySelector('.alert-level-tag').className = 'alert-level-tag resolved';
+        item.querySelector('.alert-level-tag').textContent = '已处理';
+
+        var actionsDiv = item.querySelector('.alert-actions');
+        actionsDiv.innerHTML = '<button class="admin-btn admin-btn-link" onclick="openDetailModal(this)">查看详情</button>';
+      }
+
+      closeHandleModal();
+    }
+
+    function openDetailModal(btn) {
+      var data = getAlertData(btn);
+      currentAlertItem = data;
+
+      var isResolved = data.level === 'resolved';
+
+      var html = '<div class="detail-section-title">基本信息</div>' +
+        '<div class="detail-info-grid">' +
+        '<div class="detail-info-item"><div class="detail-info-label">预警编号</div><div class="detail-info-value">ALT' + data.id.padStart(6, '0') + '</div></div>' +
+        '<div class="detail-info-item"><div class="detail-info-label">预警类型</div><div class="detail-info-value">' + getTypeText(data.type) + '</div></div>' +
+        '<div class="detail-info-item"><div class="detail-info-label">预警等级</div><div class="detail-info-value">' + getLevelText(data.level) + '</div></div>' +
+        '<div class="detail-info-item"><div class="detail-info-label">触发时间</div><div class="detail-info-value">' + data.time + '</div></div>' +
+        '<div class="detail-info-item"><div class="detail-info-label">关联门店</div><div class="detail-info-value">' + data.store + '</div></div>';
+
+      if (data.order) {
+        html += '<div class="detail-info-item"><div class="detail-info-label">关联订单</div><div class="detail-info-value" style="color:var(--admin-primary);">' + data.order + '</div></div>';
+      }
+
+      html += '</div>';
+
+      html += '<div class="detail-section-title">问题描述</div>' +
+        '<div style="font-size:14px;color:var(--admin-text);line-height:1.8;padding:4px 0;">' + data.desc + '</div>';
+
+      html += '<div class="detail-section-title">处理记录</div>' +
+        '<div class="detail-timeline">';
+
+      if (isResolved) {
+        html += '<div class="detail-timeline-item">' +
+          '<div class="detail-timeline-dot red"></div>' +
+          '<div class="detail-timeline-content">' +
+          '<div class="detail-timeline-text">系统触发预警：' + getTypeText(data.type) + '</div>' +
+          '<div class="detail-timeline-time">' + data.time + '</div>' +
+          '</div></div>' +
+          '<div class="detail-timeline-item">' +
+          '<div class="detail-timeline-dot orange"></div>' +
+          '<div class="detail-timeline-content">' +
+          '<div class="detail-timeline-text">运营专员 张三 开始处理</div>' +
+          '<div class="detail-timeline-time">' + data.time.replace(/:\d{2}$/, ':30') + '</div>' +
+          '</div></div>' +
+          '<div class="detail-timeline-item">' +
+          '<div class="detail-timeline-dot green"></div>' +
+          '<div class="detail-timeline-content">' +
+          '<div class="detail-timeline-text">处理完成：重新出票成功</div>' +
+          '<div class="detail-timeline-time">2026-05-28 16:45:00</div>' +
+          '</div></div>';
+      } else {
+        html += '<div class="detail-timeline-item">' +
+          '<div class="detail-timeline-dot red"></div>' +
+          '<div class="detail-timeline-content">' +
+          '<div class="detail-timeline-text">系统触发预警：' + getTypeText(data.type) + '</div>' +
+          '<div class="detail-timeline-time">' + data.time + '</div>' +
+          '</div></div>';
+      }
+
+      html += '</div>';
+
+      document.getElementById('detailModalBody').innerHTML = html;
+
+      var handleBtn = document.getElementById('detailHandleBtn');
+      if (isResolved) {
+        handleBtn.style.display = 'none';
+      } else {
+        handleBtn.style.display = '';
+      }
+
+      document.getElementById('detailModal').classList.add('visible');
+    }
+
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('visible');
+    }
+
+    function detailToHandle() {
+      closeDetailModal();
+      if (currentAlertItem && currentAlertItem.element) {
+        var btn = currentAlertItem.element.querySelector('.admin-btn-primary');
+        if (btn) {
+          openHandleModal(btn);
+        }
+      }
+    }
+  </script>
 </body>
 </html>

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>设备详情 - 后台管理系统</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .detail-wrap { max-width: 900px; }
+    .detail-section {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .detail-section-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .detail-section-body { padding: 20px; }
+    .detail-row {
+      display: flex;
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .detail-row:last-child { border-bottom: none; }
+    .detail-label {
+      width: 140px;
+      padding: 12px 16px;
+      background: #FAFAFA;
+      font-size: 14px;
+      color: var(--admin-text-hint);
+      flex-shrink: 0;
+    }
+    .detail-value {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .cert-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .cert-tag.valid { background: #F6FFED; color: #52C41A; }
+    .cert-tag.expiring { background: #FFF7E6; color: #FAAD14; }
+    .cert-tag.revoked { background: #FFF1F0; color: #FF4D4F; }
+    .online-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+    .online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .online-dot.green { background: #52C41A; }
+    .online-dot.gray { background: #BFBFBF; }
+    .timeline-list { padding: 0; }
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      padding-bottom: 16px;
+      position: relative;
+    }
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 20px;
+      bottom: 0;
+      width: 1px;
+      background: var(--admin-border);
+    }
+    .timeline-item:last-child::before { display: none; }
+    .timeline-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .timeline-dot.blue { background: var(--admin-primary); }
+    .timeline-dot.green { background: #52C41A; }
+    .timeline-dot.orange { background: #FAAD14; }
+    .timeline-content { flex: 1; }
+    .timeline-title { font-size: 14px; color: var(--admin-text); }
+    .timeline-time { font-size: 12px; color: var(--admin-text-hint); margin-top: 2px; }
+    .detail-actions {
+      display: flex;
+      gap: 12px;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item active" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">系统管理 / 设备授权 / <span>设备详情</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <div class="detail-wrap">
+          <!-- 设备基本信息 -->
+          <div class="detail-section">
+            <div class="detail-section-header">
+              <span>设备基本信息</span>
+              <span class="online-status"><span class="online-dot green"></span>在线</span>
+            </div>
+            <div class="detail-section-body" style="padding:0;">
+              <div class="detail-row">
+                <div class="detail-label">设备ID</div>
+                <div class="detail-value">DEV-2026-001</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">设备名称</div>
+                <div class="detail-value">点单终端A01</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">设备类型</div>
+                <div class="detail-value">点单终端</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">MAC地址</div>
+                <div class="detail-value" style="font-family:monospace;">00:1A:2B:3C:4D:01</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">硬件序列号</div>
+                <div class="detail-value" style="font-family:monospace;">SN-PT-A001</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">所属门店</div>
+                <div class="detail-value"><a href="store-edit.html" style="color:var(--admin-primary);text-decoration:none;">福州万达广场店</a></div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">注册时间</div>
+                <div class="detail-value">2026-03-15 10:30:00</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">当前版本</div>
+                <div class="detail-value">v1.2.0</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 证书信息 -->
+          <div class="detail-section">
+            <div class="detail-section-header">
+              <span>证书信息</span>
+              <span class="cert-tag valid">有效</span>
+            </div>
+            <div class="detail-section-body" style="padding:0;">
+              <div class="detail-row">
+                <div class="detail-label">证书标准</div>
+                <div class="detail-value">X.509 v3</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">密钥算法</div>
+                <div class="detail-value">RSA 2048</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">证书序列号</div>
+                <div class="detail-value" style="font-family:monospace;">0A:1B:2C:3D:4E:5F:60</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">颁发时间</div>
+                <div class="detail-value">2026-03-15 10:30:05</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">到期时间</div>
+                <div class="detail-value">2027-03-15 10:30:05</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">续期策略</div>
+                <div class="detail-value">到期前30天自动续期</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">CRL状态</div>
+                <div class="detail-value" style="color:#52C41A;">未吊销</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 设备状态 -->
+          <div class="detail-section">
+            <div class="detail-section-header">设备状态</div>
+            <div class="detail-section-body" style="padding:0;">
+              <div class="detail-row">
+                <div class="detail-label">在线状态</div>
+                <div class="detail-value"><span class="online-status"><span class="online-dot green"></span>在线</span></div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">最后心跳</div>
+                <div class="detail-value">2026-05-29 10:45:30</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">VPN隧道</div>
+                <div class="detail-value" style="color:#52C41A;">已连接</div>
+              </div>
+              <div class="detail-row">
+                <div class="detail-label">网络延迟</div>
+                <div class="detail-value">12ms</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 操作日志 -->
+          <div class="detail-section">
+            <div class="detail-section-header">操作日志</div>
+            <div class="detail-section-body">
+              <div class="timeline-list">
+                <div class="timeline-item">
+                  <div class="timeline-dot blue"></div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">版本升级 v1.1.0 → v1.2.0</div>
+                    <div class="timeline-time">2026-05-20 14:30:00 · 操作人：admin</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot green"></div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">证书自动续期，新到期日 2027-03-15</div>
+                    <div class="timeline-time">2026-03-15 10:30:05 · 系统自动</div>
+                  </div>
+                </div>
+                <div class="timeline-item">
+                  <div class="timeline-dot blue"></div>
+                  <div class="timeline-content">
+                    <div class="timeline-title">设备注册并颁发证书</div>
+                    <div class="timeline-time">2026-03-15 10:30:00 · 操作人：admin</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="detail-actions">
+            <button class="admin-btn admin-btn-primary" onclick="location.href='device-list.html'">返回列表</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

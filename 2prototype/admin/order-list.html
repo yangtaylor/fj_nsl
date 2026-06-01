@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -98,6 +98,186 @@
     .tag-status.printed { background: #F6FFED; color: #52C41A; }
     .tag-status.completed { background: #F5F5F5; color: #8C8C8C; }
     .tag-status.cancelled { background: #FFF1F0; color: #FF4D4F; }
+    .admin-modal-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .admin-modal-mask.visible {
+      display: flex;
+    }
+    .admin-modal {
+      width: 520px;
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .admin-modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .admin-modal-close {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--admin-text-hint);
+      font-size: 18px;
+      border: none;
+      background: none;
+    }
+    .admin-modal-body {
+      padding: 24px;
+    }
+    .admin-modal-footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--admin-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .export-form-item {
+      margin-bottom: 20px;
+    }
+    .export-form-item:last-child {
+      margin-bottom: 0;
+    }
+    .export-form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--admin-text);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .export-form-label .required {
+      color: var(--color-error);
+      margin-right: 4px;
+    }
+    .export-radio-group {
+      display: flex;
+      gap: 24px;
+    }
+    .export-radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .export-radio-item input[type="radio"] {
+      accent-color: var(--admin-primary);
+    }
+    .export-form-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .export-form-select {
+      flex: 1;
+      height: 36px;
+      padding: 0 28px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #FFF;
+      color: var(--admin-text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .export-form-date {
+      flex: 1;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .export-form-date:focus,
+    .export-form-select:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .export-date-sep {
+      color: var(--admin-text-hint);
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .export-hint {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      margin-top: 4px;
+    }
+    .export-progress {
+      display: none;
+      padding: 16px 0;
+    }
+    .export-progress.active {
+      display: block;
+    }
+    .export-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .export-progress-fill {
+      height: 100%;
+      background: var(--admin-primary);
+      border-radius: 4px;
+      transition: width 0.3s;
+      width: 0%;
+    }
+    .export-progress-text {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+    }
+    .export-success {
+      display: none;
+      text-align: center;
+      padding: 24px 0;
+    }
+    .export-success.active {
+      display: block;
+    }
+    .export-success-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .export-success-text {
+      font-size: 16px;
+      color: var(--admin-text);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .export-success-sub {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+    }
   </style>
 </head>
 <body>
@@ -218,7 +398,7 @@
                 <input type="date" class="admin-date-input" value="2026-05-29">
               </div>
               <div class="admin-toolbar-right">
-                <button class="admin-btn admin-btn-primary">📥 导出</button>
+                <button class="admin-btn admin-btn-primary" onclick="openExportModal()">📥 导出</button>
               </div>
             </div>
 
@@ -367,5 +547,148 @@
       </div>
     </div>
   </div>
+
+  <div class="admin-modal-mask" id="exportModal">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <span class="admin-modal-title">导出订单</span>
+        <button class="admin-modal-close" onclick="closeExportModal()">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <div id="exportFormContent">
+          <div class="export-form-item">
+            <div class="export-form-label"><span class="required">*</span>导出格式</div>
+            <div class="export-radio-group">
+              <label class="export-radio-item">
+                <input type="radio" name="exportFormat" value="xlsx" checked>
+                <span>Excel (.xlsx)</span>
+              </label>
+              <label class="export-radio-item">
+                <input type="radio" name="exportFormat" value="csv">
+                <span>CSV (.csv)</span>
+              </label>
+            </div>
+          </div>
+          <div class="export-form-item">
+            <div class="export-form-label">门店筛选</div>
+            <select class="export-form-select">
+              <option value="">全部门店</option>
+              <option>福州万达广场店</option>
+              <option>厦门中山路店</option>
+              <option>泉州浦西万达店</option>
+              <option>福州宝龙城市广场店</option>
+              <option>厦门SM广场店</option>
+            </select>
+          </div>
+          <div class="export-form-item">
+            <div class="export-form-label">订单状态</div>
+            <select class="export-form-select">
+              <option value="">全部状态</option>
+              <option>待支付</option>
+              <option>已支付</option>
+              <option>已出票</option>
+              <option>已完成</option>
+              <option>已取消</option>
+            </select>
+          </div>
+          <div class="export-form-item">
+            <div class="export-form-label">时间范围</div>
+            <div class="export-form-row">
+              <input type="date" class="export-form-date" value="2026-05-29">
+              <span class="export-date-sep">至</span>
+              <input type="date" class="export-form-date" value="2026-05-29">
+            </div>
+            <div class="export-hint">不选择时间范围则导出全部数据</div>
+          </div>
+          <div class="export-form-item">
+            <div class="export-form-label">导出内容</div>
+            <div class="export-radio-group">
+              <label class="export-radio-item">
+                <input type="checkbox" checked disabled>
+                <span>订单基础信息</span>
+              </label>
+              <label class="export-radio-item">
+                <input type="checkbox" checked>
+                <span>商品明细</span>
+              </label>
+              <label class="export-radio-item">
+                <input type="checkbox">
+                <span>序列号信息</span>
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="export-progress" id="exportProgress">
+          <div class="export-progress-bar">
+            <div class="export-progress-fill" id="exportProgressFill"></div>
+          </div>
+          <div class="export-progress-text" id="exportProgressText">正在导出，请稍候...</div>
+        </div>
+        <div class="export-success" id="exportSuccess">
+          <div class="export-success-icon">✅</div>
+          <div class="export-success-text">导出成功</div>
+          <div class="export-success-sub">文件已开始下载</div>
+        </div>
+      </div>
+      <div class="admin-modal-footer" id="exportFooter">
+        <button class="admin-btn admin-btn-default" onclick="closeExportModal()">取消</button>
+        <button class="admin-btn admin-btn-primary" id="exportConfirmBtn" onclick="confirmExport()">确认导出</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openExportModal() {
+      document.getElementById('exportFormContent').style.display = '';
+      document.getElementById('exportProgress').classList.remove('active');
+      document.getElementById('exportSuccess').classList.remove('active');
+      document.getElementById('exportFooter').style.display = '';
+      document.getElementById('exportModal').classList.add('visible');
+    }
+
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.remove('visible');
+    }
+
+    function confirmExport() {
+      var formContent = document.getElementById('exportFormContent');
+      var progress = document.getElementById('exportProgress');
+      var success = document.getElementById('exportSuccess');
+      var footer = document.getElementById('exportFooter');
+
+      formContent.style.display = 'none';
+      progress.classList.add('active');
+      footer.style.display = 'none';
+
+      var fill = document.getElementById('exportProgressFill');
+      var text = document.getElementById('exportProgressText');
+      var percent = 0;
+
+      var timer = setInterval(function() {
+        percent += Math.floor(Math.random() * 15) + 5;
+        if (percent >= 100) {
+          percent = 100;
+          clearInterval(timer);
+          fill.style.width = '100%';
+          text.textContent = '导出完成';
+          setTimeout(function() {
+            progress.classList.remove('active');
+            success.classList.add('active');
+            footer.style.display = '';
+            document.getElementById('exportConfirmBtn').textContent = '完成';
+            document.getElementById('exportConfirmBtn').onclick = function() {
+              document.getElementById('exportConfirmBtn').textContent = '确认导出';
+              document.getElementById('exportConfirmBtn').onclick = confirmExport;
+              closeExportModal();
+            };
+            document.querySelector('#exportFooter .admin-btn-default').style.display = 'none';
+          }, 500);
+        } else {
+          fill.style.width = percent + '%';
+          text.textContent = '正在导出，已完成 ' + percent + '%...';
+        }
+      }, 300);
+    }
+  </script>
 </body>
 </html>

@@ -188,6 +188,200 @@
       border-radius: 4px;
       background: var(--admin-primary);
     }
+    .multi-loading {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+    }
+    .multi-loading.active {
+      display: block;
+    }
+    .multi-loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #E8E8E8;
+      border-top-color: var(--admin-primary);
+      border-radius: 50%;
+      animation: multi-spin 0.8s linear infinite;
+      margin: 0 auto 12px;
+    }
+    @keyframes multi-spin {
+      to { transform: rotate(360deg); }
+    }
+    .multi-loading-text {
+      font-size: 14px;
+      color: var(--admin-text-hint);
+    }
+    .admin-modal-mask {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.45);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .admin-modal-mask.visible {
+      display: flex;
+    }
+    .admin-modal {
+      width: 480px;
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+    .admin-modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-modal-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .admin-modal-close {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--admin-text-hint);
+      font-size: 18px;
+      border: none;
+      background: none;
+    }
+    .admin-modal-body {
+      padding: 24px;
+    }
+    .admin-modal-footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--admin-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+    .export-form-item {
+      margin-bottom: 20px;
+    }
+    .export-form-item:last-child {
+      margin-bottom: 0;
+    }
+    .export-form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--admin-text);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .export-form-label .required {
+      color: var(--color-error);
+      margin-right: 4px;
+    }
+    .export-radio-group {
+      display: flex;
+      gap: 24px;
+    }
+    .export-radio-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .export-radio-item input[type="radio"] {
+      accent-color: var(--admin-primary);
+    }
+    .export-form-select {
+      width: 100%;
+      height: 36px;
+      padding: 0 28px 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #FFF;
+      color: var(--admin-text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M2 4l4 4 4-4' stroke='%23999' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      cursor: pointer;
+    }
+    .export-form-select:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24,144,255,0.1);
+    }
+    .export-checkbox-group {
+      display: flex;
+      gap: 24px;
+    }
+    .export-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--admin-text);
+    }
+    .export-checkbox-item input[type="checkbox"] {
+      accent-color: var(--admin-primary);
+    }
+    .export-progress {
+      display: none;
+      padding: 16px 0;
+    }
+    .export-progress.active {
+      display: block;
+    }
+    .export-progress-bar {
+      width: 100%;
+      height: 8px;
+      background: #F0F0F0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .export-progress-fill {
+      height: 100%;
+      background: var(--admin-primary);
+      border-radius: 4px;
+      transition: width 0.3s;
+      width: 0%;
+    }
+    .export-progress-text {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+    }
+    .export-success {
+      display: none;
+      text-align: center;
+      padding: 24px 0;
+    }
+    .export-success.active {
+      display: block;
+    }
+    .export-success-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .export-success-text {
+      font-size: 16px;
+      color: var(--admin-text);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+    .export-success-sub {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+    }
   </style>
 </head>
 <body>
@@ -288,7 +482,7 @@
             <span style="color:var(--admin-text-hint);">至</span>
             <input type="date" class="multi-date-input" value="2026-05-28">
           </div>
-          <button class="admin-btn admin-btn-primary">查询</button>
+          <button class="admin-btn admin-btn-primary" onclick="doQuery()">查询</button>
         </div>
 
         <div class="multi-chart-card">
@@ -353,7 +547,7 @@
         <div class="multi-table-card">
           <div class="multi-table-header">
             <div class="multi-table-title">维度明细数据</div>
-            <button class="admin-btn admin-btn-primary">📥 导出分析数据</button>
+            <button class="admin-btn admin-btn-primary" onclick="openExportModal()">📥 导出分析数据</button>
           </div>
           <div style="padding:0;">
             <table class="admin-table">
@@ -418,5 +612,167 @@
       </div>
     </div>
   </div>
+
+  <div class="admin-modal-mask" id="exportModal">
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <span class="admin-modal-title">导出分析数据</span>
+        <button class="admin-modal-close" onclick="closeExportModal()">✕</button>
+      </div>
+      <div class="admin-modal-body">
+        <div id="exportFormContent">
+          <div class="export-form-item">
+            <div class="export-form-label"><span class="required">*</span>导出格式</div>
+            <div class="export-radio-group">
+              <label class="export-radio-item">
+                <input type="radio" name="exportFormat" value="xlsx" checked>
+                <span>Excel (.xlsx)</span>
+              </label>
+              <label class="export-radio-item">
+                <input type="radio" name="exportFormat" value="csv">
+                <span>CSV (.csv)</span>
+              </label>
+            </div>
+          </div>
+          <div class="export-form-item">
+            <div class="export-form-label">分析维度</div>
+            <select class="export-form-select" id="exportDimension">
+              <option value="store">按门店</option>
+              <option value="product">按票种</option>
+              <option value="time">按时段</option>
+            </select>
+          </div>
+          <div class="export-form-item">
+            <div class="export-form-label">导出内容</div>
+            <div class="export-checkbox-group">
+              <label class="export-checkbox-item">
+                <input type="checkbox" checked disabled>
+                <span>维度汇总</span>
+              </label>
+              <label class="export-checkbox-item">
+                <input type="checkbox" checked>
+                <span>销售额</span>
+              </label>
+              <label class="export-checkbox-item">
+                <input type="checkbox" checked>
+                <span>订单数</span>
+              </label>
+              <label class="export-checkbox-item">
+                <input type="checkbox">
+                <span>占比</span>
+              </label>
+            </div>
+          </div>
+          <div class="export-form-item">
+            <div class="export-form-label">日期范围</div>
+            <div style="display:flex;gap:12px;align-items:center;">
+              <input type="date" class="multi-date-input" value="2026-05-01" id="exportDateFrom">
+              <span style="color:var(--admin-text-hint);">至</span>
+              <input type="date" class="multi-date-input" value="2026-05-28" id="exportDateTo">
+            </div>
+          </div>
+        </div>
+        <div class="export-progress" id="exportProgress">
+          <div class="export-progress-bar">
+            <div class="export-progress-fill" id="exportProgressFill"></div>
+          </div>
+          <div class="export-progress-text" id="exportProgressText">正在导出，请稍候...</div>
+        </div>
+        <div class="export-success" id="exportSuccess">
+          <div class="export-success-icon">✅</div>
+          <div class="export-success-text">导出成功</div>
+          <div class="export-success-sub">文件已开始下载</div>
+        </div>
+      </div>
+      <div class="admin-modal-footer" id="exportFooter">
+        <button class="admin-btn admin-btn-default" onclick="closeExportModal()">取消</button>
+        <button class="admin-btn admin-btn-primary" id="exportConfirmBtn" onclick="confirmExport()">确认导出</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function doQuery() {
+      var chartCard = document.querySelector('.multi-chart-card');
+      var tableCard = document.querySelector('.multi-table-card');
+      var note = document.querySelector('.multi-note');
+
+      var loadingHtml = '<div class="multi-loading active" id="queryLoading"><div class="multi-loading-spinner"></div><div class="multi-loading-text">正在加载数据...</div></div>';
+
+      chartCard.style.display = 'none';
+      note.style.display = 'none';
+      tableCard.style.display = 'none';
+
+      var content = document.querySelector('.admin-content');
+      var loadingDiv = document.createElement('div');
+      loadingDiv.id = 'queryLoading';
+      loadingDiv.className = 'multi-loading active';
+      loadingDiv.innerHTML = '<div class="multi-loading-spinner"></div><div class="multi-loading-text">正在加载数据...</div>';
+      content.insertBefore(loadingDiv, chartCard);
+
+      setTimeout(function() {
+        var loader = document.getElementById('queryLoading');
+        if (loader) loader.remove();
+        chartCard.style.display = '';
+        note.style.display = '';
+        tableCard.style.display = '';
+      }, 1200);
+    }
+
+    function openExportModal() {
+      document.getElementById('exportFormContent').style.display = '';
+      document.getElementById('exportProgress').classList.remove('active');
+      document.getElementById('exportSuccess').classList.remove('active');
+      document.getElementById('exportFooter').style.display = '';
+      document.getElementById('exportConfirmBtn').textContent = '确认导出';
+      document.getElementById('exportConfirmBtn').onclick = confirmExport;
+      var cancelBtn = document.querySelector('#exportFooter .admin-btn-default');
+      if (cancelBtn) cancelBtn.style.display = '';
+      document.getElementById('exportModal').classList.add('visible');
+    }
+
+    function closeExportModal() {
+      document.getElementById('exportModal').classList.remove('visible');
+    }
+
+    function confirmExport() {
+      var formContent = document.getElementById('exportFormContent');
+      var progress = document.getElementById('exportProgress');
+      var success = document.getElementById('exportSuccess');
+      var footer = document.getElementById('exportFooter');
+
+      formContent.style.display = 'none';
+      progress.classList.add('active');
+      footer.style.display = 'none';
+
+      var fill = document.getElementById('exportProgressFill');
+      var text = document.getElementById('exportProgressText');
+      var percent = 0;
+
+      var timer = setInterval(function() {
+        percent += Math.floor(Math.random() * 15) + 5;
+        if (percent >= 100) {
+          percent = 100;
+          clearInterval(timer);
+          fill.style.width = '100%';
+          text.textContent = '导出完成';
+          setTimeout(function() {
+            progress.classList.remove('active');
+            success.classList.add('active');
+            footer.style.display = '';
+            document.getElementById('exportConfirmBtn').textContent = '完成';
+            document.getElementById('exportConfirmBtn').onclick = function() {
+              closeExportModal();
+            };
+            var cancelBtn = document.querySelector('#exportFooter .admin-btn-default');
+            if (cancelBtn) cancelBtn.style.display = 'none';
+          }, 500);
+        } else {
+          fill.style.width = percent + '%';
+          text.textContent = '正在导出，已完成 ' + percent + '%...';
+        }
+      }, 300);
+    }
+  </script>
 </body>
 </html>

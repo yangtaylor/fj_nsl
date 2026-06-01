@@ -18,6 +18,8 @@
       border-radius: var(--radius-md);
       box-shadow: 0 1px 2px rgba(0,0,0,0.04);
       overflow: hidden;
+      display: flex;
+      flex-direction: column;
     }
     .role-list-header {
       padding: 16px 20px;
@@ -28,6 +30,7 @@
     }
     .role-list-items {
       padding: 8px 0;
+      flex: 1;
     }
     .role-list-item {
       padding: 14px 20px;
@@ -79,9 +82,13 @@
     .perm-tree {
       padding: 20px;
       flex: 1;
+      overflow-y: auto;
     }
     .perm-module {
       margin-bottom: 20px;
+    }
+    .perm-module:last-child {
+      margin-bottom: 0;
     }
     .perm-module-header {
       display: flex;
@@ -94,12 +101,12 @@
       height: 16px;
       border: 1px solid #D9D9D9;
       border-radius: 3px;
-      cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      transition: all 0.2s;
+      user-select: none;
+      cursor: default;
     }
     .perm-checkbox.checked {
       background: var(--admin-primary);
@@ -141,13 +148,6 @@
     .perm-child-name {
       font-size: 13px;
       color: var(--admin-text-secondary);
-    }
-    .perm-footer {
-      padding: 16px 20px;
-      border-top: 1px solid var(--admin-border);
-      display: flex;
-      justify-content: flex-end;
-      gap: 8px;
     }
   </style>
 </head>
@@ -207,7 +207,7 @@
         <div class="admin-header-right">
           <div class="admin-header-user">
             <div class="admin-header-avatar">管</div>
-            <span>管理员</span>
+            <span style="font-size:14px;color:var(--admin-text);">管理员</span>
           </div>
         </div>
       </div>
@@ -215,140 +215,121 @@
       <div class="admin-content">
         <div class="role-assign-layout">
           <div class="role-list-panel">
-            <div class="role-list-header">角色列表</div>
-            <div class="role-list-items">
-              <div class="role-list-item active">
-                <div class="role-list-item-name">系统管理员</div>
-                <div class="role-list-item-desc">全部权限</div>
-              </div>
-              <div class="role-list-item">
-                <div class="role-list-item-name">运营专员</div>
-                <div class="role-list-item-desc">商品 / 订单 / 门店 / 财务 / 分析</div>
-              </div>
-              <div class="role-list-item">
-                <div class="role-list-item-name">店长</div>
-                <div class="role-list-item-desc">订单 / 库存 / 看板</div>
-              </div>
-              <div class="role-list-item">
-                <div class="role-list-item-name">销售员</div>
-                <div class="role-list-item-desc">订单 / 库存</div>
-              </div>
+            <div class="role-list-header">
+              <span>角色列表</span>
             </div>
+            <div class="role-list-items" id="roleListItems"></div>
           </div>
 
           <div class="perm-panel">
             <div class="perm-panel-header">
               <div>
-                <div class="perm-panel-title">系统管理员 · 权限配置</div>
-                <div class="perm-panel-subtitle">当前角色拥有全部系统权限</div>
+                <div class="perm-panel-title" id="permPanelTitle">系统管理员 · 权限配置</div>
+                <div class="perm-panel-subtitle" id="permPanelSubtitle">当前角色拥有全部系统权限</div>
               </div>
             </div>
-            <div class="perm-tree">
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">数据仪表盘</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">商品管理</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">订单监控</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">门店管理</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">账号权限</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">设备授权</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">财务结算</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-              <div class="perm-module">
-                <div class="perm-module-header">
-                  <div class="perm-checkbox checked"></div>
-                  <span class="perm-module-name">经营分析</span>
-                </div>
-                <div class="perm-module-children">
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">查看</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">新增</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">编辑</span></div>
-                  <div class="perm-child"><div class="perm-checkbox checked"></div><span class="perm-child-name">删除</span></div>
-                </div>
-              </div>
-            </div>
-            <div class="perm-footer">
-              <button class="admin-btn admin-btn-default">重置</button>
-              <button class="admin-btn admin-btn-primary">保存权限</button>
-            </div>
+            <div class="perm-tree" id="permTree"></div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <script>
+    var modules = ['数据仪表盘', '商品管理', '订单监控', '门店管理', '账号权限', '设备授权', '财务结算', '经营分析'];
+    var actions = ['查看', '新增', '编辑', '删除'];
+
+    var roles = [
+      {
+        name: '系统管理员',
+        desc: '全部权限',
+        perms: { '数据仪表盘': [1,1,1,1], '商品管理': [1,1,1,1], '订单监控': [1,1,1,1], '门店管理': [1,1,1,1], '账号权限': [1,1,1,1], '设备授权': [1,1,1,1], '财务结算': [1,1,1,1], '经营分析': [1,1,1,1] }
+      },
+      {
+        name: '运营专员',
+        desc: '商品 / 订单 / 门店 / 财务 / 分析',
+        perms: { '数据仪表盘': [1,0,0,0], '商品管理': [1,1,1,1], '订单监控': [1,1,1,0], '门店管理': [1,1,1,0], '账号权限': [0,0,0,0], '设备授权': [0,0,0,0], '财务结算': [1,1,0,0], '经营分析': [1,0,0,0] }
+      },
+      {
+        name: '店长',
+        desc: '订单 / 库存 / 看板',
+        perms: { '数据仪表盘': [1,0,0,0], '商品管理': [1,0,0,0], '订单监控': [1,1,1,0], '门店管理': [1,0,0,0], '账号权限': [0,0,0,0], '设备授权': [0,0,0,0], '财务结算': [1,0,0,0], '经营分析': [1,0,0,0] }
+      },
+      {
+        name: '销售员',
+        desc: '订单 / 库存',
+        perms: { '数据仪表盘': [0,0,0,0], '商品管理': [1,0,0,0], '订单监控': [1,1,0,0], '门店管理': [0,0,0,0], '账号权限': [0,0,0,0], '设备授权': [0,0,0,0], '财务结算': [0,0,0,0], '经营分析': [0,0,0,0] }
+      }
+    ];
+
+    var currentRoleIndex = 0;
+
+    function renderRoleList() {
+      var container = document.getElementById('roleListItems');
+      var html = '';
+      for (var i = 0; i < roles.length; i++) {
+        var r = roles[i];
+        html += '<div class="role-list-item' + (i === currentRoleIndex ? ' active' : '') + '" onclick="switchRole(' + i + ')">';
+        html += '<div class="role-list-item-name">' + r.name + '</div>';
+        html += '<div class="role-list-item-desc">' + r.desc + '</div>';
+        html += '</div>';
+      }
+      container.innerHTML = html;
+    }
+
+    function switchRole(index) {
+      currentRoleIndex = index;
+      renderRoleList();
+      renderPermPanel();
+    }
+
+    function renderPermPanel() {
+      var role = roles[currentRoleIndex];
+      document.getElementById('permPanelTitle').textContent = role.name + ' · 权限配置';
+
+      var permCount = 0;
+      var totalPerms = modules.length * actions.length;
+      for (var m = 0; m < modules.length; m++) {
+        var pArr = role.perms[modules[m]];
+        for (var a = 0; a < actions.length; a++) {
+          if (pArr[a]) permCount++;
+        }
+      }
+      document.getElementById('permPanelSubtitle').textContent = '已配置 ' + permCount + ' / ' + totalPerms + ' 项权限';
+
+      var tree = document.getElementById('permTree');
+      var html = '';
+      for (var m = 0; m < modules.length; m++) {
+        var modName = modules[m];
+        var pArr = role.perms[modName];
+        var checkedCount = 0;
+        for (var a = 0; a < actions.length; a++) {
+          if (pArr[a]) checkedCount++;
+        }
+        var parentState = '';
+        if (checkedCount === actions.length) parentState = 'checked';
+        else if (checkedCount > 0) parentState = 'indeterminate';
+
+        html += '<div class="perm-module">';
+        html += '<div class="perm-module-header">';
+        html += '<div class="perm-checkbox ' + parentState + '"></div>';
+        html += '<span class="perm-module-name">' + modName + '</span>';
+        html += '</div>';
+        html += '<div class="perm-module-children">';
+        for (var a = 0; a < actions.length; a++) {
+          var childState = pArr[a] ? 'checked' : '';
+          html += '<div class="perm-child">';
+          html += '<div class="perm-checkbox ' + childState + '"></div>';
+          html += '<span class="perm-child-name">' + actions[a] + '</span>';
+          html += '</div>';
+        }
+        html += '</div></div>';
+      }
+      tree.innerHTML = html;
+    }
+
+    renderRoleList();
+    renderPermPanel();
+  </script>
 </body>
 </html>

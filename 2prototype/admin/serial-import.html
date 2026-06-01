@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920">
+  <title>导入批次 - 体彩管理后台</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/admin-backend.css">
+  <style>
+    .detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 14px;
+      color: var(--admin-primary);
+      cursor: pointer;
+      margin-bottom: 16px;
+      background: none;
+      border: none;
+      padding: 0;
+    }
+    .detail-back:hover {
+      color: var(--admin-primary-light);
+    }
+    .import-card {
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+    .import-card-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--admin-text);
+    }
+    .import-card-body {
+      padding: 24px 20px;
+    }
+    .import-form {
+      max-width: 640px;
+    }
+    .import-form-item {
+      margin-bottom: 20px;
+    }
+    .import-form-label {
+      display: block;
+      font-size: 14px;
+      color: var(--admin-text);
+      margin-bottom: 8px;
+    }
+    .import-form-label .required {
+      color: var(--color-error);
+      margin-right: 4px;
+    }
+    .import-form-input {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+    }
+    .import-form-input:focus {
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.1);
+    }
+    .import-form-select {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      background: #FFF;
+    }
+    .import-form-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 8px 12px;
+      border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      resize: vertical;
+    }
+    .import-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .import-upload-zone {
+      border: 2px dashed var(--admin-border);
+      border-radius: var(--radius-md);
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #FAFCFF;
+    }
+    .import-upload-zone:hover {
+      border-color: var(--admin-primary);
+      background: #F0F7FF;
+    }
+    .import-upload-zone.uploaded {
+      border-color: var(--admin-success);
+      background: #F6FFED;
+    }
+    .import-upload-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+    .import-upload-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--admin-text);
+      margin-bottom: 6px;
+    }
+    .import-upload-hint {
+      font-size: 13px;
+      color: var(--admin-text-hint);
+    }
+    .import-upload-link {
+      color: var(--admin-primary);
+      cursor: pointer;
+    }
+    .import-upload-link:hover {
+      text-decoration: underline;
+    }
+    .import-file-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      padding: 12px 16px;
+      background: #F6FFED;
+      border: 1px solid #B7EB8F;
+      border-radius: var(--radius-sm);
+    }
+    .import-file-icon {
+      font-size: 24px;
+    }
+    .import-file-name {
+      font-size: 14px;
+      color: var(--admin-text);
+      font-weight: 500;
+    }
+    .import-file-size {
+      font-size: 12px;
+      color: var(--admin-text-hint);
+    }
+    .import-file-remove {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--color-error);
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .import-actions {
+      display: flex;
+      gap: 12px;
+      padding-top: 24px;
+      border-top: 1px solid #F0F0F0;
+      margin-top: 24px;
+    }
+    .import-template-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 20px;
+      padding: 10px 16px;
+      background: #E6F7FF;
+      border: 1px solid #91D5FF;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--admin-text-secondary);
+    }
+    .import-template-link {
+      color: var(--admin-primary);
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .import-template-link:hover {
+      text-decoration: underline;
+    }
+    .import-preview {
+      margin-top: 20px;
+    }
+    .import-preview-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--admin-text);
+      margin-bottom: 12px;
+    }
+    .import-preview-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .import-preview-table th {
+      background: #FAFAFA;
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--admin-text-hint);
+      font-weight: 500;
+      border-bottom: 1px solid var(--admin-border);
+    }
+    .import-preview-table td {
+      padding: 10px 16px;
+      font-size: 13px;
+      color: var(--admin-text);
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .import-preview-table .error-row td {
+      background: #FFF1F0;
+      color: var(--color-error);
+    }
+    .import-preview-table .error-msg {
+      font-size: 12px;
+      color: var(--color-error);
+    }
+    .import-result {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-radius: var(--radius-sm);
+    }
+    .import-result.success {
+      background: #F6FFED;
+      border: 1px solid #B7EB8F;
+    }
+    .import-result.error {
+      background: #FFF1F0;
+      border: 1px solid #FFA39E;
+    }
+    .import-result-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .import-result.success .import-result-title {
+      color: #389E0D;
+    }
+    .import-result.error .import-result-title {
+      color: #CF1322;
+    }
+    .import-result-detail {
+      font-size: 13px;
+      color: var(--admin-text-secondary);
+      line-height: 1.8;
+    }
+    .import-steps {
+      display: flex;
+      margin-bottom: 24px;
+      background: #FFF;
+      border-radius: var(--radius-md);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      padding: 0;
+    }
+    .import-step {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 16px 20px;
+      font-size: 14px;
+      color: var(--admin-text-hint);
+      position: relative;
+    }
+    .import-step.active {
+      color: var(--admin-primary);
+      font-weight: 600;
+    }
+    .import-step.done {
+      color: var(--admin-success);
+    }
+    .import-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 1px;
+      height: 24px;
+      background: var(--admin-border);
+    }
+    .import-step-num {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--admin-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .import-step.active .import-step-num {
+      border-color: var(--admin-primary);
+      background: var(--admin-primary);
+      color: #FFF;
+    }
+    .import-step.done .import-step-num {
+      border-color: var(--admin-success);
+      background: var(--admin-success);
+      color: #FFF;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-app">
+    <div class="admin-sidebar">
+      <div class="admin-sidebar-logo">
+        <span class="admin-sidebar-logo-text">体彩<em>管理后台</em></span>
+      </div>
+      <div class="admin-sidebar-menu">
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">概览</div>
+          <a class="admin-sidebar-item" href="dashboard.html"><span class="admin-sidebar-item-icon">📊</span>数据仪表盘</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">商品管理</div>
+          <a class="admin-sidebar-item" href="product-list.html"><span class="admin-sidebar-item-icon">🎫</span>票种列表</a>
+          <a class="admin-sidebar-item" href="product-shelf.html"><span class="admin-sidebar-item-icon">📋</span>上下架管理</a>
+          <a class="admin-sidebar-item active" href="serial-number.html"><span class="admin-sidebar-item-icon">🔢</span>序列号管理</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">订单管理</div>
+          <a class="admin-sidebar-item" href="order-list.html"><span class="admin-sidebar-item-icon">📦</span>订单列表</a>
+          <a class="admin-sidebar-item" href="order-alert.html"><span class="admin-sidebar-item-icon">⚠️</span>异常预警</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">门店管理</div>
+          <a class="admin-sidebar-item" href="store-list.html"><span class="admin-sidebar-item-icon">🏪</span>门店列表</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">系统管理</div>
+          <a class="admin-sidebar-item" href="user-manage.html"><span class="admin-sidebar-item-icon">👤</span>用户管理</a>
+          <a class="admin-sidebar-item" href="role-assign.html"><span class="admin-sidebar-item-icon">🔑</span>角色分配</a>
+          <a class="admin-sidebar-item" href="audit-log.html"><span class="admin-sidebar-item-icon">📝</span>操作日志</a>
+          <a class="admin-sidebar-item" href="device-list.html"><span class="admin-sidebar-item-icon">💻</span>设备授权</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">财务管理</div>
+          <a class="admin-sidebar-item" href="commission.html"><span class="admin-sidebar-item-icon">💰</span>佣金计算</a>
+          <a class="admin-sidebar-item" href="reconciliation.html"><span class="admin-sidebar-item-icon">📑</span>对账管理</a>
+          <a class="admin-sidebar-item" href="report-export.html"><span class="admin-sidebar-item-icon">📤</span>报表导出</a>
+        </div>
+        <div class="admin-sidebar-group">
+          <div class="admin-sidebar-group-title">经营分析</div>
+          <a class="admin-sidebar-item" href="analysis-multi.html"><span class="admin-sidebar-item-icon">📈</span>多维分析</a>
+          <a class="admin-sidebar-item" href="analysis-compare.html"><span class="admin-sidebar-item-icon">📊</span>门店对比</a>
+          <a class="admin-sidebar-item" href="analysis-structure.html"><span class="admin-sidebar-item-icon">🥧</span>票种结构</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="admin-main">
+      <div class="admin-header">
+        <div class="admin-header-left">
+          <div class="admin-header-breadcrumb">商品管理 / 序列号管理 / <span>导入批次</span></div>
+        </div>
+        <div class="admin-header-right">
+          <div class="admin-header-user">
+            <div class="admin-header-avatar">管</div>
+            <span>管理员</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-content">
+        <button class="detail-back" onclick="location.href='serial-number.html'">← 返回列表</button>
+
+        <div class="import-steps">
+          <div class="import-step done">
+            <span class="import-step-num">✓</span>
+            填写信息
+          </div>
+          <div class="import-step active">
+            <span class="import-step-num">2</span>
+            上传文件
+          </div>
+          <div class="import-step">
+            <span class="import-step-num">3</span>
+            校验预览
+          </div>
+          <div class="import-step">
+            <span class="import-step-num">4</span>
+            确认导入
+          </div>
+        </div>
+
+        <div class="import-card">
+          <div class="import-card-header">批次信息</div>
+          <div class="import-card-body">
+            <div class="import-form">
+              <div class="import-form-row">
+                <div class="import-form-item">
+                  <label class="import-form-label"><span class="required">*</span>票种</label>
+                  <select class="import-form-select">
+                    <option value="">请选择票种</option>
+                    <option value="zhongguohong">中国红</option>
+                    <option value="haoyunshibei">好运十倍</option>
+                    <option value="jinguangshanshan">金光闪闪</option>
+                    <option value="xingyun5">幸运5</option>
+                  </select>
+                </div>
+                <div class="import-form-item">
+                  <label class="import-form-label"><span class="required">*</span>面值</label>
+                  <select class="import-form-select">
+                    <option value="">请选择面值</option>
+                    <option value="5">5元</option>
+                    <option value="10">10元</option>
+                    <option value="20">20元</option>
+                    <option value="30">30元</option>
+                    <option value="50">50元</option>
+                  </select>
+                </div>
+              </div>
+              <div class="import-form-row">
+                <div class="import-form-item">
+                  <label class="import-form-label"><span class="required">*</span>起始序列号</label>
+                  <input type="text" class="import-form-input" placeholder="例如：ZGH20260601001">
+                </div>
+                <div class="import-form-item">
+                  <label class="import-form-label"><span class="required">*</span>结束序列号</label>
+                  <input type="text" class="import-form-input" placeholder="例如：ZGH20260601500">
+                </div>
+              </div>
+              <div class="import-form-item">
+                <label class="import-form-label">备注</label>
+                <textarea class="import-form-textarea" placeholder="请输入备注信息，如批次用途等"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="import-card">
+          <div class="import-card-header">上传文件</div>
+          <div class="import-card-body">
+            <div class="import-template-bar">
+              📎 请按模板格式上传序列号文件，<span class="import-template-link">下载导入模板</span>
+              <span style="margin-left:8px;color:var(--admin-text-hint)">（支持 .xlsx / .xls / .csv，单次最多5000条）</span>
+            </div>
+
+            <div class="import-upload-zone uploaded">
+              <div class="import-upload-icon">📄</div>
+              <div class="import-upload-title">点击或拖拽文件到此区域上传</div>
+              <div class="import-upload-hint">支持 .xlsx / .xls / .csv 格式，文件大小不超过 10MB</div>
+            </div>
+
+            <div class="import-file-info">
+              <span class="import-file-icon">📊</span>
+              <div>
+                <div class="import-file-name">中国红_批次导入_20260529.xlsx</div>
+                <div class="import-file-size">28.5 KB · 500 条序列号</div>
+              </div>
+              <button class="import-file-remove">删除</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="import-card">
+          <div class="import-card-header">校验预览</div>
+          <div class="import-card-body">
+            <div class="import-result success">
+              <div class="import-result-title">✅ 校验通过</div>
+              <div class="import-result-detail">
+                共解析 <strong>500</strong> 条序列号，其中：<br>
+                新增序列号 <strong>498</strong> 条<br>
+                重复跳过 <strong>2</strong> 条（ZGH20260501001、ZGH20260501002 已存在）
+              </div>
+            </div>
+
+            <div class="import-preview">
+              <div class="import-preview-title">数据预览（前5条）</div>
+              <table class="import-preview-table">
+                <thead>
+                  <tr>
+                    <th style="width:60px">序号</th>
+                    <th>序列号</th>
+                    <th>票种</th>
+                    <th>面值</th>
+                    <th style="width:100px">校验结果</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>ZGH20260601001</td>
+                    <td>中国红</td>
+                    <td>¥10</td>
+                    <td style="color:#52C41A">✓ 通过</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>ZGH20260601002</td>
+                    <td>中国红</td>
+                    <td>¥10</td>
+                    <td style="color:#52C41A">✓ 通过</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>ZGH20260601003</td>
+                    <td>中国红</td>
+                    <td>¥10</td>
+                    <td style="color:#52C41A">✓ 通过</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>ZGH20260601004</td>
+                    <td>中国红</td>
+                    <td>¥10</td>
+                    <td style="color:#52C41A">✓ 通过</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>ZGH20260601005</td>
+                    <td>中国红</td>
+                    <td>¥10</td>
+                    <td style="color:#52C41A">✓ 通过</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="import-preview" style="margin-top:16px">
+              <div class="import-preview-title">重复数据（2条）</div>
+              <table class="import-preview-table">
+                <thead>
+                  <tr>
+                    <th style="width:60px">序号</th>
+                    <th>序列号</th>
+                    <th>票种</th>
+                    <th>面值</th>
+                    <th style="width:100px">校验结果</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="error-row">
+                    <td>499</td>
+                    <td>ZGH20260501001</td>
+                    <td>中国红</td>
+                    <td>¥10</td>
+                    <td><span class="error-msg">序列号已存在</span></td>
+                  </tr>
+                  <tr class="error-row">
+                    <td>500</td>
+                    <td>ZGH20260501002</td>
+                    <td>中国红</td>
+                    <td>¥10</td>
+                    <td><span class="error-msg">序列号已存在</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="import-actions">
+          <button class="admin-btn admin-btn-primary" style="padding:10px 32px" onclick="location.href='serial-number.html'">确认导入</button>
+          <button class="admin-btn admin-btn-default" style="padding:10px 32px" onclick="location.href='serial-number.html'">取消</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

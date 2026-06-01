@@ -48,6 +48,74 @@
       margin-top: 16px;
     }
     .admin-note-icon { font-size: 14px; }
+    /* 弹窗样式 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-box {
+      background: #FFF;
+      border-radius: 8px;
+      width: 440px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+    }
+    .modal-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--admin-border);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--admin-text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .modal-close {
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--admin-text-hint);
+      line-height: 1;
+    }
+    .modal-close:hover { color: var(--admin-text); }
+    .modal-body {
+      padding: 24px;
+      font-size: 14px;
+      color: var(--admin-text);
+      line-height: 1.6;
+    }
+    .modal-body .highlight { font-weight: 600; color: var(--admin-primary); }
+    .modal-body .warning { font-weight: 600; color: #FAAD14; }
+    .modal-body .danger { font-weight: 600; color: var(--color-error); }
+    .modal-footer {
+      padding: 12px 24px;
+      border-top: 1px solid var(--admin-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    /* 成功提示 */
+    .toast-success {
+      display: none;
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #F6FFED;
+      border: 1px solid #B7EB8F;
+      border-radius: var(--radius-sm);
+      padding: 10px 20px;
+      font-size: 14px;
+      color: #52C41A;
+      z-index: 1001;
+      align-items: center;
+      gap: 8px;
+    }
+    .toast-success.show { display: flex; }
   </style>
 </head>
 <body>
@@ -131,7 +199,7 @@
                 </select>
               </div>
               <div class="admin-toolbar-right">
-                <button class="admin-btn admin-btn-primary">＋ 新增用户</button>
+                <a class="admin-btn admin-btn-primary" href="user-add.html" style="text-decoration:none;color:#FFF;">＋ 新增用户</a>
               </div>
             </div>
 
@@ -163,8 +231,8 @@
                   <td>2026-05-29 09:15</td>
                   <td>
                     <div class="admin-table-actions">
-                      <button class="admin-btn admin-btn-link">编辑</button>
-                      <button class="admin-btn admin-btn-link">重置密码</button>
+                      <a class="admin-btn admin-btn-link" href="user-edit.html">编辑</a>
+                      <button class="admin-btn admin-btn-link" onclick="showResetModal('U10001','王建国')">重置密码</button>
                     </div>
                   </td>
                 </tr>
@@ -182,9 +250,9 @@
                   <td>2026-05-29 08:42</td>
                   <td>
                     <div class="admin-table-actions">
-                      <button class="admin-btn admin-btn-link">编辑</button>
-                      <button class="admin-btn admin-btn-link">禁用</button>
-                      <button class="admin-btn admin-btn-link">重置密码</button>
+                      <a class="admin-btn admin-btn-link" href="user-edit.html">编辑</a>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);" onclick="showDisableModal('U10002','李伟','禁用')">禁用</button>
+                      <button class="admin-btn admin-btn-link" onclick="showResetModal('U10002','李伟')">重置密码</button>
                     </div>
                   </td>
                 </tr>
@@ -202,9 +270,9 @@
                   <td>2026-05-28 18:30</td>
                   <td>
                     <div class="admin-table-actions">
-                      <button class="admin-btn admin-btn-link">编辑</button>
-                      <button class="admin-btn admin-btn-link">禁用</button>
-                      <button class="admin-btn admin-btn-link">重置密码</button>
+                      <a class="admin-btn admin-btn-link" href="user-edit.html">编辑</a>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);" onclick="showDisableModal('U10003','陈志强','禁用')">禁用</button>
+                      <button class="admin-btn admin-btn-link" onclick="showResetModal('U10003','陈志强')">重置密码</button>
                     </div>
                   </td>
                 </tr>
@@ -222,9 +290,9 @@
                   <td>2026-05-29 10:05</td>
                   <td>
                     <div class="admin-table-actions">
-                      <button class="admin-btn admin-btn-link">编辑</button>
-                      <button class="admin-btn admin-btn-link">禁用</button>
-                      <button class="admin-btn admin-btn-link">重置密码</button>
+                      <a class="admin-btn admin-btn-link" href="user-edit.html">编辑</a>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);" onclick="showDisableModal('U10004','张丽华','禁用')">禁用</button>
+                      <button class="admin-btn admin-btn-link" onclick="showResetModal('U10004','张丽华')">重置密码</button>
                     </div>
                   </td>
                 </tr>
@@ -242,9 +310,9 @@
                   <td>2026-05-15 16:22</td>
                   <td>
                     <div class="admin-table-actions">
-                      <button class="admin-btn admin-btn-link">编辑</button>
-                      <button class="admin-btn admin-btn-link">启用</button>
-                      <button class="admin-btn admin-btn-link">重置密码</button>
+                      <a class="admin-btn admin-btn-link" href="user-edit.html">编辑</a>
+                      <button class="admin-btn admin-btn-link" style="color:var(--admin-success);" onclick="showDisableModal('U10005','赵明','启用')">启用</button>
+                      <button class="admin-btn admin-btn-link" onclick="showResetModal('U10005','赵明')">重置密码</button>
                     </div>
                   </td>
                 </tr>
@@ -262,9 +330,9 @@
                   <td>2026-05-29 07:58</td>
                   <td>
                     <div class="admin-table-actions">
-                      <button class="admin-btn admin-btn-link">编辑</button>
-                      <button class="admin-btn admin-btn-link">禁用</button>
-                      <button class="admin-btn admin-btn-link">重置密码</button>
+                      <a class="admin-btn admin-btn-link" href="user-edit.html">编辑</a>
+                      <button class="admin-btn admin-btn-link" style="color:var(--color-error);" onclick="showDisableModal('U10006','林小芳','禁用')">禁用</button>
+                      <button class="admin-btn admin-btn-link" onclick="showResetModal('U10006','林小芳')">重置密码</button>
                     </div>
                   </td>
                 </tr>
@@ -287,5 +355,139 @@
       </div>
     </div>
   </div>
+
+  <!-- 重置密码确认弹窗 -->
+  <div class="modal-overlay" id="resetModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        确认重置密码
+        <span class="modal-close" onclick="closeModal('resetModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        确定要重置用户 <span class="highlight" id="resetUserName"></span>（<span id="resetUserId"></span>）的密码吗？<br><br>
+        重置后将生成新的随机密码，原密码立即失效。请确保已通知该用户。
+      </div>
+      <div class="modal-footer">
+        <button class="admin-btn admin-btn-default" onclick="closeModal('resetModal')">取消</button>
+        <button class="admin-btn admin-btn-primary" onclick="doReset()">确认重置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 禁用/启用确认弹窗 -->
+  <div class="modal-overlay" id="disableModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <span id="disableModalTitle">确认禁用</span>
+        <span class="modal-close" onclick="closeModal('disableModal')">&times;</span>
+      </div>
+      <div class="modal-body" id="disableModalBody">
+      </div>
+      <div class="modal-footer">
+        <button class="admin-btn admin-btn-default" onclick="closeModal('disableModal')">取消</button>
+        <button class="admin-btn admin-btn-primary" id="disableConfirmBtn" onclick="doDisable()">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 重置密码结果弹窗 -->
+  <div class="modal-overlay" id="resetResultModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        密码重置成功
+        <span class="modal-close" onclick="closeModal('resetResultModal')">&times;</span>
+      </div>
+      <div class="modal-body">
+        用户 <span class="highlight" id="resultUserName"></span> 的密码已重置为：<br><br>
+        <div style="background:#F5F5F5;padding:12px 16px;border-radius:4px;font-family:monospace;font-size:16px;letter-spacing:1px;text-align:center;" id="newPassword"></div>
+        <br>
+        <span style="color:var(--color-error);">请将新密码安全地通知该用户，建议用户登录后立即修改密码。</span>
+      </div>
+      <div class="modal-footer">
+        <button class="admin-btn admin-btn-default" onclick="copyNewPwd()">复制密码</button>
+        <button class="admin-btn admin-btn-primary" onclick="closeModal('resetResultModal')">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 成功提示 -->
+  <div class="toast-success" id="toastSuccess">
+    <span>✓</span>
+    <span id="toastMsg">操作成功</span>
+  </div>
+
+  <script>
+    var currentAction = { userId: '', userName: '', action: '' };
+
+    function showResetModal(userId, userName) {
+      currentAction = { userId: userId, userName: userName, action: 'reset' };
+      document.getElementById('resetUserId').textContent = userId;
+      document.getElementById('resetUserName').textContent = userName;
+      document.getElementById('resetModal').classList.add('show');
+    }
+
+    function showDisableModal(userId, userName, action) {
+      currentAction = { userId: userId, userName: userName, action: action };
+      var title = action === '禁用' ? '确认禁用用户' : '确认启用用户';
+      document.getElementById('disableModalTitle').textContent = title;
+      if (action === '禁用') {
+        document.getElementById('disableModalBody').innerHTML =
+          '确定要<span class="danger">禁用</span>用户 <span class="highlight">' + userName + '</span>（' + userId + '）吗？<br><br>' +
+          '禁用后该用户将<span class="danger">无法登录系统</span>，已登录的会话将被强制下线。';
+        document.getElementById('disableConfirmBtn').textContent = '确认禁用';
+        document.getElementById('disableConfirmBtn').className = 'admin-btn admin-btn-danger';
+      } else {
+        document.getElementById('disableModalBody').innerHTML =
+          '确定要<span class="highlight">启用</span>用户 <span class="highlight">' + userName + '</span>（' + userId + '）吗？<br><br>' +
+          '启用后该用户可以正常登录系统。';
+        document.getElementById('disableConfirmBtn').textContent = '确认启用';
+        document.getElementById('disableConfirmBtn').className = 'admin-btn admin-btn-primary';
+      }
+      document.getElementById('disableModal').classList.add('show');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('show');
+    }
+
+    function generatePassword() {
+      var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhjkmnprstwxyz2345678';
+      var len = 10;
+      var pwd = '';
+      for (var i = 0; i < len; i++) {
+        pwd += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return pwd;
+    }
+
+    function doReset() {
+      closeModal('resetModal');
+      var newPwd = generatePassword();
+      document.getElementById('resultUserName').textContent = currentAction.userName;
+      document.getElementById('newPassword').textContent = newPwd;
+      document.getElementById('resetResultModal').classList.add('show');
+    }
+
+    function doDisable() {
+      closeModal('disableModal');
+      var action = currentAction.action;
+      showToast(currentAction.userName + ' 已' + action);
+    }
+
+    function copyNewPwd() {
+      var pwd = document.getElementById('newPassword').textContent;
+      if (pwd && navigator.clipboard) {
+        navigator.clipboard.writeText(pwd);
+        showToast('密码已复制到剪贴板');
+      }
+    }
+
+    function showToast(msg) {
+      var toast = document.getElementById('toastSuccess');
+      document.getElementById('toastMsg').textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+  </script>
 </body>
 </html>
