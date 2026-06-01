@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>我的 - 顾客点单终端</title>
+  <link rel="stylesheet" href="../css/common.css">
+  <link rel="stylesheet" href="../css/customer-terminal.css">
+  <style>
+    .my-header {
+      background: linear-gradient(135deg, #C4161C 0%, #E8383E 50%, #FF6B6B 100%);
+      padding: 32px 24px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .my-header::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.06);
+      top: -60px;
+      right: -40px;
+    }
+    .my-user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+    .my-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      border: 2px solid rgba(255,255,255,0.4);
+      flex-shrink: 0;
+    }
+    .my-user-detail {
+      flex: 1;
+    }
+    .my-user-name {
+      font-size: 20px;
+      font-weight: 600;
+      color: #FFF;
+      margin-bottom: 4px;
+    }
+    .my-user-phone {
+      font-size: 14px;
+      color: rgba(255,255,255,0.8);
+    }
+    .my-user-edit {
+      padding: 6px 16px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 16px;
+      color: #FFF;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    /* 统计 */
+    .my-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      background: #FFF;
+      margin: -14px 16px 0;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      position: relative;
+      z-index: 2;
+    }
+    .my-stat-item {
+      text-align: center;
+      padding: 16px 0;
+      cursor: pointer;
+    }
+    .my-stat-item:not(:last-child) {
+      border-right: 1px solid #F0F0F0;
+    }
+    .my-stat-value {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--color-primary);
+    }
+    .my-stat-label {
+      font-size: 12px;
+      color: var(--color-text-hint);
+      margin-top: 4px;
+    }
+    /* 菜单组 */
+    .my-menu-group {
+      background: #FFF;
+      border-radius: 12px;
+      margin: 12px 16px;
+      overflow: hidden;
+    }
+    .my-menu-group-title {
+      padding: 14px 16px 8px;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .my-menu-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .my-menu-item:active {
+      background: #F5F5F5;
+    }
+    .my-menu-item:not(:last-child) {
+      border-bottom: 1px solid #F5F5F5;
+    }
+    .my-menu-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+    .my-menu-icon.blue { background: #E6F7FF; }
+    .my-menu-icon.green { background: #F6FFED; }
+    .my-menu-icon.orange { background: #FFF7E6; }
+    .my-menu-icon.purple { background: #F9F0FF; }
+    .my-menu-icon.red { background: #FFF1F0; }
+    .my-menu-icon.cyan { background: #E6FFFB; }
+    .my-menu-text {
+      flex: 1;
+      font-size: 15px;
+      color: var(--color-text-primary);
+    }
+    .my-menu-badge {
+      background: var(--color-error);
+      color: #FFF;
+      font-size: 11px;
+      padding: 1px 7px;
+      border-radius: 10px;
+      margin-right: 8px;
+    }
+    .my-menu-arrow {
+      color: var(--color-text-hint);
+      font-size: 14px;
+    }
+    /* 退出 */
+    .my-logout {
+      margin: 20px 16px;
+      padding: 14px;
+      text-align: center;
+      background: #FFF;
+      border-radius: 12px;
+      font-size: 15px;
+      color: var(--color-error);
+      cursor: pointer;
+      border: 1px solid #FFCCC7;
+    }
+    .my-logout:active {
+      background: #FFF1F0;
+    }
+    /* 未登录态 */
+    .my-login-hint {
+      color: rgba(255,255,255,0.9);
+      font-size: 15px;
+    }
+    .my-login-btn {
+      display: inline-block;
+      padding: 6px 20px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 16px;
+      color: #FFF;
+      font-size: 14px;
+      margin-top: 8px;
+      border: 1px solid rgba(255,255,255,0.4);
+      cursor: pointer;
+    }
+    .statusbar-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .statusbar-icons svg {
+      width: 14px;
+      height: 14px;
+      fill: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="customer-app">
+    <div class="customer-statusbar">
+      <span>14:30</span>
+      <div class="statusbar-icons">
+        <svg viewBox="0 0 24 24"><path d="M1 9l2 2c4.97-4.97 13.03-4.97 18 0l2-2C16.93 2.93 7.08 2.93 1 9zm8 8l3 3 3-3c-1.65-1.66-4.34-1.66-6 0zm-4-4l2 2c2.76-2.76 7.24-2.76 10 0l2-2C15.14 9.14 8.87 9.14 5 13z"/></svg>
+        <svg viewBox="0 0 24 24"><path d="M15.67 4H14V2h-4v2H8.33C7.6 4 7 4.6 7 5.33v15.33C7 21.4 7.6 22 8.33 22h7.33c.74 0 1.34-.6 1.34-1.33V5.33C17 4.6 16.4 4 15.67 4zM13 18h-2v-2h2v2zm0-4H11V9h2v5z"/></svg>
+      </div>
+    </div>
+
+    <div class="customer-body">
+      <!-- 用户信息头部 -->
+      <div class="my-header">
+        <div class="my-user-info">
+          <div class="my-avatar">👤</div>
+          <div class="my-user-detail">
+            <div class="my-user-name">微信用户</div>
+            <div class="my-user-phone">138****5678</div>
+          </div>
+          <div class="my-user-edit">编辑</div>
+        </div>
+      </div>
+
+      <!-- 统计 -->
+      <div class="my-stats">
+        <a class="my-stat-item" href="my-orders.html">
+          <div class="my-stat-value">5</div>
+          <div class="my-stat-label">全部订单</div>
+        </a>
+        <a class="my-stat-item" href="my-orders.html?tab=pending">
+          <div class="my-stat-value">1</div>
+          <div class="my-stat-label">待取票</div>
+        </a>
+        <a class="my-stat-item" href="my-orders.html?tab=completed">
+          <div class="my-stat-value">4</div>
+          <div class="my-stat-label">已完成</div>
+        </a>
+      </div>
+
+      <!-- 订单服务 -->
+      <div class="my-menu-group">
+        <div class="my-menu-group-title">订单服务</div>
+        <a class="my-menu-item" href="my-orders.html">
+          <div class="my-menu-icon blue">📦</div>
+          <div class="my-menu-text">我的订单</div>
+          <span class="my-menu-badge">1</span>
+          <span class="my-menu-arrow">›</span>
+        </a>
+        <div class="my-menu-item" onclick="alert('退款需联系门店收银台处理')">
+          <div class="my-menu-icon orange">💰</div>
+          <div class="my-menu-text">退款/售后</div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+      </div>
+
+      <!-- 门店信息 -->
+      <div class="my-menu-group">
+        <div class="my-menu-group-title">当前门店</div>
+        <div class="my-menu-item" style="cursor:default;">
+          <div class="my-menu-icon red">🏪</div>
+          <div class="my-menu-text">
+            <div style="font-weight:500;">福州万达广场店</div>
+            <div style="font-size:12px;color:var(--color-text-hint);margin-top:2px;">福州市台江区万达广场B1层</div>
+          </div>
+        </div>
+        <div class="my-menu-item" style="cursor:default;">
+          <div class="my-menu-icon cyan">🕐</div>
+          <div class="my-menu-text">
+            <div style="font-weight:500;">营业时间</div>
+            <div style="font-size:12px;color:var(--color-text-hint);margin-top:2px;">09:00 - 22:00</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 其他功能 -->
+      <div class="my-menu-group">
+        <div class="my-menu-group-title">更多服务</div>
+        <div class="my-menu-item" onclick="alert('责任彩票：理性购彩，量力而行')">
+          <div class="my-menu-icon green">🛡️</div>
+          <div class="my-menu-text">责任彩票</div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+        <div class="my-menu-item" onclick="alert('请前往门店收银台咨询')">
+          <div class="my-menu-icon purple">🎧</div>
+          <div class="my-menu-text">客服帮助</div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+        <div class="my-menu-item" onclick="location.href='login.html'">
+          <div class="my-menu-icon orange">📄</div>
+          <div class="my-menu-text">用户协议与隐私政策</div>
+          <span class="my-menu-arrow">›</span>
+        </div>
+        <div class="my-menu-item" style="cursor:default;">
+          <div class="my-menu-icon blue">ℹ️</div>
+          <div class="my-menu-text">系统版本</div>
+          <span style="font-size:13px;color:var(--color-text-hint);margin-right:8px;">v1.2.0</span>
+        </div>
+      </div>
+
+      <!-- 退出登录 -->
+      <div class="my-logout" onclick="handleLogout()">退出登录</div>
+
+      <div style="height:20px;"></div>
+    </div>
+
+    <div class="customer-tabbar">
+      <a href="ticket-browse.html" class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">🎫</span>
+        <span>票种</span>
+      </a>
+      <a href="cart.html" class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">🛒</span>
+        <span>购物车</span>
+      </a>
+      <a href="live-interaction.html" class="customer-tabbar-item">
+        <span class="customer-tabbar-icon">📺</span>
+        <span>直播</span>
+      </a>
+      <a href="my-profile.html" class="customer-tabbar-item active">
+        <span class="customer-tabbar-icon">👤</span>
+        <span>我的</span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function handleLogout() {
+      if (confirm('确定退出登录？')) {
+        location.href = 'login.html';
+      }
+    }
+  </script>
+</body>
+</html>
